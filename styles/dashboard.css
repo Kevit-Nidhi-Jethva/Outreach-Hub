@@ -1,0 +1,212 @@
+* {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #3a0ca3, #4361ee);
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-links a,
+    .logout-btn {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      transition: 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover,
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .dashboard {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+      padding: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    }
+
+    .welcome-section {
+      text-align: center;
+    }
+
+    .welcome-section img {
+      max-width: 300px;
+      height: auto;
+      margin-top: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .welcome-section img:hover {
+      transform: scale(1.05);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #3a0ca3, #4361ee);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      display: inline-block;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .charts {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .charts img {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .charts img:hover {
+      transform: scale(1.02);
+    }
+
+    .table-section table,
+    #contacts-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: #f0f0f5;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+      transition: background 0.2s ease;
+    }
+
+    #contact-form {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    #contact-form input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      flex: 1 1 200px;
+    }
+
+    #contact-form button {
+      padding: 0.6rem 1.2rem;
+      background: #4361ee;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #contact-form button:hover {
+      background: #3a0ca3;
+    }
+
+    #contacts-table button {
+      margin-right: 5px;
+      padding: 0.4rem 0.6rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+    }
+
+    #contacts-table button:first-child {
+      background-color: #00b894;
+    }
+
+    #contacts-table button:last-child {
+      background-color: #d63031;
+    }
+
+    @media (max-width: 768px) {
+      .charts {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .dashboard {
+        padding: 1rem;
+      }
+    }
