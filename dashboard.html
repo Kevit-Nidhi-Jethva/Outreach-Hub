@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OutreachHub Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css" >
-  
+  <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 <body>
 
@@ -18,23 +17,34 @@
       <a href="#">Analytics</a>
       <a href="#">Support</a>
       <a href="#" onclick="showSection('contacts')">Contact</a>
+
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
   </div>
 
   <!-- Dashboard Content -->
-  <div class="dashboard" id="dashboard-section">
-    <div class="card welcome-section">
-      <img src="images/logo1.png" alt="OutreachHub Logo" style="width: 350px; height: 250px"><br>
+  <div id="dashboard-section" class="dashboard">
+    <div class="welcome-section">
+      <img src="images/logo1.png" alt="OutreachHub Logo" class="logo-img" style="width: 400px; height: 250px;">
       <h1 style="color: #0a2c5f">Welcome to OutreachHub!</h1>
       <p style="color: #0c387a; font-size: 20px;">Your one-stop solution for managing outreach and engagement.</p>
     </div>
 
     <div class="card">
-      <h2>Analytics Overview</h2>
+      <h2 >Analytics Overview</h2>
       <div class="charts">
-        <img src="images/chart1.png" alt="Chart 1 Placeholder">
-        <img src="images/chart2.png" alt="Chart 2 Placeholder">
+        <img src="images/chart1.png" alt="Chart 1">
+        <img src="images/chart2.png" alt="Chart 2">
+        <img src="images/chart3.png" alt="Chart 3">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Team Highlights</h2>
+      <p>Meet our top outreach performers this quarter:</p>
+      <div class="charts">
+        <img src="images/profile1.jpg" alt="Team Member 1">
+        <img src="images/profile2.jpg" alt="Team Member 2">
       </div>
     </div>
 
@@ -75,31 +85,49 @@
 
   <!-- Contacts Module -->
   <div class="dashboard" id="contacts-section" style="display:none;">
-    <div class="card">
+
+    <!-- Contact List View -->
+    <div class="card" id="contacts-list">
       <h2>Contacts</h2>
+      <button onclick="showForm()" style="font-size: 18px; color: black; padding: 5px; background: transparent;">+ New Contact</button>
+      <table id="contacts-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="pagination" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- Contact Form View -->
+    <div class="card" id="contact-form-view" style="display:none;">
+      <h2 id="form-title">Add Contact</h2>
       <form id="contact-form">
         <input type="hidden" id="contact-id" />
         <input type="text" id="contact-name" placeholder="Name" required />
         <input type="email" id="contact-email" placeholder="Email" required />
-        <input type="text" id="contact-phone" placeholder="Phone" required />
+        <input type="tel" id="contact-phone" placeholder="Phone" required pattern="[0-9]{10}" />
         <button type="submit">Save Contact</button>
       </form>
-      <hr />
-      <table id="contacts-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
     </div>
-  </div>
 
-  <!-- Scripts -->
+    <!-- Contact Details View -->
+    <div class="card" id="contact-details" style="display:none;">
+      <h2>Contact Details</h2>
+      <p><strong>Name:</strong> <span id="detail-name"></span></p>
+      <p><strong>Email:</strong> <span id="detail-email"></span></p>
+      <p><strong>Phone:</strong> <span id="detail-phone"></span></p>
+      <button onclick="showList()">Back to List</button>
+    </div>
+
+  </div>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 OutreachHub. All rights reserved.</p>
+  </footer>
+
+  <!-- Inline Scripts -->
   <script>
     function logout() {
       localStorage.removeItem('user');
@@ -107,67 +135,17 @@
     }
 
     function showSection(section) {
-      document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'block' : 'none';
+      document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'flex' : 'none';
       document.getElementById('contacts-section').style.display = section === 'contacts' ? 'block' : 'none';
-    }
 
-    let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
-
-    function saveContacts() {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-      renderContacts();
-    }
-
-    function renderContacts() {
-      const tbody = document.querySelector('#contacts-table tbody');
-      tbody.innerHTML = '';
-      contacts.forEach((contact, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${contact.name}</td>
-          <td>${contact.email}</td>
-          <td>${contact.phone}</td>
-          <td>
-            <button onclick="editContact(${index})">Edit</button>
-            <button onclick="deleteContact(${index})">Delete</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function editContact(index) {
-      const contact = contacts[index];
-      document.getElementById('contact-id').value = index;
-      document.getElementById('contact-name').value = contact.name;
-      document.getElementById('contact-email').value = contact.email;
-      document.getElementById('contact-phone').value = contact.phone;
-    }
-
-    function deleteContact(index) {
-      if (confirm("Are you sure you want to delete this contact?")) {
-        contacts.splice(index, 1);
-        saveContacts();
+      if (section === 'contacts') {
+        showList(); // defined in contacts.js
       }
     }
-
-    document.getElementById('contact-form').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const id = document.getElementById('contact-id').value;
-      const name = document.getElementById('contact-name').value.trim();
-      const email = document.getElementById('contact-email').value.trim();
-      const phone = document.getElementById('contact-phone').value.trim();
-      if (id) {
-        contacts[id] = { name, email, phone };
-      } else {
-        contacts.push({ name, email, phone });
-      }
-      this.reset();
-      document.getElementById('contact-id').value = '';
-      saveContacts();
-    });
-
-    renderContacts();
   </script>
+
+  <!-- External Contact Logic -->
+  <script src="script/contact.js"></script>
+
 </body>
 </html>

@@ -1,212 +1,201 @@
-* {
-      box-sizing: border-box;
-    }
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f3f6fb;
+}
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
-      animation: fadeIn 0.8s ease-in;
-    }
+.navbar {
+  background: linear-gradient(135deg, #311694, #0f49a7); 
+  color: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+.nav-links a,
+.logout-btn {
+  color: #fff;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+}
 
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: linear-gradient(to right, #3a0ca3, #4361ee);
-      color: white;
-      padding: 1rem 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+.logout-btn {
+  background: #c0392b;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-    .navbar h1 {
-      margin: 0;
-      font-size: 1.6rem;
-    }
+.dashboard {
+  max-width: 1400px; /* wider dashboard */
+  margin: 2rem auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-    .nav-links {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
+.card {
+  background: #f3f6fb;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
 
-    .nav-links a,
-    .logout-btn {
-      color: white;
-      text-decoration: none;
-      padding: 0.5rem 0.8rem;
-      border-radius: 4px;
-      transition: 0.3s ease;
-      font-weight: 500;
-    }
+/* Remove card styles from the welcome section or logo container */
+.welcome-section {
+  background: transparent; /* no background */
+  padding: 0;              /* no extra padding */
+  border-radius: 0;        /* no rounded corners */
+  box-shadow: none;        /* no shadow */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 300px;
+}
 
-    .nav-links a:hover,
-    .logout-btn:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
+/* Logo image without card styling */
+.welcome-section img.logo-img {
+  max-width: 350px;
+  height: auto;
+  margin-bottom: 1rem;
+  border-radius: 0;        /* remove rounding */
+  box-shadow: none;        /* remove shadow */
+}
 
-    .logout-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
 
-    .dashboard {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      max-width: 1200px;
-      margin: auto;
-    }
+.welcome-section img {
+  max-width: 350px;
+  height: auto;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(10, 44, 95, 0.3);
+}
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-      padding: 2rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-    }
+.welcome-section h1 {
+  color: #0a2c5f;
+  margin: 0.5rem 0;
+  font-size: 2.8rem;
+}
 
-    .welcome-section {
-      text-align: center;
-    }
+.welcome-section p {
+  color: #0c387a;
+  font-size: 20px;
+  margin: 0;
+}
 
-    .welcome-section img {
-      max-width: 300px;
-      height: auto;
-      margin-top: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-    }
+/* Charts container - horizontal line inside a single card */
+.charts {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;  /* center charts horizontally */
+  flex-wrap: nowrap;
+  padding: 0 10px;
+  padding-left: 20px;
+  padding-right: 60px;
+  overflow-x: auto; /* horizontal scroll if needed */
+}
 
-    .welcome-section img:hover {
-      transform: scale(1.05);
-    }
+.charts img {
+  flex: 1 1 30%;
+  max-width: 32%;
+  min-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
 
-    h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(to right, #3a0ca3, #4361ee);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      display: inline-block;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
+.charts img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
 
-    .charts {
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+.table-section table,
+#contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
 
-    .charts img {
-      width: 100%;
-      max-width: 500px;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-    }
+.table-section th,
+.table-section td,
+#contacts-table th,
+#contacts-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
 
-    .charts img:hover {
-      transform: scale(1.02);
-    }
+.table-section th,
+#contacts-table th {
+  background-color: #f1f1f1;
+}
 
-    .table-section table,
-    #contacts-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
+button {
+  padding: 0.5rem 1rem;
+  margin: 0.2rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #0a2c5f;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
 
-    th, td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
+button:hover:not(:disabled) {
+  background-color: #062042;
+}
 
-    th {
-      background-color: #f0f0f5;
-    }
+button:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
 
-    tr:hover {
-      background-color: #f9f9f9;
-      transition: background 0.2s ease;
-    }
+#pagination {
+  margin-top: 1rem;
+  text-align: center;
+}
 
-    #contact-form {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
+#pagination button {
+  margin: 0 4px;
+}
 
-    #contact-form input {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      flex: 1 1 200px;
-    }
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .card.welcome-section {
+    padding: 2rem 1rem;
+  }
 
-    #contact-form button {
-      padding: 0.6rem 1.2rem;
-      background: #4361ee;
-      border: none;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+  .charts {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-    #contact-form button:hover {
-      background: #3a0ca3;
-    }
+  .charts img {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
 
-    #contacts-table button {
-      margin-right: 5px;
-      padding: 0.4rem 0.6rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      color: white;
-    }
+.footer{
+  background: linear-gradient(135deg, #311694, #0f49a7);
+  color: #fff;
+  text-align: center;
+  padding: 1rem 2rem;
+  font-size: 0.95rem;
+  margin-top: 2rem;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
 
-    #contacts-table button:first-child {
-      background-color: #00b894;
-    }
-
-    #contacts-table button:last-child {
-      background-color: #d63031;
-    }
-
-    @media (max-width: 768px) {
-      .charts {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .dashboard {
-        padding: 1rem;
-      }
-    }

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OutreachHub - Sign Up</title>
+  <link rel="stylesheet" href="styles/signup.css">
+</head>
+<body>
+  <div class="overlay">
+    <div class="login-container">
+      <img src="images/logo1.png" alt="OutreachHub Logo" class="logo-img" style="width: 250px; height: 200px;" />
+      <h2>Create Your Account</h2>
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" name="fullname" placeholder="John Doe" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="contact">Contact Number</label>
+          <input type="tel" id="contact" name="contact" placeholder="1234567890" required pattern="^\d{10}$" maxlength="10"/>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Create Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required />
+        </div>
+
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <div class="login-footer">
+        <p>Already have an account? <a href="login.html">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+      const contactPattern = /^\d{10}$/;
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
+
+      if (!emailPattern.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      if (!contactPattern.test(contact)) {
+        alert('Contact number must be exactly 10 digits.');
+        return;
+      }
+
+      if (!passwordPattern.test(password)) {
+        alert('Password must be at least 8 characters and include uppercase, lowercase, number, and special character.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      // Simulate success
+      alert('Account created successfully!');
+      localStorage.setItem('user', email);
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

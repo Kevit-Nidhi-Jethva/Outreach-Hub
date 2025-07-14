@@ -4,25 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OutreachHub - Login</title>
-  <link rel="stylesheet" href="styles/login.css" type="text/css">
- 
+  <link rel="stylesheet" href="styles/login.css" >
 </head>
 <body>
-  <div class="login-container">
-    <h2>OutreachHub Login</h2>
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" id="email" name="email" placeholder="you@example.com" required />
+  <div class="overlay">
+    <div class="login-container">
+      <img src="images/logo1.png" alt="OutreachHub Logo" class="logo-img" style="width: 250px; height: 200px;"/>
+      <h2>Welcome to OutreachHub</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <div class="login-footer">
+        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="••••••••" required />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <div class="login-footer">
-      <p>Don't have an account? <a href="#">Sign up</a></p>
     </div>
   </div>
 
@@ -30,18 +32,12 @@
     const form = document.getElementById('loginForm');
 
     form.addEventListener('submit', function (e) {
-      e.preventDefault(); // prevent default form submission
-
-      // Simulate user login check (for demo only)
+      e.preventDefault();
       const email = form.email.value;
       const password = form.password.value;
 
-      // You can add real auth here later
       if (email && password) {
-        // Save basic session info if needed
         localStorage.setItem('user', email);
-
-        // Redirect to dashboard
         window.location.href = 'dashboard.html';
       } else {
         alert('Please enter email and password.');
