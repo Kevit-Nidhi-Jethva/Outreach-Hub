@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OutreachHub Dashboard</title>
   <link rel="stylesheet" href="styles/dashboard.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -24,11 +26,12 @@
 
   <!-- Dashboard Content -->
   <div id="dashboard-section" class="dashboard">
-    <div class="welcome-section">
+    <!-- Welcome section is NOT inside a .card -->
+    <section class="welcome-section">
       <img src="images/logo1.png" alt="OutreachHub Logo" class="logo-img" style="width: 400px; height: 250px;">
       <h1 style="color: #0a2c5f">Welcome to OutreachHub!</h1>
       <p style="color: #0c387a; font-size: 20px;">Your one-stop solution for managing outreach and engagement.</p>
-    </div>
+    </section>
 
     <div class="card">
       <h2 >Analytics Overview</h2>
@@ -36,15 +39,6 @@
         <img src="images/chart1.png" alt="Chart 1">
         <img src="images/chart2.png" alt="Chart 2">
         <img src="images/chart3.png" alt="Chart 3">
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Team Highlights</h2>
-      <p>Meet our top outreach performers this quarter:</p>
-      <div class="charts">
-        <img src="images/profile1.jpg" alt="Team Member 1">
-        <img src="images/profile2.jpg" alt="Team Member 2">
       </div>
     </div>
 
@@ -80,6 +74,69 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="card">
+      <h2>Upcoming Events</h2>
+      <ul class="events-list">
+        <li><strong>July 20, 2025:</strong> Community Outreach Webinar</li>
+        <li><strong>August 5, 2025:</strong> Annual Networking Meetup</li>
+        <li><strong>August 18, 2025:</strong> Volunteer Training Session</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Quick Tips</h2>
+      <ul class="tips-list">
+        <li>Follow up with leads within 24 hours for better conversion.</li>
+        <li>Personalize your outreach messages for higher engagement.</li>
+        <li>Track campaign metrics regularly to optimize performance.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Recent Announcements</h2>
+      <ul class="announcements-list">
+        <li><strong>New Feature:</strong> Contact import/export now available!</li>
+        <li><strong>Update:</strong> Dashboard analytics improved for better insights.</li>
+        <li><strong>Notice:</strong> Scheduled maintenance on July 25, 2025.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="display: flex; flex-direction: row; align-items: center; gap: 32px; background: linear-gradient(90deg, #e6ecf7 60%, #f0f4fa 100%);">
+      <div style="flex: 1;">
+        <h2 style="margin-bottom: 10px;"><i class="fas fa-bullseye" style="color:#0a2c5f;"></i> Our Mission</h2>
+        <p style="font-size: 1.1rem; color: #1a2a40;">Empowering organizations to maximize their outreach and engagement through innovative tools, actionable analytics, and seamless collaboration.</p>
+      </div>
+      <img src="images/logindash.avif" alt="Mission" style="width: 180px; border-radius: 12px; box-shadow: 0 2px 8px rgba(10,44,95,0.08);">
+    </div>
+
+    <div class="card" style="background: linear-gradient(90deg, #f0f4fa 60%, #e6ecf7 100%);">
+      <h2><i class="fas fa-star" style="color:#ffd700;"></i> User Testimonials</h2>
+      <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+        <div style="flex:1; min-width: 220px;">
+          <blockquote style="font-style: italic; color: #0a2c5f; margin: 0 0 8px 0;">"OutreachHub has transformed the way we manage our campaigns!"</blockquote>
+          <span style="font-size: 0.95rem; color: #1a2a40;">- Priya S., Campaign Manager</span>
+        </div>
+        <div style="flex:1; min-width: 220px;">
+          <blockquote style="font-style: italic; color: #0a2c5f; margin: 0 0 8px 0;">"The analytics dashboard is intuitive and powerful."</blockquote>
+          <span style="font-size: 0.95rem; color: #1a2a40;">- Alex R., Data Analyst</span>
+        </div>
+        <div style="flex:1; min-width: 220px;">
+          <blockquote style="font-style: italic; color: #0a2c5f; margin: 0 0 8px 0;">"Our team collaboration has never been smoother."</blockquote>
+          <span style="font-size: 0.95rem; color: #1a2a40;">- Meera T., Outreach Lead</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background: #f9fafc; border: 1px solid #e6ecf7;">
+      <h2><i class="fas fa-info-circle" style="color:#0a2c5f;"></i> How to Get Started</h2>
+      <ol style="color: #1a2a40; font-size: 1.08rem; padding-left: 20px;">
+        <li>Explore the dashboard for analytics and campaign performance.</li>
+        <li>Use the Contacts module to manage your outreach network.</li>
+        <li>Check out the Quick Tips and Announcements for updates.</li>
+        <li>Reach out to Support for any help or feedback.</li>
+      </ol>
     </div>
   </div>
 
