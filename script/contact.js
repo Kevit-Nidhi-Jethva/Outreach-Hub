@@ -6,7 +6,7 @@ const limit = 5;
 function fetchContacts(page = 1) {
   currentPage = page;
 
-  fetch(`${API_BASE}?page=${page}&limit=${limit}&sortBy=name`)
+  fetch(`${API_BASE}?page=${page}&limit=${limit}&sortBy=name&order=asc`)
     .then(res => res.json())
     .then(data => {
       renderContacts(data);
@@ -126,7 +126,7 @@ document.getElementById('contact-form').addEventListener('submit', function (e) 
   const contact = {
     name: document.getElementById('contact-name').value,
     email: document.getElementById('contact-email').value,
-    number: document.getElementById('contact-number').value
+    number: document.getElementById('contact-phone').value
   };
 
   const method = id ? 'PUT' : 'POST';
