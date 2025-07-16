@@ -333,6 +333,34 @@ body {
   color: #ffd700;
 }
 
+/*modal styles*/
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.modal-content {
+  background: white;
+  padding: 24px 32px;
+  border-radius: 8px;
+  text-align: center;
+}
+.btn-confirm {
+  background: #c0392b;
+  color: white;
+  padding: 8px 16px;
+  margin-right: 10px;
+}
+.btn-cancel {
+  background: #bdc3c7;
+  color: #2c3e50;
+  padding: 8px 16px;
+}
+
 /* Responsive tweaks */
 @media (max-width: 768px) {
   .card.welcome-section {

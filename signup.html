@@ -47,44 +47,90 @@
   </div>
 
   <script>
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+  const signupForm = document.getElementById('signupForm');
 
-      const name = document.getElementById('fullname').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const contact = document.getElementById('contact').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
+  signupForm.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-      const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-      const contactPattern = /^\d{10}$/;
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
+    const name = document.getElementById('fullname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const contact = document.getElementById('contact').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
 
-      if (!emailPattern.test(email)) {
-        alert('Please enter a valid email address.');
-        return;
-      }
+    const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    const contactPattern = /^\d{10}$/;
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
 
-      if (!contactPattern.test(contact)) {
-        alert('Contact number must be exactly 10 digits.');
-        return;
-      }
+    if (!emailPattern.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
 
-      if (!passwordPattern.test(password)) {
-        alert('Password must be at least 8 characters and include uppercase, lowercase, number, and special character.');
-        return;
-      }
+    if (!contactPattern.test(contact)) {
+      alert('Contact number must be exactly 10 digits.');
+      return;
+    }
 
-      if (password !== confirmPassword) {
-        alert('Passwords do not match.');
-        return;
-      }
+    if (!passwordPattern.test(password)) {
+      alert('Password must be at least 8 characters and include uppercase, lowercase, number, and special character.');
+      return;
+    }
 
-      // Simulate success
-      alert('Account created successfully!');
-      localStorage.setItem('user', email);
-      window.location.href = "login.html";
-    });
-  </script>
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    const API_BASE = 'https://687731c9dba809d901ee37ad.mockapi.io/login'; // Replace with your actual MockAPI URL
+
+    // ✅ Step 1: Fetch all users (not ideal for large datasets, but fine for mock/demo)
+    fetch(API_BASE)
+      .then(res => res.json())
+      .then(users => {
+        const existingUser = users.find(user => user.email === email);
+
+        if (existingUser) {
+          alert('An account with this email already exists. Please login or use a different email.');
+          throw new Error('Duplicate email');
+        }
+
+        // ✅ Step 2: Create the new user
+        return fetch(API_BASE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            contact,
+            password
+          })
+        });
+      })
+      .then(res => {
+        if (!res || !res.ok) {
+          throw new Error('Failed to create user');
+        }
+        return res.json();
+      })
+      .then(newUser => {
+        alert('Account created successfully!');
+        localStorage.setItem('user', JSON.stringify(newUser));
+        window.location.href = 'login.html';
+      })
+      .catch(err => {
+        if (err.message !== 'Duplicate email') {
+          console.error('Signup error:', err);
+          alert('Signup failed. Please try again.');
+        }
+      });
+  });
+</script>
+
+
+
+
 </body>
 </html>

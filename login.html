@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <script>
+  <!-- <script>
     const form = document.getElementById('loginForm');
 
     form.addEventListener('submit', function (e) {
@@ -43,6 +43,45 @@
         alert('Please enter email and password.');
       }
     });
+  </script>-->
+  <script>
+  const form = document.getElementById('loginForm');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const email = form.email.value.trim();
+    const password = form.password.value.trim();
+
+    // Replace with your actual MockAPI users endpoint
+    const loginUrl = `https://687731c9dba809d901ee37ad.mockapi.io/login?email=${email}`;
+
+    fetch(loginUrl)
+      .then(res => res.json())
+      .then(users => {
+        const user = users[0];
+
+        if (user && user.password === password) {
+          // Store user info (or a mock token)
+          localStorage.setItem('user', JSON.stringify(user));
+          // Redirect to dashboard
+          window.location.href = 'dashboard.html';
+        } else {
+          alert('Invalid email or password');
+        }
+      })
+      .catch(err => {
+        console.error('Login error:', err);
+        alert('Failed to login. Try again.');
+      });
+  });
   </script>
+
+  
+
+
 </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
 </html>
