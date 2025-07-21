@@ -393,3 +393,59 @@ body {
   }
 }
 
+/* Message styles */
+#message-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#message-table th, #message-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.compose-btn {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background-color: #0a2c5f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.compose-btn:hover {
+  background-color: #0c387a;
+}
+
+#compose-view input,
+#compose-view textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#compose-view textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+#compose-view button {
+  padding: 8px 14px;
+  margin-right: 10px;
+  background-color: #0a2c5f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#compose-view button:hover {
+  background-color: #0c387a;
+}
+

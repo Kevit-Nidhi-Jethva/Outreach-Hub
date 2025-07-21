@@ -15,9 +15,9 @@
     <h1>Outreach Hub</h1>
     <div class="nav-links">
       <a href="#" onclick="showSection('dashboard')">Home</a>
-      <a href="#">Projects</a>
-      <a href="#">Analytics</a>
-      <a href="#">Support</a>
+      <a href="#" onclick="showSection('messages')">Messages</a>
+      <a href="#" onclick="showSection('campaign')">Campaigns</a>
+      <a href="#" onclick="showSection('support')">Support</a>
       <a href="#" onclick="showSection('contacts')">Contact</a>
 
       <button class="logout-btn" onclick="logout()">Logout</button>
@@ -188,6 +188,102 @@
     </div>
   </div>
 
+    <div class="card" id="inbox-view">
+    <h2>Inbox</h2>
+    <table id="message-table">
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated via JS -->
+      </tbody>
+    </table>
+  </div>
+
+   <!-- Messages Module -->
+<div class="dashboard" id="messages-section" style="display: none;">
+  <div class="card">
+    <h2>Inbox</h2>
+    <button onclick="toggleMessageViews('compose')" class="compose-btn">+ Compose</button>
+
+    <!-- Inbox View -->
+    <div id="inbox-view">
+      <table id="message-table">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Messages will be populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Message Detail View -->
+    <div id="message-detail" style="display: none;">
+      <h3>Message Detail</h3>
+      <p><strong>From:</strong> <span id="msg-from"></span></p>
+      <p><strong>Subject:</strong> <span id="msg-subject"></span></p>
+      <p><strong>Date:</strong> <span id="msg-date"></span></p>
+      <p><strong>Content:</strong></p>
+      <p id="msg-content" style="white-space: pre-line;"></p>
+      <button onclick="showInbox()">Back to Inbox</button>
+    </div>
+
+    <!-- Compose Message Form -->
+    <div id="compose-view" style="display: none;">
+      <h3>Compose Message</h3>
+      <form id="compose-form">
+        <input type="text" id="compose-name" placeholder="Your Name" required>
+        <input type="email" id="compose-email" placeholder="Your Email" required>
+        <input type="text" id="compose-subject" placeholder="Subject" required>
+        <textarea id="compose-body" placeholder="Write your message..." required></textarea>
+        <button type="submit">Send</button>
+        <button type="button" onclick="showInbox()">Cancel</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="card" id="compose-view" style="display: none;">
+  <h2>Compose Message</h2>
+  <form id="compose-form">
+    <input type="text" id="compose-name" placeholder="Your Name" required />
+    <input type="email" id="compose-email" placeholder="Your Email" required />
+    <input type="text" id="compose-subject" placeholder="Subject" required />
+    <textarea id="compose-content" placeholder="Message..." required rows="5"></textarea>
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+
+  <!-- Campaign Module -->
+  <div class="dashboard" id="campaign-section" style="display: none;">
+    <div class="card">
+      <h2>Campaigns</h2>
+      <p>This is the Campaigns page. (Coming soon!)</p>
+      <!-- Add campaign creation/scheduling here -->
+    </div>
+  </div>
+
+  <!-- Support Section (optional) -->
+  <div class="dashboard" id="support-section" style="display: none;">
+    <div class="card">
+      <h2>Support</h2>
+      <p>Coming soon! Contact our support team at support@example.com.</p>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="footer">
     <p>&copy; 2025 OutreachHub. All rights reserved.</p>
@@ -200,29 +296,35 @@
       window.location.href = 'login.html';
     }
 
-    function showSection(section) {
+    /*function showSection(section) {
       document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'flex' : 'none';
       document.getElementById('contacts-section').style.display = section === 'contacts' ? 'block' : 'none';
 
       if (section === 'contacts') {
         showList(); // defined in contacts.js
       }
-    }
+    }*/
+    function showSection(section) {
+      const sections = [
+        'dashboard-section',
+        'contacts-section',
+        'messages-section',
+        'campaign-section',
+        'support-section'
+      ];
 
-    const token = localStorage.getItem('jwt');
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = id === `${section}-section` ? (id === 'dashboard-section' ? 'flex' : 'block') : 'none';
+        }
+      });
 
-    fetch('https://yourdomain.com/api/protected', {
-    headers: {
-    'Authorization': 'Bearer ' + token
+      // Special handling if contacts section is shown
+      if (section === 'contacts') {
+        showList();
       }
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log('Secure data:', data);
-    })
-    .catch(err => {
-      console.error('Unauthorized or error:', err);
-    });
+    }
 
     /*const user = JSON.parse(localStorage.getItem('user'));
     if (!user) {
@@ -232,6 +334,7 @@
 
   <!-- External Contact Logic -->
   <script src="script/contact.js"></script>
+  <script src="script/messages.js"></script>
 
 </body>
 </html>

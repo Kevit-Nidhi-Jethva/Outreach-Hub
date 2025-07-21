@@ -58,12 +58,12 @@ function renderPagination(totalContacts, currentPage) {
   }
 }
 
-// View, edit, delete, etc. (unchanged logic below)
+// Show contact form for adding new contact
 function showForm() {
   document.getElementById('form-title').textContent = 'Add Contact';
   document.getElementById('contact-form').reset();
   document.getElementById('contact-id').value = '';
-  showSectionView('contact-form-view');
+  showContactView('contact-form-view');
 }
 
 function viewContact(id) {
@@ -73,6 +73,11 @@ function viewContact(id) {
       document.getElementById('detail-name').textContent = contact.name;
       document.getElementById('detail-email').textContent = contact.email;
       document.getElementById('detail-phone').textContent = contact.number;
+
+      showContactView('contact-details');
+    })
+    .catch(err => {
+      console.error('Failed to load contact details:', err);
     });
 }
 
@@ -85,7 +90,7 @@ function editContact(id) {
       document.getElementById('contact-email').value = contact.email;
       document.getElementById('contact-phone').value = contact.number;
       document.getElementById('form-title').textContent = 'Edit Contact';
-      showSectionView('contact-form-view');
+      showContactView('contact-form-view');
     });
 }
 
@@ -145,13 +150,24 @@ document.getElementById('contact-form').addEventListener('submit', function (e) 
 });
 
 function showList() {
-  showSectionView('contacts-list');
+  showContactView('contacts-list');
   fetchContacts(currentPage);
 }
 
-function showSectionView(idToShow) {
+function showContactView(idToShow) {
   ['contacts-list', 'contact-form-view', 'contact-details'].forEach(id => {
     document.getElementById(id).style.display = id === idToShow ? 'block' : 'none';
+  });
+}
+
+// OPTIONAL: in case you want to show/hide entire contacts section in a special way
+function showContactSection(section) {
+  const sections = ['contacts-section', 'dashboard-section', 'messages-section', 'campaign-section'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = id === `${section}-section` ? 'block' : 'none';
+    }
   });
 }
 
@@ -159,3 +175,4 @@ function showSectionView(idToShow) {
 document.addEventListener('DOMContentLoaded', () => {
   showList();
 });
+
