@@ -1,109 +1,120 @@
 body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(90deg, #cde5ff, #2387f3);
-  background-size: cover;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(90deg, #cde5ff, #2387f3);
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    h1 {
+        font-size: 2rem;
+        margin: 1rem 0;
+    }
 
-.overlay {
-  background: rgba(0, 0, 0, 0.5); /* dark overlay over background */
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .overlay {
+      background: rgba(0, 0, 0, 0.5);
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+    }
 
-.login-container {
-  background: rgba(255, 255, 255, 0.85); /* white with 85% opacity */
-   backdrop-filter: blur(10px); /* Adds blur behind the element */
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
-  padding: 2.5rem;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  text-align: center;
-}
+    .login-container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      color: #0a2c5f;
+      border: none;
+    }
 
+    .logo-img {
+      width: 250px;
+      height: 200px;
+      margin-bottom: 1rem;
+    }
 
-.logo-img {
-  width: 120px;
-  margin-bottom: 1rem;
-}
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #0a2c5f;
+    }
 
-h2 {
-  margin-bottom: 1.5rem;
-  color: #0a2c5f;
-}
+    .form-group {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
 
-.form-group {
-  margin-bottom: 1.2rem;
-  text-align: left;
-}
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
 
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
 
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #1d258a, #2c1fbd);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #1d258a, #2c1fbd);
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
+    button:hover {
+      background: linear-gradient(135deg, #311694, #0f49a7);
+    }
 
-button:hover {
-  background: linear-gradient(135deg, #311694, #0f49a7);
-}
+    .login-footer {
+      margin-top: 1rem;
+    }
 
-.login-footer {
-  margin-top: 1rem;
-}
+    .login-footer a {
+      color: #0a2c5f;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-.login-footer a {
-  color: #0a2c5f;
-  text-decoration: none;
-  font-weight: bold;
-}
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+      }
 
-/* Responsive Design */
-@media (max-width: 480px) {
-  .login-container {
-    padding: 1.5rem;
-  }
+      .logo-img {
+        width: 90px;
+      }
 
-  .logo-img {
-    width: 90px;
-  }
+      h2 {
+        font-size: 1.5rem;
+      }
 
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  button {
-    font-size: 0.95rem;
-  }
-}
+      button {
+        font-size: 0.95rem;
+      }
+    }

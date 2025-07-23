@@ -147,12 +147,14 @@
     <div class="card" id="contacts-list">
       <h2>Contacts</h2>
       <button onclick="showForm()" style="font-size: 18px; color: black; padding: 5px; background: transparent;">+ New Contact</button>
-      <table id="contacts-table">
-        <thead>
-          <tr><th>Name</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="contacts-table-wrapper">
+        <table id="contacts-table" class="wide-contacts-table">
+          <thead>
+            <tr><th>Name</th><th>Phone</th><th>Tags</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <div id="pagination" style="margin-top: 10px;"></div>
     </div>
 
@@ -162,8 +164,8 @@
       <form id="contact-form">
         <input type="hidden" id="contact-id" />
         <input type="text" id="contact-name" placeholder="Name" required />
-        <input type="email" id="contact-email" placeholder="Email" required />
         <input type="tel" id="contact-phone" placeholder="Phone" required pattern="[0-9]{10}" />
+        <input type="text" id="contact-tags" placeholder="Tags (comma separated)" required />
         <button type="submit">Save Contact</button>
       </form>
     </div>
@@ -172,8 +174,8 @@
     <div class="card" id="contact-details" style="display:none;">
       <h2>Contact Details</h2>
       <p><strong>Name:</strong> <span id="detail-name"></span></p>
-      <p><strong>Email:</strong> <span id="detail-email"></span></p>
       <p><strong>Phone:</strong> <span id="detail-phone"></span></p>
+      <p><strong>Tags:</strong> <span id="detail-tags"></span></p>
       <button onclick="showList()">Back to List</button>
     </div>
 
@@ -188,24 +190,7 @@
     </div>
   </div>
 
-    <div class="card" id="inbox-view">
-    <h2>Inbox</h2>
-    <table id="message-table">
-      <thead>
-        <tr>
-          <th>From</th>
-          <th>Subject</th>
-          <th>Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Populated via JS -->
-      </tbody>
-    </table>
-  </div>
-
-   <!-- Messages Module -->
+  <!-- Messages Module -->
 <div class="dashboard" id="messages-section" style="display: none;">
   <div class="card">
     <h2>Inbox</h2>
@@ -252,18 +237,6 @@
       </form>
     </div>
   </div>
-</div>
-
-
-<div class="card" id="compose-view" style="display: none;">
-  <h2>Compose Message</h2>
-  <form id="compose-form">
-    <input type="text" id="compose-name" placeholder="Your Name" required />
-    <input type="email" id="compose-email" placeholder="Your Email" required />
-    <input type="text" id="compose-subject" placeholder="Subject" required />
-    <textarea id="compose-content" placeholder="Message..." required rows="5"></textarea>
-    <button type="submit">Send</button>
-  </form>
 </div>
 
 

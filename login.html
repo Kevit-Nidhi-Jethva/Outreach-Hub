@@ -3,85 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OutreachHub - Login</title>
-  <link rel="stylesheet" href="styles/login.css" >
+  <title>Login</title>
+  <style src="styles/login.css"></style>
+  <link rel="stylesheet" href="styles/login.css">
+  <link rel="icon" href="images/logo1.png" type="image/png">
+    
 </head>
 <body>
   <div class="overlay">
     <div class="login-container">
-      <img src="images/logo1.png" alt="OutreachHub Logo" class="logo-img" style="width: 250px; height: 200px;"/>
-      <h2>Welcome to OutreachHub</h2>
-      <form id="loginForm">
+      <img src="images/logo1.png" alt="Logo" class="logo-img" />
+      <h2>Login</h2>
+      <form id="login-form">
         <div class="form-group">
-          <label for="email">Email address</label>
-          <input type="email" id="email" name="email" placeholder="you@example.com" required />
+          <label for="username">Username:</label>
+          <input type="text" id="username" placeholder="Enter your username" required />
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="••••••••" required />
+          <label for="password">Password:</label>
+          <input type="password" id="password" placeholder="Enter your password" required />
         </div>
         <button type="submit">Login</button>
       </form>
       <div class="login-footer">
-        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        Don't have an account? <a href="signup.html">Sign Up</a>
       </div>
     </div>
   </div>
 
-  <!-- <script>
-    const form = document.getElementById('loginForm');
+  <script>
+    const loginForm = document.getElementById('login-form');
 
-    form.addEventListener('submit', function (e) {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = form.email.value;
-      const password = form.password.value;
 
-      if (email && password) {
-        localStorage.setItem('user', email);
-        window.location.href = 'dashboard.html';
-      } else {
-        alert('Please enter email and password.');
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+        console.log('Login response:', data);
+        console.log(data.access_token);
+        console.log(data.username);
+        console.log(data.role);
+        // console.log(response.ok);
+          if (data) {
+          const jwtToken= data.access_token;
+          const payload = atob(jwtToken.split('.')[1]);
+          console.log("payload", payload);
+          localStorage.setItem('userdata', payload);
+          localStorage.setItem('access_token', data.access_token);
+          //dashboard redirection
+          window.location.href = './dashboard.html';
+        } else {
+          alert(data.message || 'Invalid credentials');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Failed to connect to server.');
       }
     });
-  </script>-->
-  <script>
-  const form = document.getElementById('loginForm');
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const email = form.email.value.trim();
-    const password = form.password.value.trim();
-
-    // Replace with your actual MockAPI users endpoint
-    const loginUrl = `https://687731c9dba809d901ee37ad.mockapi.io/login?email=${email}`;
-
-    fetch(loginUrl)
-      .then(res => res.json())
-      .then(users => {
-        const user = users[0];
-
-        if (user && user.password === password) {
-          // Store user info (or a mock token)
-          localStorage.setItem('user', JSON.stringify(user));
-          // Redirect to dashboard
-          window.location.href = 'dashboard.html';
-        } else {
-          alert('Invalid email or password');
-        }
-      })
-      .catch(err => {
-        console.error('Login error:', err);
-        alert('Failed to login. Try again.');
-      });
-  });
   </script>
-
-  
-
-
 </body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
 </html>
