@@ -1,8 +1,21 @@
+/* --- Refreshed Color Palette --- */
+:root {
+  --primary: #4f46e5;      /* Indigo 600 */
+  --primary-dark: #312e81; /* Indigo 900 */
+  --secondary: #f59e42;    /* Orange 400 */
+  --secondary-light: #ffe7c2;
+  --accent: #10b981;       /* Emerald 500 */
+  --accent-light: #d1fae5;
+  --bg-light: #f3f4f6;     /* Gray 100 */
+  --bg-card: #fff;
+  --text-main: #1e293b;    /* Slate 800 */
+  --text-light: #64748b;   /* Slate 400 */
+}
+
 body {
   font-family: 'Roboto', Arial, sans-serif;
-  background: linear-gradient(120deg, #f0f4fa 0%, #e6ecf7 100%);
-  margin: 0;
-  color: #1a2a40;
+  background: linear-gradient(120deg, var(--bg-light) 0%, #e0e7ef 100%);
+  color: var(--text-main);
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -10,7 +23,7 @@ body {
 }
 
 .navbar {
-  background: #0a2c5f;
+  background: var(--primary-dark);
   color: #fff;
   display: flex;
   align-items: center;
@@ -42,12 +55,12 @@ body {
 }
 
 .nav-links a:hover {
-  color: #ffd700;
+  color: var(--secondary);
 }
 
 .logout-btn {
-  background: #ffd700;
-  color: #0a2c5f;
+  background: var(--secondary);
+  color: var(--primary-dark);
   border: none;
   border-radius: 20px;
   padding: 8px 22px;
@@ -60,7 +73,7 @@ body {
 
 .logout-btn:hover {
   background: #fff;
-  color: #0a2c5f;
+  color: var(--primary-dark);
 }
 
 .dashboard {
@@ -73,7 +86,6 @@ body {
   width: 100vw;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 .welcome-section {
@@ -88,27 +100,30 @@ body {
 }
 
 .card {
-  background: linear-gradient(120deg, #f0f4fa 0%, #e6ecf7 100%);
+  background: linear-gradient(120deg, var(--bg-card) 60%, var(--bg-light) 100%);
   border-radius: 18px;
   box-shadow: 0 4px 24px rgba(10,44,95,0.10);
   padding: 20px 10px;
   width: 100%;
   max-width: 100%; /* changed from 100vw to 100% */
   margin: 0 auto 10px auto;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.25s, transform 0.18s;
   box-sizing: border-box;
 }
 
 .card:hover {
-  box-shadow: 0 8px 32px rgba(10,44,95,0.16);
+  box-shadow: 0 12px 32px rgba(10,44,95,0.18);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .card h2 {
-  color: #0a2c5f;
-  margin-top: 0;
+  background: linear-gradient(90deg, var(--primary) 60%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  letter-spacing: 1.5px;
   margin-bottom: 18px;
-  font-size: 1.5rem;
-  letter-spacing: 1px;
 }
 
 .charts {
@@ -217,8 +232,8 @@ body {
 }
 
 #contacts-list button {
-  background: #ffd700;
-  color: #0a2c5f;
+  background: var(--secondary);
+  color: var(--primary-dark);
   border: none;
   border-radius: 18px;
   padding: 6px 18px;
@@ -229,8 +244,8 @@ body {
   transition: background 0.2s, color 0.2s;
 }
 #contacts-list button:hover {
-  background: #0a2c5f;
-  color: #ffd700;
+  background: var(--primary-dark);
+  color: #fff;
 }
 
 #contacts-table th, #contacts-table td {
@@ -255,15 +270,15 @@ body {
   margin: 0 4px;
   padding: 4px 12px;
   border-radius: 8px;
-  background: #e6ecf7;
-  color: #0a2c5f;
+  background: var(--bg-light);
+  color: var(--primary-dark);
   border: none;
   cursor: pointer;
   transition: background 0.2s;
 }
 #pagination button.active, #pagination button:hover {
-  background: #ffd700;
-  color: #0a2c5f;
+  background: var(--accent);
+  color: #fff;
 }
 
 #contact-form-view {
@@ -386,6 +401,80 @@ body {
 /* Contact tag styles */
 .contact-tag {
   display: inline-block;
+  background: linear-gradient(90deg, var(--accent-light) 60%, var(--secondary-light) 100%);
+  color: var(--accent);
+  border-radius: 16px;
+  padding: 2px 10px;
+  margin: 0 2px 2px 0;
+  font-size: 0.95em;
+  border: 1px solid var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px #d1fae588;
+}
+
+/* --- UI ENHANCEMENTS FOR MODERN DASHBOARD --- */
+
+/* 1. Card Elevation & Hover Effect */
+
+/* 2. Gradient Section Headers */
+
+/* 3. Zebra Striping for Tables */
+#contacts-table tbody tr:nth-child(even),
+#message-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+/* 4. Pill-shaped & Outlined Buttons */
+.card button, .compose-btn, #pagination button {
+  border-radius: 999px !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(10,44,95,0.06);
+  border: 2px solid var(--primary);
+  background: linear-gradient(90deg, var(--secondary) 60%, var(--secondary-light) 100%);
+  color: var(--primary-dark);
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.card button:hover, .compose-btn:hover, #pagination button:hover {
+  background: linear-gradient(90deg, var(--primary) 60%, var(--accent) 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(10,44,95,0.14);
+}
+
+/* 5. Section Divider */
+.card:not(:last-child) {
+  border-bottom: 3px solid var(--accent-light);
+  margin-bottom: 24px;
+}
+
+/* 6. Microinteractions: Smooth Section Transitions */
+.dashboard, .card, .contacts-table-wrapper, #contacts-section {
+  transition: background 0.3s, box-shadow 0.3s, border 0.3s;
+}
+
+/* 7. Responsive Card Padding */
+@media (max-width: 900px) {
+  .card {
+    padding: 12px 4px;
+  }
+}
+
+/* 8. Icon Accent for Section Headers */
+.card h2 i {
+  margin-right: 8px;
+  color: var(--secondary);
+  filter: drop-shadow(0 2px 4px #4f46e522);
+}
+
+/* 9. Subtle Section Backgrounds */
+.dashboard {
+  background: linear-gradient(120deg, #f0f4fa 0%, #e6ecf7 100%);
+}
+
+/* 10. Contact Tag Glow */
+.contact-tag {
+  display: inline-block;
   background: #e0e7ff;
   color: #1a237e;
   border-radius: 16px;
@@ -396,6 +485,8 @@ body {
   font-weight: 500;
   letter-spacing: 0.01em;
   vertical-align: middle;
+  box-shadow: 0 2px 8px #e0e7ff88;
+  background: linear-gradient(90deg, #e0e7ff 60%, #fffbe6 100%);
 }
 
 /* Responsive tweaks */

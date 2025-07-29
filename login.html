@@ -56,12 +56,14 @@
         console.log(data.role);
         // console.log(response.ok);
           if (data) {
+
           const jwtToken= data.access_token;
           const payload = atob(jwtToken.split('.')[1]);
           console.log("payload", payload);
           localStorage.setItem('userdata', payload);
           localStorage.setItem('access_token', data.access_token);
           //dashboard redirection
+          
           window.location.href = './dashboard.html';
         } else {
           alert(data.message || 'Invalid credentials');
