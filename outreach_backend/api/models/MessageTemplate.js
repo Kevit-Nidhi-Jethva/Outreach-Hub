@@ -5,6 +5,7 @@ const messageTemplateSchema = new mongoose.Schema({
   name: { type: String, required: true },
   type: { type: String, enum: ['Text', 'Text-Image'], required: true },
   message: {
+    
     text: { type: String, required: true },
     imageUrl: { type: String } // only for Text-Image
   },
