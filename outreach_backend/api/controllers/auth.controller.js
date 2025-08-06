@@ -26,7 +26,7 @@ const loginUser = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, isAdmin: user.isAdmin },
+      { userId: user._id, isAdmin: user.isAdmin, email: user.email, name: user.name , role: user.role, workspaces: user.workspaces},
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
@@ -83,16 +83,20 @@ const signupUser = async (req, res) => {
 //admin can add users to database
 const addUser = async (req, res) => {
   try {
-    const { name, email, phoneNumber, password } = req.body;
+    const { name, email, phoneNumber, password, workspaces } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required.' });
+      return res
+        .status(400)
+        .json({ message: 'Name, email, and password are required.' });
     }
 
-    const existingUser = await User.find({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (existingUser.length > 0) {
-      return res.status(400).json({ message: 'User already exists with this email.' });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: 'User already exists with this email.' });
     }
 
     const newUser = new User({
@@ -100,18 +104,20 @@ const addUser = async (req, res) => {
       email,
       phoneNumber,
       password,
-      isAdmin: false, // Default to false for new users
+      isAdmin: false,
+      workspaces: Array.isArray(workspaces) ? workspaces : []
     });
 
     await newUser.save();
 
-    res.status(201).json({ message: 'User created successfully' }); 
+    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
     console.error('Add user error:', error.message);
     console.error('Add user error stack:', error.stack);
     res.status(500).json({ message: 'Server error' });
   }
-};  
+};
+
 
 const logoutUser = async (req, res) => {
   try {

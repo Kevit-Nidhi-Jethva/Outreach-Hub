@@ -11,8 +11,10 @@ const messageTemplateSchema = new mongoose.Schema({
   },
   workspaceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Workspace', required: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date }
+  
+},
+{
+  timestamps:true,
 });
 
 messageTemplateSchema.index({ workspaceId: 1, type: 1 });
