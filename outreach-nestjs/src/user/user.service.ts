@@ -46,7 +46,14 @@ export class UserService {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, name: user.name, workspaces: user.workspaces, isAdmin: user.isAdmin },
+      { 
+        id: user._id, 
+        email: user.email, 
+        name: user.name, 
+        workspaces: user.workspaces, 
+        isAdmin: user.isAdmin,
+        role: user.isAdmin ? 'admin' : (user.workspaces && user.workspaces.length > 0 ? user.workspaces[0].role : null)
+      },
       process.env.JWT_SECRET || 'default_secret',
       { expiresIn: '1d' }
     );
@@ -64,17 +71,35 @@ export class UserService {
     password: string,
     role: string,
     workspaceId?: string,
-    createdBy?: string
+    createdBy?: string,
+    workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[]
   ) {
-    const user = new this.userModel({
+    const userData: any = {
       name,
       email,
       password, // hashing handled in schema
       role,
-      workspaceId: workspaceId ? new Types.ObjectId(workspaceId) : undefined,
       createdBy: createdBy ? new Types.ObjectId(createdBy) : undefined,
-    });
+    };
 
+    // Handle workspaces properly
+    if (workspaces && workspaces.length > 0) {
+      userData.workspaces = workspaces.map(ws => ({
+        workspaceId: ws.workspaceId,
+        role: ws.role
+      }));
+    } else if (workspaceId) {
+      // Backward compatibility: if only workspaceId is provided
+      userData.workspaces = [{
+        workspaceId: workspaceId,
+        role: role === 'Editor' ? 'Editor' : 'Viewer'
+      }];
+    } else {
+      // Default empty workspaces array
+      userData.workspaces = [];
+    }
+
+    const user = new this.userModel(userData);
     return await user.save();
   }
 

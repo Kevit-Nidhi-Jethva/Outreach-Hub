@@ -1,43 +1,51 @@
-import { Controller, Post, Get, Param, Body, Query, Put, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles-decorator';
 
 @Controller('contacts')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthGuard)
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
-  @Post('create')
-  @Roles('Editor')
-  createContact(@Body() dto: CreateContactDto, @Req() req) {
-    return this.contactService.create(dto, req.user);
+  // Create
+  @Post()
+  create(@Body() createContactDto: CreateContactDto, @Req() req) {
+    return this.contactService.create(createContactDto, req.user);
   }
 
-  @Get('get')
-  @Roles('Editor', 'Viewer')
-  getContacts(@Query() query) {
-    return this.contactService.findAll(query);
+  // Find All by Workspace
+  @Get('workspace/:workspaceId')
+  findAll(@Param('workspaceId') workspaceId: string, @Req() req) {
+    return this.contactService.findAll(workspaceId, req.user);
   }
 
-  @Get('get/:id')
-  @Roles('Editor', 'Viewer')
-  getContactById(@Param('id') id: string) {
-    return this.contactService.findOne(id);
+  // Find One
+  @Get(':id')
+  findOne(@Param('id') id: string, @Req() req) {
+    return this.contactService.findOne(id, req.user);
   }
 
-  @Put('update/:id')
-  @Roles('Editor')
-  updateContact(@Param('id') id: string, @Body() dto: UpdateContactDto, @Req() req) {
-    return this.contactService.update(id, dto, req.user);
+  // Update
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto, @Req() req) {
+    return this.contactService.update(id, updateContactDto, req.user);
   }
 
-  @Delete('delete/:id')
-  @Roles('Editor')
-  deleteContact(@Param('id') id: string, @Req() req) {
+  // Delete
+  @Delete(':id')
+  remove(@Param('id') id: string, @Req() req) {
     return this.contactService.remove(id, req.user);
   }
 }

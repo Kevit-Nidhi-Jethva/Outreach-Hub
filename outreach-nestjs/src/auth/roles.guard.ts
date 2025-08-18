@@ -11,12 +11,15 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (!requiredRoles || requiredRoles.length === 0) {
-      return true; // No roles required for this route
-    }
+    if (!requiredRoles || requiredRoles.length === 0) return true;
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
+
+    // Admin users can access everything
+    if (user?.isAdmin) {
+      return true;
+    }
 
     if (!user || !requiredRoles.includes(user.role)) {
       throw new ForbiddenException('You do not have permission to perform this action');

@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
 import { RolesGuard } from './roles.guard';
-import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [UserModule], // ✅ direct import so AuthGuard can inject UserService
+  imports: [
+    JwtModule.register({
+      global: true, // ✅ makes JwtService available everywhere
+      secret: process.env.JWT_SECRET || 'supersecret', // use env in production
+      signOptions: { expiresIn: '1d' },
+    }),
+  ],
   providers: [AuthGuard, RolesGuard],
-  exports: [AuthGuard, RolesGuard], // ✅ so ContactModule can use them
+  exports: [AuthGuard, RolesGuard],
 })
 export class AuthModule {}

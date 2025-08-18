@@ -1,5 +1,4 @@
-// dto/create-contact.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
 
 export class CreateContactDto {
   @IsString()
@@ -10,8 +9,8 @@ export class CreateContactDto {
   @IsNotEmpty()
   phoneNumber: string;
 
-  @IsOptional()
   @IsArray()
+  @IsOptional()
   tags?: string[];
 
   @IsString()

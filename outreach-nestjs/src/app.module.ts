@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { WhitelistModule } from './whitelist/whitelist.module';
 import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from './auth/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 import mongoose from 'mongoose';
 
 @Module({
@@ -20,20 +22,11 @@ import mongoose from 'mongoose';
     WorkspaceModule, 
     CampaignModule,  WhitelistModule, AuthModule, ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
-export class AppModule {
-  async onModuleInit() {
-    mongoose.connection.on('connected', () => {
-      console.log('✅ MongoDB connected successfully');
-    });
-
-    mongoose.connection.on('error', (err) => {
-      console.error('❌ MongoDB connection error:', err);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      console.warn('⚠️ MongoDB disconnected');
-    });
-  }
-}
+export class AppModule {}

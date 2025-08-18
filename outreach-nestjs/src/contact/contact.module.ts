@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ContactController } from './contact.controller';
-import { ContactService } from './contact.service';
 import { Contact, ContactSchema } from './contact.schema';
-import { AuthModule } from 'src/auth/auth.module';
+import { ContactService } from './contact.service';
+import { ContactController } from './contact.controller';
+import { User, UserSchema } from 'src/user/user.schema'; // ✅ import User schema
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Contact.name, schema: ContactSchema }]),
-    AuthModule // ✅ gets AuthGuard from here, which now has UserService resolved
+    MongooseModule.forFeature([
+      { name: Contact.name, schema: ContactSchema },
+      { name: User.name, schema: UserSchema }, // ✅ register User model
+    ]),
   ],
   controllers: [ContactController],
   providers: [ContactService],
-  exports: [ContactService],
 })
 export class ContactModule {}

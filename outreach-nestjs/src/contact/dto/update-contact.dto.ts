@@ -1,16 +1,4 @@
-// dto/update-contact.dto.ts
-import { IsString, IsOptional, IsArray } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateContactDto } from './create-contact.dto';
 
-export class UpdateContactDto {
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @IsString()
-  @IsOptional()
-  phoneNumber?: string;
-
-  @IsOptional()
-  @IsArray()
-  tags?: string[];
-}
+export class UpdateContactDto extends PartialType(CreateContactDto) {}

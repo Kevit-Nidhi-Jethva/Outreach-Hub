@@ -1,77 +1,126 @@
-import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Contact } from './contact.schema';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { User } from '../user/user.schema';
 
 @Injectable()
 export class ContactService {
-  constructor(@InjectModel(Contact.name) private contactModel: Model<Contact>) {}
+  constructor(
+    @InjectModel(Contact.name) private contactModel: Model<Contact>,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
 
-  async create(dto: CreateContactDto, user: any) {
-    const existing = await this.contactModel.findOne({
-      workspaceId: dto.workspaceId,
-      phoneNumber: dto.phoneNumber,
-    });
-    if (existing) {
-      throw new ConflictException('Contact already exists with this phone number in the workspace.');
-    }
-
-    const contact = new this.contactModel({
-      ...dto,
-      createdBy: user.userId,
-    });
-
-    return contact.save();
+  // ✅ Create Contact
+  async create(createContactDto: CreateContactDto, user: any): Promise<Contact> {
+  if (!user.workspaces || !Array.isArray(user.workspaces)) {
+    throw new ForbiddenException('User has no workspaces assigned');
   }
 
-  async findAll(query: any) {
-    const { workspaceId, tag, search, page = 1, limit = 10 } = query;
-    const filter: any = {};
+  const workspaceRole = user.workspaces.find(
+    (ws) => ws.workspaceId.toString() === createContactDto.workspaceId,
+  );
 
-    if (workspaceId) filter.workspaceId = new Types.ObjectId(workspaceId);
-    if (tag) filter.tags = tag;
-    if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { phoneNumber: { $regex: search, $options: 'i' } },
-      ];
+  if (!workspaceRole || workspaceRole.role !== 'Editor') {
+    throw new ForbiddenException('Only editors can create contacts');
+  }
+
+  const createdContact = new this.contactModel({
+    ...createContactDto,
+    workspaceId: new this.contactModel.db.base.Types.ObjectId(
+      createContactDto.workspaceId,
+    ),
+    // 🔹 Use user.sub (from JWT) if _id is missing
+    createdBy: user.id || user.sub,
+  });
+
+  return await createdContact.save();
+}
+
+
+  // ✅ Find All Contacts for a Workspace
+  async findAll(workspaceId: string, user: any): Promise<Contact[]> {
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === workspaceId,
+    );
+
+    if (!workspaceRole) {
+      throw new ForbiddenException('You do not belong to this workspace');
     }
 
     return this.contactModel
-      .find(filter)
-      .skip((+page - 1) * +limit)
-      .limit(+limit);
+      .find({ workspaceId: new Types.ObjectId(workspaceId) })
+      .populate('createdBy', 'name email')
+      .exec();
   }
 
-  async findOne(id: string) {
-    const contact = await this.contactModel.findById(id);
-    if (!contact) throw new NotFoundException('Contact not found');
+  // ✅ Find Contact by ID
+  async findOne(id: string, user: any): Promise<Contact> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid contact ID');
+    }
+
+    const contact = await this.contactModel
+      .findById(id)
+      .populate('createdBy', 'name email')
+      .exec();
+
+    if (!contact) {
+      throw new NotFoundException('Contact not found');
+    }
+
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === contact.workspaceId.toString(),
+    );
+
+    if (!workspaceRole) {
+      throw new ForbiddenException('You do not belong to this workspace');
+    }
+
     return contact;
   }
 
-  async update(id: string, dto: UpdateContactDto, user: any) {
+  // ✅ Update Contact
+  async update(id: string, updateContactDto: UpdateContactDto, user: any): Promise<Contact> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid contact ID');
+    }
+
     const contact = await this.contactModel.findById(id);
     if (!contact) throw new NotFoundException('Contact not found');
 
-    if (contact.createdBy.toString() !== user.userId) {
-      throw new ForbiddenException('Unauthorized');
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === contact.workspaceId.toString(),
+    );
+
+    if (!workspaceRole || workspaceRole.role !== 'Editor') {
+      throw new ForbiddenException('Only editors can update contacts');
     }
 
-    Object.assign(contact, dto);
+    Object.assign(contact, updateContactDto);
     return contact.save();
   }
 
-  async remove(id: string, user: any) {
+  // ✅ Delete Contact
+  async remove(id: string, user: any): Promise<{ message: string }> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid contact ID');
+    }
+
     const contact = await this.contactModel.findById(id);
     if (!contact) throw new NotFoundException('Contact not found');
 
-    if (contact.createdBy.toString() !== user.userId) {
-      throw new ForbiddenException('Unauthorized');
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === contact.workspaceId.toString(),
+    );
+
+    if (!workspaceRole || workspaceRole.role !== 'Editor') {
+      throw new ForbiddenException('Only editors can delete contacts');
     }
 
-    await contact.deleteOne();
-    return { message: 'Contact deleted' };
+    await this.contactModel.deleteOne({ _id: id });
+    return { message: 'Contact deleted successfully' };
   }
 }

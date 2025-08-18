@@ -2,11 +2,14 @@ import { Body, Controller, Post, Get,Put,Param,Delete, Headers , UnauthorizedExc
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles-decorator';
+import { Public } from 'src/auth/public-decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  
+  @Public()
   @Post('signup')
   async signupUser(
     @Body() body: { 
@@ -27,14 +30,13 @@ export class UserController {
       body.createdBy
     );
   }
-
+  @Public()
   @Post('login')
   async loginUser(@Body() body: { email: string; password: string }) {
     return this.userService.loginUser(body.email, body.password);
   }
 
-
-
+  @Public()
   @Post('logout')
  async logoutUser(@Headers('authorization') authHeader?: string) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -46,7 +48,8 @@ export class UserController {
 }
 
 //admin only routes
-@UseGuards(AuthGuard,RolesGuard)
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles('admin')
   @Post('adduser')
   async addUser(
     @Body() body: { 
@@ -56,6 +59,7 @@ export class UserController {
       role: string; 
       workspaceId?: string; 
       createdBy?: string;
+      workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[];
     }
   ) {
     return this.userService.addUser(
@@ -64,23 +68,27 @@ export class UserController {
       body.password,
       body.role,
       body.workspaceId,
-      body.createdBy
+      body.createdBy,
+      body.workspaces
     );
   }
 
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Get('all')
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
 
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Get(':id')
   async getUserById(@Param('id') id: string) {
     return this.userService.getUserById(id);
   }
 
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Put(':id')
   async updateUser(
     @Param('id') id: string,
@@ -95,6 +103,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
     return this.userService.deleteUser(id);

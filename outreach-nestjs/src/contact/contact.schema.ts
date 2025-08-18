@@ -19,9 +19,4 @@ export class Contact extends Document {
   createdBy: Types.ObjectId;
 }
 
-export type ContactDocument = Contact & Document;
 export const ContactSchema = SchemaFactory.createForClass(Contact);
-
-// Adding indexes like in your old model
-ContactSchema.index({ workspaceId: 1, phoneNumber: 1 });
-ContactSchema.index({ workspaceId: 1, tags: 1 });
