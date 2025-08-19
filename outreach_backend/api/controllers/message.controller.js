@@ -1,3 +1,4 @@
+//message.controller
 const MessageTemplate= require('../models/MessageTemplate');
 const Workspace = require('../models/Workspace');
 
