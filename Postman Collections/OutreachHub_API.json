@@ -1,0 +1,475 @@
+{
+	"info": {
+		"_postman_id": "e8610b82-9759-4523-b60a-75e8b355d379",
+		"name": "outreachHub",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "contacts",
+			"item": [
+				{
+					"name": "createcontact",
+					"id": "a85bff28-11dd-438a-b235-618dae2a02e6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQzOTA5NjUsImV4cCI6MTc1NDQ3NzM2NX0.u1OJVTMzYcpt-JLx2Ph9LROADMycJet1XKihml5Rb0M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"daniella\",\n    \"phoneNumber\":\"1231231231\",\n    \"tags\":[\"client\",\"vip\"],\n    \"workspaceId\": \"688c836bfcb58b7c13bd8fcc\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/contact/create"
+					},
+					"response": []
+				},
+				{
+					"name": "getallContact",
+					"id": "271f11e0-3005-49e5-a7a4-ee1f9db0a419",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQzOTA5NjUsImV4cCI6MTc1NDQ3NzM2NX0.u1OJVTMzYcpt-JLx2Ph9LROADMycJet1XKihml5Rb0M",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3000/contact/get"
+					},
+					"response": []
+				},
+				{
+					"name": "getbyId",
+					"id": "7d951f79-af6b-44c6-9e02-41db141888b1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQzOTA5NjUsImV4cCI6MTc1NDQ3NzM2NX0.u1OJVTMzYcpt-JLx2Ph9LROADMycJet1XKihml5Rb0M",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3000/contact/get/6891e31e1a0cae190df71006"
+					},
+					"response": []
+				},
+				{
+					"name": "updatebyid",
+					"id": "02b3ea00-4613-4c29-b645-99adfc89f28c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQzOTA5NjUsImV4cCI6MTc1NDQ3NzM2NX0.u1OJVTMzYcpt-JLx2Ph9LROADMycJet1XKihml5Rb0M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"cooper\",\n    \"phoneNumber\":\"1231231231\",\n    \"tags\":[\"client\",\"worker\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/contact/update/6891e4511a0cae190df71010"
+					},
+					"response": []
+				},
+				{
+					"name": "deletebyId",
+					"id": "f1f299ad-f88a-4333-8b36-6f8546a2acde",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQzOTA5NjUsImV4cCI6MTc1NDQ3NzM2NX0.u1OJVTMzYcpt-JLx2Ph9LROADMycJet1XKihml5Rb0M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/contact/delete/6891e71861b9519f5a1f9b65"
+					},
+					"response": []
+				}
+			],
+			"id": "19b33f66-bb14-44e3-870d-824b99c7f713"
+		},
+		{
+			"name": "messages",
+			"item": [
+				{
+					"name": "New Request",
+					"id": "22c9c339-f8dd-4c66-98bf-47ab457a0b4c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NTY1OTAsImV4cCI6MTc1NDU0Mjk5MH0.Obki6opOisH9fLt7pi1gNLq92Pdps67SjxwwVDUCcrI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Promo Message\",\n  \"type\": \"Text-Image\",\n  \"message\": {\n    \"text\": \"Check out our new product!\",\n    \"imageUrl\": \"https://www.ricoh-imaging.co.jp/english/products/wg-6/ex/img/ex-pic04.jpg\"\n  },\n  \"workspaceId\": \"688c836bfcb58b7c13bd8fcc\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/message/create"
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"id": "8fa0ba61-b092-4bf9-9ddc-3f18b22ee234",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"id": "65e4d94d-049a-4ea1-80f9-363a4df49262",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NTY1OTAsImV4cCI6MTc1NDU0Mjk5MH0.Obki6opOisH9fLt7pi1gNLq92Pdps67SjxwwVDUCcrI",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:3000/message/get/6892e35263dcc94d15024678"
+					},
+					"response": []
+				},
+				{
+					"name": "updateById",
+					"id": "58d89052-0f4b-436a-93ea-8288d249458b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NTY1OTAsImV4cCI6MTc1NDU0Mjk5MH0.Obki6opOisH9fLt7pi1gNLq92Pdps67SjxwwVDUCcrI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"warning message\",\n  \"type\": \"Text\", \n  \"message\": {\n    \"text\": \"This is the updated message text\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/message/update/6892e35263dcc94d15024678"
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"id": "c2ae407b-d93f-4fb9-a3e2-ba1c64d82d49",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NTY1OTAsImV4cCI6MTc1NDU0Mjk5MH0.Obki6opOisH9fLt7pi1gNLq92Pdps67SjxwwVDUCcrI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://localhost:3000/message/delete/6892e35263dcc94d15024678"
+					},
+					"response": []
+				}
+			],
+			"id": "4602cf88-70a1-4669-a23c-8049fdd12180"
+		},
+		{
+			"name": "campaign",
+			"item": [
+				{
+					"name": "createCampaign",
+					"id": "2915485b-59dd-45e5-aef8-df5bbbec35c6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NTY1OTAsImV4cCI6MTc1NDU0Mjk5MH0.Obki6opOisH9fLt7pi1gNLq92Pdps67SjxwwVDUCcrI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"August Offer Campaign\",\n  \"description\": \"Special discount campaign for August\",\n  \"status\": \"Draft\",\n  \"selectedTags\": [\"discount\", \"regular\", \"loyal\"],\n  \"message\": {\n    \"type\": \"Text\",\n    \"text\": \"Don't miss our August offers!\"\n  },\n  \"workspaceId\": \"688c836bfcb58b7c13bd8fcc\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/campaign/create"
+					},
+					"response": []
+				},
+				{
+					"name": "getMyCampaign",
+					"id": "f29fc296-c16d-4bb8-8bc5-e602cf6a4782",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODkzMDUzNDFjODM4MzM4Mjc4Y2Y4ZWUiLCJpc0FkbWluIjpmYWxzZSwiZW1haWwiOiJkYW5pZWxsYUBleGFtcGxlLmNvbSIsIm5hbWUiOiJkYW5pZWxsYSIsIndvcmtzcGFjZXMiOlt7IndvcmtzcGFjZUlkIjoiNjg4YzgzNmJmY2I1OGI3YzEzYmQ4ZmNjIiwicm9sZSI6IkVkaXRvciIsIl9pZCI6IjY4OTMwNTM0MWM4MzgzMzgyNzhjZjhlZiJ9XSwiaWF0IjoxNzU0NDY4OTUxLCJleHAiOjE3NTQ1NTUzNTF9.CMyzmHlwT7Ts0EI3ShQh_7Ipgx_3cYLTvnz-Y1BNYmc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"february offer campaign\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/campaign/get"
+					},
+					"response": []
+				},
+				{
+					"name": "getallCampaign",
+					"id": "ff000326-0371-4a3d-bc93-da5ff599b070",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODkzMDUzNDFjODM4MzM4Mjc4Y2Y4ZWUiLCJpc0FkbWluIjpmYWxzZSwiZW1haWwiOiJkYW5pZWxsYUBleGFtcGxlLmNvbSIsIm5hbWUiOiJkYW5pZWxsYSIsIndvcmtzcGFjZXMiOlt7IndvcmtzcGFjZUlkIjoiNjg4YzgzNmJmY2I1OGI3YzEzYmQ4ZmNjIiwicm9sZSI6IkVkaXRvciIsIl9pZCI6IjY4OTMwNTM0MWM4MzgzMzgyNzhjZjhlZiJ9XSwiaWF0IjoxNzU0NDY4OTUxLCJleHAiOjE3NTQ1NTUzNTF9.CMyzmHlwT7Ts0EI3ShQh_7Ipgx_3cYLTvnz-Y1BNYmc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"february offer campaign\"\n}"
+						},
+						"url": "http://localhost:3000/campaign/get/all"
+					},
+					"response": []
+				},
+				{
+					"name": "getCampaignById",
+					"id": "c51bf273-ed6f-4ef7-a5aa-56194b4171f9",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODkzMDUzNDFjODM4MzM4Mjc4Y2Y4ZWUiLCJpc0FkbWluIjpmYWxzZSwiZW1haWwiOiJkYW5pZWxsYUBleGFtcGxlLmNvbSIsIm5hbWUiOiJkYW5pZWxsYSIsIndvcmtzcGFjZXMiOlt7IndvcmtzcGFjZUlkIjoiNjg4YzgzNmJmY2I1OGI3YzEzYmQ4ZmNjIiwicm9sZSI6IkVkaXRvciIsIl9pZCI6IjY4OTMwNTM0MWM4MzgzMzgyNzhjZjhlZiJ9XSwiaWF0IjoxNzU0NDY4OTUxLCJleHAiOjE3NTQ1NTUzNTF9.CMyzmHlwT7Ts0EI3ShQh_7Ipgx_3cYLTvnz-Y1BNYmc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"february offer campaign\"\n}"
+						},
+						"url": "http://localhost:3000/campaign/get/689301436f8b3cb0e4704fc5"
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"id": "e2bc9821-f2c7-487b-a58d-b15e15692b02",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODkzMDUzNDFjODM4MzM4Mjc4Y2Y4ZWUiLCJpc0FkbWluIjpmYWxzZSwiZW1haWwiOiJkYW5pZWxsYUBleGFtcGxlLmNvbSIsIm5hbWUiOiJkYW5pZWxsYSIsIndvcmtzcGFjZXMiOlt7IndvcmtzcGFjZUlkIjoiNjg4YzgzNmJmY2I1OGI3YzEzYmQ4ZmNjIiwicm9sZSI6IkVkaXRvciIsIl9pZCI6IjY4OTMwNTM0MWM4MzgzMzgyNzhjZjhlZiJ9XSwiaWF0IjoxNzU0NDY4OTUxLCJleHAiOjE3NTQ1NTUzNTF9.CMyzmHlwT7Ts0EI3ShQh_7Ipgx_3cYLTvnz-Y1BNYmc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"june Campaign \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/campaign/update/689301436f8b3cb0e4704fc5"
+					},
+					"response": []
+				},
+				{
+					"name": "deleteById",
+					"id": "9992cd17-5700-4eae-949c-da7e7d4bac09",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODkzMDUzNDFjODM4MzM4Mjc4Y2Y4ZWUiLCJpc0FkbWluIjpmYWxzZSwiZW1haWwiOiJkYW5pZWxsYUBleGFtcGxlLmNvbSIsIm5hbWUiOiJkYW5pZWxsYSIsIndvcmtzcGFjZXMiOlt7IndvcmtzcGFjZUlkIjoiNjg4YzgzNmJmY2I1OGI3YzEzYmQ4ZmNjIiwicm9sZSI6IkVkaXRvciIsIl9pZCI6IjY4OTMwNTM0MWM4MzgzMzgyNzhjZjhlZiJ9XSwiaWF0IjoxNzU0NDY4OTUxLCJleHAiOjE3NTQ1NTUzNTF9.CMyzmHlwT7Ts0EI3ShQh_7Ipgx_3cYLTvnz-Y1BNYmc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://localhost:3000/campaign/delete/689301436f8b3cb0e4704fc5"
+					},
+					"response": []
+				}
+			],
+			"id": "b200e569-5a86-4d80-8e2c-cff49a5d57f8"
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "login",
+					"id": "3710131c-54d2-4fb5-a469-a29399b4c47c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NTY1OTAsImV4cCI6MTc1NDU0Mjk5MH0.Obki6opOisH9fLt7pi1gNLq92Pdps67SjxwwVDUCcrI",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"daniella@example.com\",\n  \"password\": \"daniella123\"\n \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "addUser",
+					"id": "d52331b5-9271-494e-8d73-76cd4f5ea52f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjNThlNzkyN2MxMjA4Y2IwOWJjZWMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3NTQ0NjQ5NjAsImV4cCI6MTc1NDU1MTM2MH0.NmFBSyVYDIliL0hhtJd8p2ohkEwPU6KTUD0ww31cnyU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"daniella\",\n  \"email\": \"daniella@example.com\",\n  \"phoneNumber\": \"9876543210\",\n  \"password\": \"daniella123\",\n  \"workspaces\": [\n    {\n      \"workspaceId\": \"688c836bfcb58b7c13bd8fcc\", \n      \"role\": \"Editor\"\n    }\n  ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/auth/addUser"
+					},
+					"response": []
+				}
+			],
+			"id": "ac4509c9-5a9f-4943-bd4b-cba477d922b7"
+		}
+	]
+}
