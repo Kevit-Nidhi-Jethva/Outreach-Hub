@@ -1,0 +1,119 @@
+<div class="dashboard-wrapper d-flex">
+  <!-- Sidebar -->
+  <aside class="sidebar bg-dark text-white p-3">
+    <div class="user-info text-center mb-4">
+      <img src="assets/user.png" alt="User" class="rounded-circle mb-2" width="70" />
+      <h6 class="mb-0">John David</h6>
+      <small class="text-success">● Online</small>
+    </div>
+
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link active" routerLink="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/widgets"><i class="bi bi-grid"></i> Widgets</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/elements"><i class="bi bi-layers"></i> Elements</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/tables"><i class="bi bi-table"></i> Tables</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/campaigns"><i class="bi bi-megaphone"></i> Campaigns</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/contacts"><i class="bi bi-people"></i> Contacts</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/analytics"><i class="bi bi-bar-chart-line"></i> Analytics</a></li>
+      <li class="nav-item"><a class="nav-link" routerLink="/settings"><i class="bi bi-gear"></i> Settings</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-content flex-grow-1">
+    <!-- Navbar -->
+    <header class="topbar d-flex justify-content-between align-items-center p-3 shadow-sm">
+      <h5 class="mb-0">Dashboard</h5>
+      <div class="d-flex align-items-center">
+        <i class="bi bi-bell me-3"></i>
+        <i class="bi bi-envelope me-3"></i>
+        <div class="dropdown">
+          <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" id="userDropdown" data-bs-toggle="dropdown">
+            <img src="assets/user.png" class="rounded-circle me-2" width="35" />
+            John David
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><a class="dropdown-item" href="#">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="container-fluid py-4">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="card stats-card shadow-sm text-center p-3">
+            <i class="bi bi-person-fill text-warning fs-2"></i>
+            <h4 class="mt-2">2500</h4>
+            <p class="text-muted mb-0">Welcome</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card shadow-sm text-center p-3">
+            <i class="bi bi-clock-fill text-primary fs-2"></i>
+            <h4 class="mt-2">123.5</h4>
+            <p class="text-muted mb-0">Avg Time</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card shadow-sm text-center p-3">
+            <i class="bi bi-cloud-arrow-down-fill text-success fs-2"></i>
+            <h4 class="mt-2">1805</h4>
+            <p class="text-muted mb-0">Collections</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card shadow-sm text-center p-3">
+            <i class="bi bi-chat-fill text-danger fs-2"></i>
+            <h4 class="mt-2">54</h4>
+            <p class="text-muted mb-0">Comments</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Media Cards -->
+      <div class="row g-4 mt-3">
+        <div class="col-md-3">
+          <div class="card p-3 text-center text-white bg-primary shadow-sm">
+            <h5>Facebook</h5>
+            <p class="mb-0">35k Friends</p>
+            <small>128 Feeds</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center text-white bg-info shadow-sm">
+            <h5>Twitter</h5>
+            <p class="mb-0">584k Followers</p>
+            <small>978 Tweets</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center text-white bg-primary shadow-sm">
+            <h5>LinkedIn</h5>
+            <p class="mb-0">758+ Contacts</p>
+            <small>365 Feeds</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center text-white bg-danger shadow-sm">
+            <h5>Google+</h5>
+            <p class="mb-0">450 Followers</p>
+            <small>57 Circles</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Section -->
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div class="card shadow-sm p-3">
+            <h6>Extra Area Chart</h6>
+            <canvas id="areaChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
