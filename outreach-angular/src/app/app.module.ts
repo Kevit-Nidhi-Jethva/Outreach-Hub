@@ -9,19 +9,27 @@ import { DashboardComponent } from './modules/features/dashboard/dashboard.compo
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from '../app/modules/core/intersecptors/auth.interceptor';
 import { AuthModule } from './modules/features/auth/auth.module';
+import { RouterModule } from '@angular/router';
+import { DashboardModule } from './modules/features/dashboard/dashboard.module';
+import { ReportComponent } from './modules/features/report/report.component';
+import { ProfileComponent } from './modules/features/profile/profile.component';
+
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
+    ReportComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     AuthModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule,
+    DashboardModule
   ],
   providers: [
     provideClientHydration(),

@@ -1,1 +1,20 @@
-<p>sidebar works!</p>
+<aside class="sidebar-container">
+  <div class="user-profile-header">
+    <div class="user-avatar-circle">
+      <span class="initials">{{ userInitial }}</span>
+    </div>
+    <div class="user-details">
+      <span class="app-name" style="color: aliceblue; font-weight: bold;font-size: large;">Outreach Hub</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li *ngFor="let item of items; trackBy: trackByFn">
+        <a [routerLink]="item.route" routerLinkActive="active">
+          <i class="bi bi-{{item.icon}}" *ngIf="item.icon"></i>
+          <span class="nav-label">{{item.label}}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>
