@@ -181,6 +181,18 @@
 						"url": "http://localhost:3000/user/689daa738f7149246d67b625"
 					},
 					"response": []
+				},
+				{
+					"name": "getmy-Workspace",
+					"id": "44e8400d-274b-486f-b724-23813e7f92ce",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			],
 			"id": "2ab63e3f-e9d7-4e64-9763-e40840661c76"
