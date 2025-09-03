@@ -4,9 +4,10 @@ import { DashboardComponent } from './dashboard.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, WelcomeComponent],
   imports: [
     CommonModule,
     RouterModule,

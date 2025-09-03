@@ -11,7 +11,7 @@
 @import "primeicons/primeicons.css";
 
 /* Import Bootstrap and other global styles */
-@import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 /* Your custom reset layer to override default browser or framework styles */
 @layer reset {
@@ -29,6 +29,11 @@
 }
 
 /* Any other global styles for your application */
+:root {
+  --font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
 body {
   font-family: var(--font-family);
+  background: #f6f8fb;
 }

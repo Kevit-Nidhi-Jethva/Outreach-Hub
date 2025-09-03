@@ -1,0 +1,15 @@
+/* layout/layout.component.scss */
+.layout-container {
+  height: 100vh;
+}
+
+.main-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}

@@ -113,3 +113,21 @@ $navbar-height: 60px;
     font-size: 1rem;
   }
 }
+
+.btn-switch-workspace {
+  background-color: transparent;
+  border: 1px solid $border-light;
+  color: $primary-text;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  &:hover {
+    background-color: $border-light;
+    border-color: darken($border-light, 10%);
+    color: $primary-blue;
+  }
+}

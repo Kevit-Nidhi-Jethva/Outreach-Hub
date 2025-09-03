@@ -1,6 +1,7 @@
-
+// sidebar.ts
 import { Component, OnInit, Input } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service'; // 🔹 use state service
 
 type Role = 'admin' | 'editor' | 'viewer';
 
@@ -18,12 +19,16 @@ interface MenuItem {
 })
 export class SidebarComponent implements OnInit {
   @Input() role?: Role;
+  currentWorkspace: any = null; // 🔹 selected workspace info
 
   username: string = 'User';
   userRole: Role = 'viewer';
   userInitial: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private workspaceState: WorkspaceStateService // 🔹 inject state service
+  ) {}
 
   ngOnInit(): void {
     // Get username from AuthService
@@ -44,6 +49,11 @@ export class SidebarComponent implements OnInit {
           : 'viewer';
       }
     }
+
+    // 🔹 Subscribe to current workspace
+    this.workspaceState.workspace$.subscribe((workspace) => {
+      this.currentWorkspace = workspace;
+    });
   }
 
   allMenuItems: MenuItem[] = [
@@ -94,12 +104,10 @@ export class SidebarComponent implements OnInit {
   get items(): MenuItem[] {
     const normalizedRole = this.userRole.toLowerCase();
 
-    const filteredItems = this.allMenuItems.filter(item => {
+    return this.allMenuItems.filter(item => {
       if (!item.guard) return true;
       return item.guard(normalizedRole);
     });
-
-    return filteredItems;
   }
 
   trackByFn(index: number, item: MenuItem): string {

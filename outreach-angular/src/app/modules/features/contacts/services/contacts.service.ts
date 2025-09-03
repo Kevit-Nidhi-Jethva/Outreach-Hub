@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 export class ContactsService {
   private baseUrl = 'http://localhost:3000/contacts';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService) {}
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -19,8 +20,13 @@ export class ContactsService {
     return headers;
   }
 
+  // Fetch all contacts for selected workspace
   getAllContacts(): Observable<any> {
-    return this.http.get(this.baseUrl, { headers: this.getHeaders() }).pipe(
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (!ws?.workspaceId) {
+      return throwError(() => new Error('No workspace selected'));
+    }
+    return this.http.get(`${this.baseUrl}/workspace/${ws.workspaceId}`, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error fetching contacts:', error);
         return throwError(() => error);
@@ -38,7 +44,9 @@ export class ContactsService {
   }
 
   createContact(contactData: any): Observable<any> {
-    return this.http.post(this.baseUrl, contactData, { headers: this.getHeaders() }).pipe(
+    const ws = this.workspaceState.getWorkspaceSync();
+    const payload = { ...contactData, workspaceId: contactData.workspaceId || ws?.workspaceId };
+    return this.http.post(this.baseUrl, payload, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error creating contact:', error);
         return throwError(() => error);
@@ -47,7 +55,7 @@ export class ContactsService {
   }
 
   updateContact(id: string, contactData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, contactData, { headers: this.getHeaders() }).pipe(
+    return this.http.patch(`${this.baseUrl}/${id}`, contactData, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error updating contact:', error);
         return throwError(() => error);
@@ -65,7 +73,9 @@ export class ContactsService {
   }
 
   importContacts(contactsData: any[]): Observable<any> {
-    return this.http.post(`${this.baseUrl}/import`, contactsData, { headers: this.getHeaders() }).pipe(
+    const ws = this.workspaceState.getWorkspaceSync();
+    const payload = contactsData.map(c => ({ ...c, workspaceId: c.workspaceId || ws?.workspaceId }));
+    return this.http.post(`${this.baseUrl}/import`, payload, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error importing contacts:', error);
         return throwError(() => error);

@@ -1,0 +1,16 @@
+<div class="welcome-header mb-3">
+  <h2>Welcome</h2>
+  <p *ngIf="selectedWorkspaceName">Current workspace: <strong>{{selectedWorkspaceName}}</strong></p>
+</div>
+
+<div class="row g-3">
+  <div class="col-12">
+    <div class="card p-3">
+      <h5 class="mb-2">Quick actions</h5>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary">New Campaign</button>
+        <button class="btn btn-outline-secondary">Import Contacts</button>
+      </div>
+    </div>
+  </div>
+</div>

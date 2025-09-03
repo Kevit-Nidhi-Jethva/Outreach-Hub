@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +14,8 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router // Inject the Router service
+    private router: Router,
+    private workspaceState: WorkspaceStateService
   ) { }
 
   ngOnInit(): void {
@@ -21,6 +23,15 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']); // Navigate to the login page
+    // Clear only auth and workspace state (avoid wiping unrelated storage)
+    this.workspaceState.clearWorkspace();
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
   }
+
+  switchWorkspace() {
+    this.workspaceState.clearWorkspace();
+    this.router.navigate(['/workspace-selection']);
+  }
+
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 export class CampaignService {
   private baseUrl = 'http://localhost:3000/campaigns';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService) {}
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -19,8 +20,32 @@ export class CampaignService {
     return headers;
   }
 
-  getAllCampaigns(): Observable<any> {
-    return this.http.get(this.baseUrl, { headers: this.getHeaders() }).pipe(
+  createCampaign(campaignData: any): Observable<any> {
+    const ws = this.workspaceState.getWorkspaceSync();
+    const payload = { ...campaignData, workspaceId: campaignData.workspaceId || ws?.workspaceId };
+    return this.http.post(`${this.baseUrl}/create`, payload, { headers: this.getHeaders() }).pipe(
+      catchError((error) => {
+        console.error('Error creating campaign:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getMyCampaigns(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/mine`, { headers: this.getHeaders() }).pipe(
+      catchError((error) => {
+        console.error('Error fetching my campaigns:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getAllInWorkspace(workspaceId?: string): Observable<any> {
+    const ws = workspaceId || this.workspaceState.getWorkspaceSync()?.workspaceId;
+    if (!ws) {
+      return throwError(() => new Error('No workspace selected'));
+    }
+    return this.http.get(`${this.baseUrl}/workspace/${ws}`, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error fetching campaigns:', error);
         return throwError(() => error);
@@ -37,17 +62,8 @@ export class CampaignService {
     );
   }
 
-  createCampaign(campaignData: any): Observable<any> {
-    return this.http.post(this.baseUrl, campaignData, { headers: this.getHeaders() }).pipe(
-      catchError((error) => {
-        console.error('Error creating campaign:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  updateCampaign(id: string, campaignData: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, campaignData, { headers: this.getHeaders() }).pipe(
+  updateCampaign(id: string, dto: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${id}`, dto, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error updating campaign:', error);
         return throwError(() => error);

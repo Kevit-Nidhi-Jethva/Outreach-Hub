@@ -11,6 +11,7 @@ import { WorkspacesComponent } from '../workspaces/workspaces/workspaces.compone
 
 import { EditorGuard } from '../../core/guards/editor.guard';
 import { ViewerGuard } from '../../core/guards/viewer.guard';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
   
@@ -25,7 +26,10 @@ const routes: Routes = [
       { path: 'workspaces', component: WorkspacesComponent},
       { path: 'profile', component: ProfileComponent }
     ]
-  }
+  },
+  { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+  { path: 'welcome', component: WelcomeComponent },
+
 ];
 
 @NgModule({

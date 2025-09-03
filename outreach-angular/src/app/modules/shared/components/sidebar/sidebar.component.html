@@ -1,18 +1,35 @@
 <aside class="sidebar-container">
+  <!-- User Header -->
   <div class="user-profile-header">
     <div class="user-avatar-circle">
       <span class="initials">{{ userInitial }}</span>
     </div>
     <div class="user-details">
-      <span class="app-name" style="color: aliceblue; font-weight: bold;font-size: large;">Outreach Hub</span>
+      <span class="app-name">Outreach Hub</span>
+
+      <!-- ✅ Workspace Info -->
+      <ng-container *ngIf="currentWorkspace; else noWorkspace">
+        <div class="workspace-info">
+          <i class="bi bi-building"></i>
+          <span>{{ currentWorkspace.name }}</span>
+        </div>
+      </ng-container>
+      <ng-template #noWorkspace>
+        <div class="workspace-info text-muted">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>No workspace</span>
+        </div>
+      </ng-template>
     </div>
   </div>
+
+  <!-- Navigation -->
   <nav class="sidebar-nav">
     <ul>
       <li *ngFor="let item of items; trackBy: trackByFn">
         <a [routerLink]="item.route" routerLinkActive="active">
-          <i class="bi bi-{{item.icon}}" *ngIf="item.icon"></i>
-          <span class="nav-label">{{item.label}}</span>
+          <i class="bi bi-{{ item.icon }}" *ngIf="item.icon"></i>
+          <span class="nav-label">{{ item.label }}</span>
         </a>
       </li>
     </ul>

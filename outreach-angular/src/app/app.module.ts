@@ -11,8 +11,14 @@ import { AuthInterceptor } from '../app/modules/core/intersecptors/auth.intercep
 import { AuthModule } from './modules/features/auth/auth.module';
 import { RouterModule } from '@angular/router';
 import { DashboardModule } from './modules/features/dashboard/dashboard.module';
+import { WorkspacesModule } from './modules/features/workspaces/workspaces.module';
 import { ReportComponent } from './modules/features/report/report.component';
 import { ProfileComponent } from './modules/features/profile/profile.component';
+// import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LayoutComponent } from './modules/features/layout/layout.component';
+import { SharedModule } from './modules/shared/shared.module';
+
 
 
 
@@ -20,7 +26,8 @@ import { ProfileComponent } from './modules/features/profile/profile.component';
   declarations: [
     AppComponent,
     ReportComponent,
-    ProfileComponent
+    ProfileComponent,
+    LayoutComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +36,9 @@ import { ProfileComponent } from './modules/features/profile/profile.component';
     AuthModule,
     HttpClientModule,
     RouterModule,
-    DashboardModule
+    DashboardModule,
+    WorkspacesModule,
+    SharedModule
   ],
   providers: [
     provideClientHydration(),

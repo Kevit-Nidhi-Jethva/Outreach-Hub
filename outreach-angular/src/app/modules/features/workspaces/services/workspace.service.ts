@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceService {
-  private baseUrl = 'http://localhost:3000/workspaces';
+  private baseUrl = 'http://localhost:3000/user';
+
+  // 🔹 Track selected workspace with BehaviorSubject
+  private currentWorkspaceSubject = new BehaviorSubject<any>(this.loadInitialWorkspace());
+  currentWorkspace$ = this.currentWorkspaceSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -19,8 +23,12 @@ export class WorkspaceService {
     return headers;
   }
 
+  // =======================
+  // 🔹 API Calls
+  // =======================
+
   getAllWorkspaces(): Observable<any> {
-    return this.http.get(this.baseUrl, { headers: this.getHeaders() }).pipe(
+    return this.http.get(`${this.baseUrl}/my-workspaces`, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error fetching workspaces:', error);
         return throwError(() => error);
@@ -89,5 +97,28 @@ export class WorkspaceService {
         return throwError(() => error);
       })
     );
+  }
+
+  // =======================
+  // 🔹 Selected Workspace Handling
+  // =======================
+
+  private loadInitialWorkspace(): any {
+    const saved = localStorage.getItem('selectedWorkspace');
+    return saved ? JSON.parse(saved) : null;
+  }
+
+  setWorkspace(workspace: any): void {
+    localStorage.setItem('selectedWorkspace', JSON.stringify(workspace));
+    this.currentWorkspaceSubject.next(workspace); // 🔹 Notify subscribers
+  }
+
+  getWorkspace(): any {
+    return this.currentWorkspaceSubject.value;
+  }
+
+  clearWorkspace(): void {
+    localStorage.removeItem('selectedWorkspace');
+    this.currentWorkspaceSubject.next(null);
   }
 }
