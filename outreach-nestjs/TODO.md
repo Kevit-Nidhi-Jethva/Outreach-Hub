@@ -1,2 +1,0 @@
-- [x] Edit src/user/user.controller.ts: Remove @Public() decorator from getMyWorkspaces method.
-- [x] Edit src/user/user.service.ts: In getUserWorkspaces, add check for null workspaceId and filter out invalid workspaces.
