@@ -8,25 +8,24 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { WhitelistModule } from './whitelist/whitelist.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthGuard } from './auth/auth.guard';
-import { APP_GUARD } from '@nestjs/core';
+
 import mongoose from 'mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URL!),
+    MongooseModule.forRoot(process.env.MONGO_URL!, {
+      connectionFactory: (connection) => {
+      connection.set('strictQuery', false);
+      return connection;
+      },
+    }),
     UserModule, 
     ContactModule, 
     MessageModule, 
     WorkspaceModule, 
     CampaignModule,  WhitelistModule, AuthModule, ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}

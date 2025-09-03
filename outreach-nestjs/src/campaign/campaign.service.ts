@@ -15,32 +15,34 @@ export class CampaignService {
     @InjectModel(Campaign.name) private readonly campaignModel: Model<Campaign>,
   ) {}
 
-  private userHasWorkspace(user: any, workspaceId: string): boolean {
-    if (user?.isAdmin) return true;
-    if (!user?.workspaces?.length) return false;
-    return user.workspaces.some(
+  private getWorkspaceRole(user: any, workspaceId: string) {
+    if (user?.isAdmin) return { role: 'Admin' };
+    return user?.workspaces?.find(
       (w) => w?.workspaceId?.toString() === workspaceId.toString(),
     );
   }
 
-  // Create
+  // ✅ Create
   async create(dto: CreateCampaignDto, user: any): Promise<Campaign> {
-    const workspaceIdStr = dto.workspaceId;
+    const workspaceRole = this.getWorkspaceRole(user, dto.workspaceId);
 
-    if (!this.userHasWorkspace(user, workspaceIdStr)) {
+    if (!workspaceRole) {
       throw new ForbiddenException('Unauthorized: Not your workspace');
+    }
+    if (workspaceRole.role !== 'Editor') {
+      throw new ForbiddenException('Only editors can create campaigns');
     }
 
     const created = new this.campaignModel({
       ...dto,
-      workspaceId: new Types.ObjectId(workspaceIdStr),
+      workspaceId: new Types.ObjectId(dto.workspaceId),
       createdBy: new Types.ObjectId(user.id || user._id),
     });
 
     return created.save();
   }
 
-  // Get my campaigns (createdBy me)
+  // ✅ Get my campaigns (createdBy me, across all workspaces)
   async findMine(user: any): Promise<Campaign[]> {
     const userId = new Types.ObjectId(user.id || user._id);
     return this.campaignModel
@@ -49,9 +51,11 @@ export class CampaignService {
       .exec();
   }
 
-  // Get all in a workspace
+  // ✅ Get all in a workspace
   async findAllInWorkspace(workspaceId: string, user: any): Promise<Campaign[]> {
-    if (!this.userHasWorkspace(user, workspaceId)) {
+    const workspaceRole = this.getWorkspaceRole(user, workspaceId);
+
+    if (!workspaceRole) {
       throw new ForbiddenException('Unauthorized: Not your workspace');
     }
 
@@ -61,34 +65,40 @@ export class CampaignService {
       .exec();
   }
 
-  // Get by id (must belong to a workspace the user has)
+  // ✅ Get by id
   async findOne(id: string, user: any): Promise<Campaign> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid campaign ID');
+    }
+
     const campaign = await this.campaignModel.findById(id);
     if (!campaign) throw new NotFoundException('Campaign not found');
 
-    if (
-      !user?.isAdmin &&
-      !this.userHasWorkspace(user, campaign.workspaceId.toString())
-    ) {
-      throw new ForbiddenException('You are not authorized to view this campaign');
+    const workspaceRole = this.getWorkspaceRole(user, campaign.workspaceId.toString());
+
+    if (!workspaceRole) {
+      throw new ForbiddenException('Unauthorized: Not your workspace');
     }
 
     return campaign;
   }
 
-  // Update by id
+    // ✅ Update
   async update(id: string, dto: UpdateCampaignDto, user: any): Promise<Campaign> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid campaign ID');
+    }
+
     const campaign = await this.campaignModel.findById(id);
     if (!campaign) throw new NotFoundException('Campaign not found');
 
-    if (
-      !user?.isAdmin &&
-      !this.userHasWorkspace(user, campaign.workspaceId.toString())
-    ) {
-      throw new ForbiddenException('You are not authorized to update this campaign');
+    const workspaceRole = this.getWorkspaceRole(user, campaign.workspaceId.toString());
+
+    if (!workspaceRole || workspaceRole.role !== 'Editor') {
+      throw new ForbiddenException('Only editors can update campaigns');
     }
 
-    // Prevent workspaceId/createdBy hijack by ignoring them in updates
+    // Prevent workspaceId/createdBy hijack
     const { workspaceId, createdBy, ...safe } = dto as any;
 
     const updated = await this.campaignModel.findByIdAndUpdate(
@@ -97,19 +107,27 @@ export class CampaignService {
       { new: true, runValidators: true },
     );
 
-    return updated!;
+    if (!updated) {
+      throw new NotFoundException('Campaign not found after update');
+    }
+
+    return updated;
   }
 
-  // Delete by id
+
+  // ✅ Delete
   async remove(id: string, user: any): Promise<{ message: string }> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid campaign ID');
+    }
+
     const campaign = await this.campaignModel.findById(id);
     if (!campaign) throw new NotFoundException('Campaign not found');
 
-    if (
-      !user?.isAdmin &&
-      !this.userHasWorkspace(user, campaign.workspaceId.toString())
-    ) {
-      throw new ForbiddenException('You are not authorized to delete this campaign');
+    const workspaceRole = this.getWorkspaceRole(user, campaign.workspaceId.toString());
+
+    if (!workspaceRole || workspaceRole.role !== 'Editor') {
+      throw new ForbiddenException('Only editors can delete campaigns');
     }
 
     await campaign.deleteOne();

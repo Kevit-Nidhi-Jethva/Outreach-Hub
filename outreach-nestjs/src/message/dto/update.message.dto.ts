@@ -1,6 +1,17 @@
 // src/message/dto/update-message.dto.ts
-import { IsOptional, IsString, IsEnum } from 'class-validator';
+import { IsOptional, IsString, IsEnum, ValidateNested } from 'class-validator';
 import { MessageType } from './create.message.dto';
+import { Type } from 'class-transformer';
+
+class MessageContentUpdateDto {
+  @IsOptional()
+  @IsString()
+  text?: string;
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+}
 
 export class UpdateMessageDto {
   @IsOptional()
@@ -12,8 +23,7 @@ export class UpdateMessageDto {
   type?: MessageType;
 
   @IsOptional()
-  message?: {
-    text?: string;
-    imageUrl?: string;
-  };
+  @ValidateNested()
+  @Type(() => MessageContentUpdateDto)
+  message?: MessageContentUpdateDto;
 }

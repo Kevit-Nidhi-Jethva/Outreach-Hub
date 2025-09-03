@@ -1,4 +1,16 @@
-import { Body, Controller, Post, Get,Put,Param,Delete, Headers , UnauthorizedException, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Put,
+  Param,
+  Delete,
+  Headers,
+  UnauthorizedException,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
@@ -8,28 +20,32 @@ import { Public } from 'src/auth/public-decorator';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  
+
+  // ===== Public Routes =====
+
   @Public()
   @Post('signup')
   async signupUser(
-    @Body() body: { 
-      name: string; 
-      email: string; 
-      password: string; 
-      role: string; 
-      workspaceId?: string; 
+    @Body()
+    body: {
+      name: string;
+      email: string;
+      password: string;
+      role: string;
+      workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[];
       createdBy?: string;
-    }
+    },
   ) {
     return this.userService.signupUser(
       body.name,
       body.email,
       body.password,
       body.role,
-      body.workspaceId,
-      body.createdBy
+      body.workspaces,
+      body.createdBy,
     );
   }
+
   @Public()
   @Post('login')
   async loginUser(@Body() body: { email: string; password: string }) {
@@ -38,38 +54,60 @@ export class UserController {
 
   @Public()
   @Post('logout')
- async logoutUser(@Headers('authorization') authHeader?: string) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw new UnauthorizedException('Authorization header missing or invalid');
+  async logoutUser(@Headers('authorization') authHeader?: string) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException(
+        'Authorization header missing or invalid',
+      );
+    }
+
+    const token = authHeader.split(' ')[1];
+    return this.userService.logoutUser(token);
   }
 
-  const token = authHeader.split(' ')[1];
-  return this.userService.logoutUser(token);
-}
+  @Public()
+  @Get('validate-token')
+  async validateToken(@Headers('authorization') authHeader?: string) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException(
+        'Authorization header missing or invalid',
+      );
+    }
+    const token = authHeader.split(' ')[1];
+    return this.userService.validateToken(token);
+  }
 
-//admin only routes
-  @UseGuards(AuthGuard,RolesGuard)
+  // ===== Authenticated User Routes =====
+
+  @UseGuards(AuthGuard)
+  @Get('my-workspaces')
+  async getMyWorkspaces(@Req() req) {
+    return this.userService.getUserWorkspacesFromToken(req.user.workspaces);
+  }
+
+  // ===== Admin Only Routes =====
+
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
   @Post('adduser')
   async addUser(
-    @Body() body: { 
-      name: string; 
-      email: string; 
-      password: string; 
-      role: string; 
-      workspaceId?: string; 
+    @Body()
+    body: {
+      name: string;
+      email: string;
+      password: string;
+      role: string;
       createdBy?: string;
       workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[];
-    }
+    },
   ) {
     return this.userService.addUser(
       body.name,
       body.email,
       body.password,
       body.role,
-      body.workspaceId,
       body.createdBy,
-      body.workspaces
+      body.workspaces,
     );
   }
 
@@ -92,12 +130,13 @@ export class UserController {
   @Put(':id')
   async updateUser(
     @Param('id') id: string,
-    @Body() body: Partial<{
+    @Body()
+    body: Partial<{
       name: string;
       email: string;
       password: string;
       workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[];
-    }>
+    }>,
   ) {
     return this.userService.updateUser(id, body);
   }
