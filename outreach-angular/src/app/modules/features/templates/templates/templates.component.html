@@ -1,1 +1,44 @@
-<p>templates works!</p>
+<div class="templates-container">
+  <div class="header">
+    <h2>Message Templates</h2>
+    <button class="btn-add" (click)="openAdd()">+ Add Template</button>
+  </div>
+
+  <div class="cards-wrapper">
+    <div class="template-card" *ngFor="let t of templates">
+      <div class="card-actions" *ngIf="t.createdBy === currentUser">
+        <button class="btn-icon edit" (click)="openEdit(t)">✏️</button>
+        <button class="btn-icon del" (click)="deleteTemplate(t)">🗑️</button>
+      </div>
+      <div class="card-content">
+        <h4>{{ t.name }}</h4>
+        <p>{{ t.content }}</p>
+        <small>By: {{ t.createdBy }}</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal-backdrop" *ngIf="displayModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>{{ editingTemplate ? 'Edit Template' : 'Add Template' }}</h5>
+        <button class="close" (click)="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Template Name</label>
+          <input type="text" [(ngModel)]="form.name">
+        </div>
+        <div class="form-group">
+          <label>Message Content</label>
+          <textarea rows="4" [(ngModel)]="form.content"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-save" (click)="save()">{{ editingTemplate ? 'Update' : 'Save' }}</button>
+      </div>
+    </div>
+  </div>
+</div>

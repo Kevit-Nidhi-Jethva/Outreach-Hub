@@ -12,7 +12,7 @@ export class ViewerGuard implements CanActivate {
   canActivate(): boolean {
     const role = this.authService.getUserRole();
 
-    if (role === 'viewer' || role === 'editor') {
+    if (role === 'Viewer' || role === 'Editor') {
       // viewer can see reports, editor can also see them
       return true;
     }

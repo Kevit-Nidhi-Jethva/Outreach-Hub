@@ -1,15 +1,14 @@
-// sidebar.ts
 import { Component, OnInit, Input } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
-import { WorkspaceStateService } from '../../../core/services/workspace-state.service'; // 🔹 use state service
+import { WorkspaceStateService, SelectedWorkspace } from '../../../core/services/workspace-state.service';
 
-type Role = 'admin' | 'editor' | 'viewer';
+type Role = 'Admin' | 'Editor' | 'Viewer';
 
 interface MenuItem {
   label: string;
   icon: string;
   route: string;
-  guard?: (role: string) => boolean;
+  guard?: (role: Role) => boolean;
 }
 
 @Component({
@@ -19,15 +18,18 @@ interface MenuItem {
 })
 export class SidebarComponent implements OnInit {
   @Input() role?: Role;
-  currentWorkspace: any = null; // 🔹 selected workspace info
+  currentWorkspace: SelectedWorkspace | null = null;
 
   username: string = 'User';
-  userRole: Role = 'viewer';
+  userRole: Role = 'Viewer';
   userInitial: string = '';
+
+  // ✅ New state for Contacts dropdown
+  isContactsOpen: boolean = false;
 
   constructor(
     private authService: AuthService,
-    private workspaceState: WorkspaceStateService // 🔹 inject state service
+    private workspaceState: WorkspaceStateService
   ) {}
 
   ngOnInit(): void {
@@ -38,79 +40,39 @@ export class SidebarComponent implements OnInit {
       this.userInitial = this.username.charAt(0).toUpperCase();
     }
 
-    // Use input role if provided, else get from AuthService
-    if (this.role) {
-      this.userRole = this.role;
-    } else {
-      const roleFromToken = this.authService.getUserRole();
-      if (roleFromToken) {
-        this.userRole = (roleFromToken === 'admin' || roleFromToken === 'editor' || roleFromToken === 'viewer')
-          ? roleFromToken as Role
-          : 'viewer';
-      }
-    }
-
-    // 🔹 Subscribe to current workspace
+    // 🔹 Always set userRole from workspace role
     this.workspaceState.workspace$.subscribe((workspace) => {
       this.currentWorkspace = workspace;
+      if (workspace?.role) {
+        const normalized = workspace.role.toLowerCase();
+        if (normalized === 'admin') this.userRole = 'Admin';
+        else if (normalized === 'editor') this.userRole = 'Editor';
+        else this.userRole = 'Viewer';
+      }
     });
   }
 
   allMenuItems: MenuItem[] = [
-    {
-      label: 'Dashboard',
-      icon: 'house-door-fill',
-      route: '/dashboard/home',
-      guard: () => true
-    },
-    {
-      label: 'Contacts',
-      icon: 'person-lines-fill',
-      route: '/dashboard/contacts',
-      guard: (role) => role === 'editor'
-    },
-    {
-      label: 'Templates',
-      icon: 'file-earmark-text',
-      route: '/dashboard/templates',
-      guard: (role) => role === 'editor'
-    },
-    {
-      label: 'Campaigns',
-      icon: 'rocket-takeoff',
-      route: '/dashboard/campaigns',
-      guard: (role) => role === 'viewer' || role === 'editor'
-    },
-    {
-      label: 'Reports',
-      icon: 'bar-chart-fill',
-      route: '/dashboard/reports',
-      guard: (role) => role === 'viewer' || role === 'editor'
-    },
-    {
-      label: 'Workspaces',
-      icon: 'building',
-      route: '/dashboard/workspaces',
-      guard: (role) => role === 'viewer' || role === 'editor'
-    },
-    {
-      label: 'Profile',
-      icon: 'person-badge',
-      route: '/dashboard/profile',
-      guard: () => true
-    }
+    { label: 'Dashboard', icon: 'house-door-fill', route: 'dashboard', guard: () => true },
+    { label: 'Contacts', icon: 'person-lines-fill', route: 'contacts', guard: () => true },
+    { label: 'Templates', icon: 'file-earmark-text', route: 'templates', guard: () => true },
+    { label: 'Campaigns', icon: 'rocket-takeoff', route: 'campaigns', guard: () => true },
+    { label: 'Reports', icon: 'bar-chart-fill', route: 'reports', guard: () => true },
+    { label: 'Profile', icon: 'person-badge', route: 'profile', guard: () => true }
   ];
 
   get items(): MenuItem[] {
-    const normalizedRole = this.userRole.toLowerCase();
-
-    return this.allMenuItems.filter(item => {
-      if (!item.guard) return true;
-      return item.guard(normalizedRole);
-    });
+    return this.allMenuItems.filter(item =>
+      !item.guard ? true : item.guard(this.userRole)
+    );
   }
 
   trackByFn(index: number, item: MenuItem): string {
     return item.route;
+  }
+
+  // ✅ Toggle method for Contacts dropdown
+  toggleContacts(): void {
+    this.isContactsOpen = !this.isContactsOpen;
   }
 }

@@ -103,8 +103,36 @@ export class AuthService {
     }
   }
 
-  // 🔹 Get user role from token (only from workspaces array)
-  getUserRole(): string | null {
+  // auth.service.ts
+getUserRole(workspaceId?: string): string | null {
+  if (!isPlatformBrowser(this.platformId)) return null;
+
+  const token = this.getToken();
+  if (!token) return null;
+
+  try {
+    const decoded: DecodedToken = jwtDecode(token);
+
+    if (workspaceId && decoded.workspaces) {
+      const ws = decoded.workspaces.find(w => w.workspaceId === workspaceId);
+      return ws ? ws.role.toLowerCase() : null;
+    }
+
+    // fallback → first workspace
+    if (decoded.workspaces && decoded.workspaces.length > 0) {
+      return decoded.workspaces[0].role.toLowerCase();
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+
+
+
+  getUserId(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
 
     const token = this.getToken();
@@ -112,10 +140,7 @@ export class AuthService {
 
     try {
       const decoded: DecodedToken = jwtDecode(token);
-      if (decoded.workspaces && decoded.workspaces.length > 0) {
-        return decoded.workspaces[0].role.toLowerCase();
-      }
-      return null;
+      return decoded.id || null;
     } catch {
       return null;
     }

@@ -1,16 +1,20 @@
 <nav class="top-navbar" [ngClass]="{ 'scrolled': isScrolled }">
   <div class="navbar-left">
-    <!-- You can add a logo or a brand name here -->
+    <!-- Logo / Brand -->
   </div>
+
   <div class="navbar-search">
     <i class="bi bi-search search-icon"></i>
     <input type="text" placeholder="Search...">
   </div>
+
   <div class="navbar-right">
     <div class="user-info">
       <span class="user-greeting">Hi,</span>
       <span class="username">{{ username }}!</span>
+      
     </div>
+
     <button class="btn btn-sm btn-switch-workspace" (click)="switchWorkspace()">Switch Workspace</button>
 
     <button class="btn btn-logout" (click)="logout()">

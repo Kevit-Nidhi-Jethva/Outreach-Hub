@@ -37,3 +37,17 @@ body {
   font-family: var(--font-family);
   background: #f6f8fb;
 }
+
+/* Fix for Bootstrap CSS selector errors */
+.form-floating label {
+  /* Override any problematic styles */
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  padding: 1rem 0.75rem;
+  pointer-events: none;
+  border: 1px solid transparent;
+  transform-origin: 0 0;
+  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+}

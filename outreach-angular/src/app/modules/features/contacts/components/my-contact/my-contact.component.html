@@ -1,0 +1,87 @@
+<div class="my-contacts-container">
+  <!-- header -->
+  <div class="header">
+    <h2>My Contacts</h2>
+    <button class="btn-add" (click)="openAdd()">+ Add Contact</button>
+  </div>
+
+  <!-- list / cards -->
+  <div class="cards-wrapper" *ngIf="!loading; else loadingTpl">
+    <div class="contact-card" *ngFor="let c of paginatedContacts">
+      <div class="card-actions">
+        <button class="btn-icon edit" title="Edit" (click)="openEdit(c)">✏️</button>
+        <button class="btn-icon del" title="Delete" (click)="deleteContact(c._id)">🗑️</button>
+      </div>
+
+      <div class="card-content">
+        <h4>{{ c.name }}</h4>
+        <p>Phone: {{ c.phoneNumber }}</p>
+        <div class="tags" *ngIf="c.tags?.length">
+          <span class="tag" *ngFor="let t of c.tags">{{ t }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="contacts.length === 0">
+      No contacts found. Click “Add Contact” to create your first contact.
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">Loading contacts…</div>
+  </ng-template>
+
+  <!-- pagination -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">‹</button>
+    <span>{{ currentPage }} / {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+  </div>
+
+  <!-- modal -->
+  <div class="modal-backdrop" *ngIf="displayModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>{{ editingId ? 'Update Contact' : 'Add Contact' }}</h5>
+        <button class="close" (click)="closeModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" [(ngModel)]="form.name" />
+          <small class="error" *ngIf="errors['name']">{{ errors['name'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label>Phone number</label>
+          <input type="text" [(ngModel)]="form.phoneNumber" />
+          <small class="error" *ngIf="errors['phoneNumber']">{{ errors['phoneNumber'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label>Tags</label>
+
+          <!-- tags ABOVE input -->
+          <div class="tags-wrapper">
+            <span class="tag" *ngFor="let t of form.tags">
+              {{ t }} <i class="remove" (click)="removeTag(t)">×</i>
+            </span>
+          </div>
+
+          <!-- input below tags -->
+          <div class="tag-input-row">
+            <input type="text" [(ngModel)]="tagInput" (keyup.enter)="addTag()" placeholder="Add a tag and press Enter" />
+            <button type="button" class="btn-add-tag" (click)="addTag()">Add</button>
+          </div>
+          <small class="error" *ngIf="errors['tags']">{{ errors['tags'] }}</small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-save" (click)="save()">{{ editingId ? 'Update' : 'Save' }}</button>
+      </div>
+    </div>
+  </div>
+</div>
