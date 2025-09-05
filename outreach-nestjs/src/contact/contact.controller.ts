@@ -1,3 +1,4 @@
+//contact controller
 import {
   Controller,
   Get,
@@ -36,6 +37,27 @@ export class ContactController {
   findOne(@Param('id') id: string, @Req() req) {
     return this.contactService.findOne(id, req.user);
   }
+
+    // Get my contacts for a workspace
+  @Get('workspace/:workspaceId/my')
+  findMy(@Param('workspaceId') workspaceId: string, @Req() req) {
+    return this.contactService.findMy(workspaceId, req.user);
+  }
+
+    // contacts.controller.ts
+  @Get('workspace/:workspaceId')
+  async getWorkspaceContacts(@Param('workspaceId') workspaceId: string) {
+    return this.contactService.findByWorkspace(workspaceId);
+  }
+
+  // ✅ Only my contacts in workspace
+  @Get('workspace/:workspaceId/my')
+  async getMyContacts(@Param('workspaceId') workspaceId: string, @Req() req) {
+    const userId = req.user.sub; // comes from JWT payload
+    return this.contactService.findMyContacts(workspaceId, userId);
+  }
+  
+
 
   // Update
   @Patch(':id')

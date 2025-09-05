@@ -79,6 +79,40 @@ export class ContactService {
     return contact;
   }
 
+  // Find contacts created by the current user in a workspace
+  async findMy(workspaceId: string, user: any): Promise<Contact[]> {
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === workspaceId,
+    );
+
+    if (!workspaceRole) {
+      throw new ForbiddenException('You do not belong to this workspace');
+    }
+
+    // user id may be in user.id or user.sub
+    const userId = user.id || user.sub;
+
+    return this.contactModel
+      .find({ workspaceId: new Types.ObjectId(workspaceId), createdBy: new Types.ObjectId(userId) })
+      .populate('createdBy', 'name email')
+      .exec();
+  }
+  // contacts.service.ts
+  async findByUser(userId: string) {
+    return this.contactModel.find({ createdBy: userId }).exec();
+  }
+
+  // contacts.service.ts
+  async findByWorkspace(workspaceId: string) {
+    return this.contactModel.find({ workspaceId }).populate('createdBy', 'username email');
+  }
+
+  async findMyContacts(workspaceId: string, userId: string) {
+    return this.contactModel.find({ workspaceId, createdBy: userId });
+  }
+
+
+
   // ✅ Update Contact
   async update(id: string, updateContactDto: UpdateContactDto, user: any): Promise<Contact> {
     if (!Types.ObjectId.isValid(id)) {
