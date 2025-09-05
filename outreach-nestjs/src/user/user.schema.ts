@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
 export type UserDocument = User & Document;
@@ -15,7 +15,7 @@ export class User {
   @Prop({ required: false, trim: true })
   phoneNumber?: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 
   @Prop({ default: false })
@@ -24,21 +24,19 @@ export class User {
   @Prop({
     type: [
       {
-        workspaceId: { type: String, ref: 'Workspace' },
+        workspaceId: { type: Types.ObjectId, ref: 'Workspace' },
         role: { type: String, enum: ['Editor', 'Viewer'] },
       },
     ],
     default: [],
   })
-  workspaces: { workspaceId: string; role: 'Editor' | 'Viewer' }[];
+  workspaces: { workspaceId: Types.ObjectId; role: 'Editor' | 'Viewer' }[];
 
-  // ⬇️ Instance method declaration
   comparePassword: (enteredPassword: string) => Promise<boolean>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// Pre-save hook for hashing password
 UserSchema.pre<UserDocument>('save', async function (next) {
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
@@ -46,7 +44,6 @@ UserSchema.pre<UserDocument>('save', async function (next) {
   next();
 });
 
-// Instance method definition
 UserSchema.methods.comparePassword = async function (
   enteredPassword: string,
 ): Promise<boolean> {

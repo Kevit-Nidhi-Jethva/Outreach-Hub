@@ -1,0 +1,76 @@
+<div class="contacts-container">
+  <!-- Header -->
+  <div class="header">
+    <h2>Contacts</h2>
+    <button class="add-btn" (click)="openModal()">+ Add Contact</button>
+  </div>
+
+  <!-- Contact Cards -->
+  <div class="cards-wrapper">
+    <div class="contact-card" *ngFor="let contact of contacts">
+      <div class="card-actions">
+        <button class="btn-icon" (click)="editContact(contact)">✏️</button>
+        <button class="btn-icon" (click)="deleteContact(contact)">🗑️</button>
+      </div>
+      <div class="card-content">
+        <h4>{{ contact.name }}</h4>
+        <p><strong>Phone:</strong> {{ contact.phoneNumber }}</p>
+        <div class="tags" *ngIf="contact.tags?.length">
+          <span class="tag" *ngFor="let tag of contact.tags">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>{{ editingContact ? 'Edit Contact' : 'Add Contact' }}</h5>
+        <button class="close-btn" (click)="closeModal()">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <!-- Name -->
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" [(ngModel)]="formData.name" name="name" required />
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" [(ngModel)]="formData.phoneNumber" name="phone" required />
+          </div>
+
+          <!-- Tags -->
+          <div class="form-group">
+            <label>Tags</label>
+            <div class="tags-list">
+              <span class="tag" *ngFor="let tag of formData.tags; let i = index">
+                {{ tag }} <span class="remove-tag" (click)="removeTag(i)">✖</span>
+              </span>
+            </div>
+            <div class="tags-input">
+              <input type="text" [(ngModel)]="newTag" name="newTag" placeholder="Enter tag" />
+              <button type="button" class="add-tag-btn" (click)="addTag()">+ Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-save" (click)="saveContact()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

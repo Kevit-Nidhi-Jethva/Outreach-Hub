@@ -1,3 +1,4 @@
+// contact.service.ts
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -15,30 +16,26 @@ export class ContactService {
 
   // ✅ Create Contact
   async create(createContactDto: CreateContactDto, user: any): Promise<Contact> {
-  if (!user.workspaces || !Array.isArray(user.workspaces)) {
-    throw new ForbiddenException('User has no workspaces assigned');
+    if (!user.workspaces || !Array.isArray(user.workspaces)) {
+      throw new ForbiddenException('User has no workspaces assigned');
+    }
+
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === createContactDto.workspaceId,
+    );
+
+    if (!workspaceRole || workspaceRole.role !== 'Editor') {
+      throw new ForbiddenException('Only editors can create contacts');
+    }
+
+    const createdContact = new this.contactModel({
+      ...createContactDto,
+      workspaceId: new Types.ObjectId(createContactDto.workspaceId),
+      createdBy: new Types.ObjectId(user.id || user.sub),
+    });
+
+    return await createdContact.save();
   }
-
-  const workspaceRole = user.workspaces.find(
-    (ws) => ws.workspaceId.toString() === createContactDto.workspaceId,
-  );
-
-  if (!workspaceRole || workspaceRole.role !== 'Editor') {
-    throw new ForbiddenException('Only editors can create contacts');
-  }
-
-  const createdContact = new this.contactModel({
-    ...createContactDto,
-    workspaceId: new this.contactModel.db.base.Types.ObjectId(
-      createContactDto.workspaceId,
-    ),
-    // 🔹 Use user.sub (from JWT) if _id is missing
-    createdBy: user.id || user.sub,
-  });
-
-  return await createdContact.save();
-}
-
 
   // ✅ Find All Contacts for a Workspace
   async findAll(workspaceId: string, user: any): Promise<Contact[]> {
@@ -81,6 +78,40 @@ export class ContactService {
 
     return contact;
   }
+
+  // Find contacts created by the current user in a workspace
+  async findMy(workspaceId: string, user: any): Promise<Contact[]> {
+    const workspaceRole = user.workspaces.find(
+      (ws) => ws.workspaceId.toString() === workspaceId,
+    );
+
+    if (!workspaceRole) {
+      throw new ForbiddenException('You do not belong to this workspace');
+    }
+
+    // user id may be in user.id or user.sub
+    const userId = user.id || user.sub;
+
+    return this.contactModel
+      .find({ workspaceId: new Types.ObjectId(workspaceId), createdBy: new Types.ObjectId(userId) })
+      .populate('createdBy', 'name email')
+      .exec();
+  }
+  // contacts.service.ts
+  async findByUser(userId: string) {
+    return this.contactModel.find({ createdBy: userId }).exec();
+  }
+
+  // contacts.service.ts
+  async findByWorkspace(workspaceId: string) {
+    return this.contactModel.find({ workspaceId }).populate('createdBy', 'username email');
+  }
+
+  async findMyContacts(workspaceId: string, userId: string) {
+    return this.contactModel.find({ workspaceId, createdBy: userId });
+  }
+
+
 
   // ✅ Update Contact
   async update(id: string, updateContactDto: UpdateContactDto, user: any): Promise<Contact> {

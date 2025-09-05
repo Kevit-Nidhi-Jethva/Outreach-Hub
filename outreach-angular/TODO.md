@@ -1,0 +1,1 @@
+- [x] Update sidebar.component.html to display userInitial and "Outreach Hub", remove username and role display

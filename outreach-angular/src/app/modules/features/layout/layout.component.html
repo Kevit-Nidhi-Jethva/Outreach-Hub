@@ -1,0 +1,11 @@
+<!-- layout/layout.component.html -->
+<div class="d-flex layout-container">
+  <app-sidebar></app-sidebar>
+  <div class="main-area flex-grow-1 d-flex flex-column">
+    <app-navbar></app-navbar>
+    <div class="content-area flex-grow-1 p-3">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>

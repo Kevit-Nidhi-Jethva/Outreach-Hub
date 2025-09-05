@@ -1,0 +1,35 @@
+.workspace-contacts {
+  padding: 1rem;
+
+  .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+
+  .cards-wrapper {
+    display:flex;
+    flex-wrap:wrap;
+    gap:1rem;
+
+    .contact-card {
+      width: calc(33.333% - 1rem);
+      background:#fff;
+      border-radius:8px;
+      padding:1rem;
+      border:1px solid #e6e9ee;
+      cursor: pointer;
+
+      .card-content { h4 { margin: 0 0 0.5rem 0; } p { margin: 0 0 0.4rem 0; } .tags { margin-top:0.5rem; .tag { background:#f3f4f6; padding: 0.2rem 0.5rem; border-radius:4px; margin-right:6px; } } }
+    }
+
+    .empty { padding:1.6rem; color:#6b7280; }
+  }
+
+  .pagination { margin-top:1rem; display:flex; gap:0.5rem; justify-content:center; align-items:center; }
+
+  /* view modal - reuse styles similar to my-contacts */
+  .modal-backdrop { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background: rgba(2,6,23,0.5); z-index:1100;
+    .modal-content { width:420px; background:#fff; border-radius:10px; padding:1rem;
+      .modal-header { display:flex; justify-content:space-between; }
+      .modal-body { margin-top:0.6rem; .tags { margin-top:0.5rem; .tag{ background:#e6f4f8; padding:0.25rem 0.5rem; border-radius:6px; } } }
+      .modal-footer { display:flex; justify-content:flex-end; margin-top:0.6rem; .btn-close { padding:0.4rem 0.8rem; } }
+    }
+  }
+}

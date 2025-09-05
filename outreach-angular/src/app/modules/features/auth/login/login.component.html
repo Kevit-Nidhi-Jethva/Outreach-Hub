@@ -1,0 +1,80 @@
+<div class="login-wrapper d-flex align-items-center justify-content-center vh-100">
+  <div class="login-container d-flex shadow-lg rounded-4 overflow-hidden">
+    
+    <!-- Left Side -->
+    <div class="login-left d-flex flex-column justify-content-center align-items-center text-white p-4">
+      <h2 class="mb-3">Welcome back! </h2>
+      <p class="mb-4">Please login</p>
+      <!-- <button class="btn btn-outline-light rounded-pill px-4 py-2">Sign Up</button> -->
+    </div>
+
+    <!-- Right Side (Login Form) -->
+    <div class="login-right p-4 p-md-5">
+      <div class="text-center mb-4">
+        <img src="assets/logo1.png" alt="OutreachHub Logo" class="logo mb-3" />
+        <p class="text-muted">
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control rounded-pill"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          <div
+            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            class="text-danger mt-1 small"
+          >
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Enter a valid email</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3 position-relative">
+          <label for="password" class="form-label fw-semibold">Password</label>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control rounded-pill pe-5"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+            <i [ngClass]="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
+          </button>
+          <div
+            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            class="text-danger mt-1 small"
+          >
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <p class="text-danger small text-center" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <!-- Submit Button -->
+        <div class="d-grid mb-3">
+          <button
+            type="submit"
+            [disabled]="loginForm.invalid"
+            class="btn btn-outline-success rounded-pill py-2"
+          >
+            Sign In
+          </button>
+        </div>
+
+        <!-- Extra links -->
+        <div class="text-center extra-links">
+          <a href="#" class="small text-success">Forgot Password?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -14,12 +14,18 @@ export class MessageService {
     @InjectModel(Workspace.name) private readonly workspaceModel: Model<Workspace>,
   ) {}
 
+  private ensureWorkspaceAccess(user: any, workspaceId: string) {
+    const hasAccess = user.workspaces?.some(
+      (w) => w.workspaceId.toString() === workspaceId.toString(),
+    );
+    if (!hasAccess) {
+      throw new ForbiddenException('Unauthorized: You do not belong to this workspace');
+    }
+  }
+
   // Create message
   async create(createMessageDto: CreateMessageDto, user: any): Promise<Message> {
-    const workspace = await this.workspaceModel.findById(createMessageDto.workspaceId);
-    if (!workspace || workspace.createdBy.toString() !== user.id) {
-      throw new ForbiddenException('Unauthorized: Not your workspace');
-    }
+    this.ensureWorkspaceAccess(user, createMessageDto.workspaceId);
 
     const createdMessage = new this.messageModel({
       ...createMessageDto,
@@ -30,28 +36,20 @@ export class MessageService {
     return await createdMessage.save();
   }
 
-  // Get all messages of user's workspaces
+  // Get all messages of user’s workspaces
   async findAll(user: any): Promise<Message[]> {
-  const workspaces = await this.workspaceModel.find({
-    createdBy: new Types.ObjectId(user.id)
-  }, '_id');
+    const workspaceIds = user.workspaces?.map((w) => new Types.ObjectId(w.workspaceId)) || [];
+    if (!workspaceIds.length) return [];
 
-    if (!workspaces.length) return []; // no workspaces owned by user
-
-    const workspaceIds = workspaces.map(ws => ws._id);
     return this.messageModel.find({ workspaceId: { $in: workspaceIds } }).exec();
   }
 
-  // Get message by ID (only if belongs to user's workspace)
+  // Get message by ID
   async findById(id: string, user: any): Promise<Message> {
     const message = await this.messageModel.findById(id);
     if (!message) throw new NotFoundException('Message not found');
 
-    const workspace = await this.workspaceModel.findById(message.workspaceId);
-    if (!workspace || workspace.createdBy.toString() !== user.id) {
-      throw new ForbiddenException('Unauthorized access to this message');
-    }
-
+    this.ensureWorkspaceAccess(user, message.workspaceId.toString());
     return message;
   }
 
@@ -60,12 +58,8 @@ export class MessageService {
     const message = await this.messageModel.findById(id);
     if (!message) throw new NotFoundException('Message not found');
 
-    const workspace = await this.workspaceModel.findById(message.workspaceId);
-    if (!workspace || workspace.createdBy.toString() !== user.id) {
-      throw new ForbiddenException('Unauthorized: Not your workspace');
-    }
+    this.ensureWorkspaceAccess(user, message.workspaceId.toString());
 
-    // Only update passed fields
     if (updateDto.name) message.name = updateDto.name;
     if (updateDto.type) message.type = updateDto.type;
     if (updateDto.message) {
@@ -81,10 +75,7 @@ export class MessageService {
     const message = await this.messageModel.findById(id);
     if (!message) throw new NotFoundException('Message not found');
 
-    const workspace = await this.workspaceModel.findById(message.workspaceId);
-    if (!workspace || workspace.createdBy.toString() !== user.id) {
-      throw new ForbiddenException('Unauthorized: Not your workspace');
-    }
+    this.ensureWorkspaceAccess(user, message.workspaceId.toString());
 
     await this.messageModel.deleteOne({ _id: id });
     return { message: 'Message deleted successfully' };

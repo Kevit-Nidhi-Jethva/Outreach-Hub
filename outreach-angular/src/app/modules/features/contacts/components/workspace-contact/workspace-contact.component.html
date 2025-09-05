@@ -1,0 +1,54 @@
+<div class="workspace-contacts">
+  <div class="header">
+    <h2>Workspace Contacts</h2>
+  </div>
+
+  <div class="cards-wrapper" *ngIf="!loading; else loadingTpl">
+    <div class="contact-card" *ngFor="let c of paginated" (click)="openView(c)" role="button" tabindex="0">
+      <div class="card-content">
+        <h4>{{ c.name }}</h4>
+        <p>Phone: {{ c.phoneNumber }}</p>
+        <p *ngIf="c.createdBy">Added by: {{ c.createdBy.name || c.createdBy.email }}</p>
+        <div class="tags">
+          <span class="tag" *ngFor="let t of c.tags">{{ t }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="contacts.length === 0">No contacts in this workspace.</div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">Loading contacts…</div>
+  </ng-template>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="prev()" [disabled]="currentPage === 1">‹</button>
+    <span>{{ currentPage }} / {{ totalPages }}</span>
+    <button (click)="next()" [disabled]="currentPage === totalPages">›</button>
+  </div>
+
+  <!-- view modal -->
+  <div class="modal-backdrop" *ngIf="showViewModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Contact Details</h5>
+        <button class="close" (click)="closeView()">×</button>
+      </div>
+
+      <div class="modal-body" *ngIf="viewing">
+        <p><strong>Name:</strong> {{ viewing.name }}</p>
+        <p><strong>Phone:</strong> {{ viewing.phoneNumber }}</p>
+        <p *ngIf="viewing.createdBy"><strong>Added by:</strong> {{ viewing.createdBy.name || viewing.createdBy.email }}</p>
+
+        <div class="tags">
+          <span class="tag" *ngFor="let t of viewing.tags">{{ t }}</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-close" (click)="closeView()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

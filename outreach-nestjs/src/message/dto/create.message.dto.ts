@@ -1,9 +1,20 @@
 // src/message/dto/create-message.dto.ts
-import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsMongoId, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export enum MessageType {
   TEXT = 'Text',
   TEXT_IMAGE = 'Text-Image',
+}
+
+class MessageContentDto {
+  @IsString()
+  @IsNotEmpty()
+  text: string;
+
+  @IsString()
+  @IsNotEmpty()
+  imageUrl?: string;
 }
 
 export class CreateMessageDto {
@@ -15,13 +26,12 @@ export class CreateMessageDto {
   @IsNotEmpty()
   type: MessageType;
 
+  @ValidateNested()
+  @Type(() => MessageContentDto)
   @IsNotEmpty()
-  message: {
-    text: string;
-    imageUrl?: string;
-  };
+  message: MessageContentDto;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   workspaceId: string;
 }

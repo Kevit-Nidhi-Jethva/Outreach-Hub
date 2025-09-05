@@ -1,0 +1,89 @@
+.login-wrapper {
+  background: #f4f6f9; // light background
+}
+
+.login-container {
+  width: 850px;
+  max-width: 95%;
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Left side (Welcome section) */
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #56ccf2, #2f80ed); // light blue gradient
+  text-align: center;
+
+  h2 {
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    border: 2px solid #fff;
+    font-weight: 500;
+    transition: 0.2s;
+
+    &:hover {
+      background: #fff;
+      color: #2f80ed;
+    }
+  }
+}
+
+/* Right side (Login form) */
+.login-right {
+  flex: 1;
+  background: #fff;
+
+  .logo {
+    max-width: 250px;
+  }
+
+  .form-control {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    transition: border 0.2s;
+
+    &:focus {
+      border-color: #2f80ed;
+      box-shadow: 0 0 6px rgba(47, 128, 237, 0.3);
+    }
+  }
+
+  /* Eye toggle */
+  .password-toggle {
+    position: absolute;
+    top: 70%;
+    right: 15px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1.2rem;
+
+    &:hover {
+      color: #2f80ed;
+    }
+  }
+
+  /* Buttons */
+  .btn-outline-success {
+    border: 2px solid #2f80ed;
+    color: #2f80ed;
+    font-weight: 600;
+
+    &:hover {
+      background: #2f80ed;
+      color: #fff;
+    }
+  }
+}

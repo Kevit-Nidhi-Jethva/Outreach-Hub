@@ -3,17 +3,26 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
+  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from './public-decorator';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import {
+  WhitelistedToken,
+  WhitelistedTokenDocument,
+} from '../whitelist/whitelist.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
+    @InjectModel(WhitelistedToken.name)
+    private readonly whitelistModel: Model<WhitelistedTokenDocument>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -28,7 +37,7 @@ export class AuthGuard implements CanActivate {
     const authHeader = request.headers['authorization'];
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Authorization header missing or invalid');
+      throw new ForbiddenException('Authorization header missing or invalid');
     }
 
     const token = authHeader.split(' ')[1];
@@ -38,6 +47,13 @@ export class AuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
 
+      // ✅ Check if token is whitelisted
+      const record = await this.whitelistModel.findOne({ token });
+      if (!record) {
+        throw new ForbiddenException('Token is invalid or expired');
+      }
+
+      // Attach payload to request
       request.user = payload;
 
       // ✅ Admin shortcut
@@ -53,34 +69,29 @@ export class AuthGuard implements CanActivate {
         request.params?.workspaceId;
 
       if (!workspaceId) {
-        if (!payload.workspaces || payload.workspaces.length === 0) {
-          throw new UnauthorizedException('User has no workspaces assigned');
-        }
-        const defaultWorkspace = payload.workspaces[0];
-        request.user = {
-          ...payload,
-          role: defaultWorkspace?.role,
-          workspaceId: defaultWorkspace?.workspaceId,
-        };
-      } else {
-        const workspaceData = payload.workspaces?.find(
-          (w) => w?.workspaceId?.toString() === workspaceId.toString(),
-        );
-        if (!workspaceData) {
-          throw new UnauthorizedException(
-            'User does not belong to this workspace',
-          );
-        }
-        request.user = {
-          ...payload,
-          role: workspaceData?.role,
-          workspaceId: workspaceData?.workspaceId,
-        };
+        // no workspace needed, keep payload as is
+        return true;
       }
+
+      const workspaceData = payload.workspaces?.find(
+        (w) => String(w?.workspaceId) === String(workspaceId),
+      );
+
+      if (!workspaceData) {
+        throw new ForbiddenException(
+          'User does not belong to this workspace',
+        );
+      }
+
+      request.user = {
+        ...payload,
+        role: workspaceData?.role,
+        workspaceId: workspaceData?.workspaceId,
+      };
 
       return true;
     } catch {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new ForbiddenException('Invalid or expired token');
     }
   }
 }

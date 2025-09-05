@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsArray, IsOptional, IsMongoId } from 'class-validator';
 
 export class CreateContactDto {
   @IsString()
@@ -13,7 +13,7 @@ export class CreateContactDto {
   @IsOptional()
   tags?: string[];
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   workspaceId: string;
 }
