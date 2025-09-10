@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
 
 @Injectable({ providedIn: 'root' })
@@ -61,5 +61,29 @@ export class ContactsService {
   deleteContact(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`, { headers: this.getHeaders() })
       .pipe(catchError(err => throwError(() => err)));
+  }
+
+  /** Get all unique tags from workspace contacts */
+  getTags(): Observable<string[]> {
+    return this.getWorkspaceContacts().pipe(
+      // Extract tags from contacts and flatten unique tags
+      map(contacts => {
+        const tagsSet = new Set<string>();
+        contacts.forEach((contact: any) => {
+          if (Array.isArray(contact.tags)) {
+            contact.tags.forEach((tag: string) => tagsSet.add(tag));
+          }
+        });
+        return Array.from(tagsSet);
+      }),
+      catchError(err => throwError(() => err))
+    );
+  }
+
+  /** Get all templates - placeholder, adjust as needed */
+  getTemplates(): Observable<string[]> {
+    // Assuming templates are fetched from a different endpoint or service
+    // For now, return empty array observable
+    return of([]); 
   }
 }

@@ -72,20 +72,23 @@ export class MyContactsComponent implements OnInit {
 
   // modal controls
   openAdd(): void {
-    this.displayModal = true;
-    this.editingId = null;
-    this.form = { name: '', phoneNumber: '', tags: [] };
-    this.tagInput = '';
-    this.errors = {};
-  }
+  this.displayModal = true;
+  this.editingId = null;
+  this.form = { name: '', phoneNumber: '', tags: [] };  // ✅ ensure array
+  this.tagInput = '';
+  this.errors = {};
+}
+
 
   openEdit(contact: Contact): void {
-    this.displayModal = true;
-    this.editingId = contact._id!;
-    this.form = { ...contact, tags: contact.tags ? [...contact.tags] : [] };
-    this.tagInput = '';
-    this.errors = {};
-  }
+  this.displayModal = true;
+  this.editingId = contact._id!;
+  this.form = { ...contact };
+  this.form.tags = contact.tags ? [...contact.tags] : [];  // ✅ ensure array
+  this.tagInput = '';
+  this.errors = {};
+}
+
 
   closeModal(): void {
     this.displayModal = false;

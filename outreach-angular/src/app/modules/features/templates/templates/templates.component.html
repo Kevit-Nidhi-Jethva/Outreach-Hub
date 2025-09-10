@@ -6,14 +6,15 @@
 
   <div class="cards-wrapper">
     <div class="template-card" *ngFor="let t of templates">
-      <div class="card-actions" *ngIf="t.createdBy === currentUser">
+      <div class="card-actions">
         <button class="btn-icon edit" (click)="openEdit(t)">✏️</button>
         <button class="btn-icon del" (click)="deleteTemplate(t)">🗑️</button>
       </div>
       <div class="card-content">
         <h4>{{ t.name }}</h4>
-        <p>{{ t.content }}</p>
-        <small>By: {{ t.createdBy }}</small>
+        <p>Type: {{ t.type }}</p>
+        <p>{{ t.message.text }}</p>
+        <img *ngIf="t.message.imageUrl" [src]="t.message.imageUrl" alt="image" class="template-img">
       </div>
     </div>
   </div>
@@ -31,8 +32,19 @@
           <input type="text" [(ngModel)]="form.name">
         </div>
         <div class="form-group">
-          <label>Message Content</label>
-          <textarea rows="4" [(ngModel)]="form.content"></textarea>
+          <label>Type</label>
+          <select [(ngModel)]="form.type">
+            <option value="Text">Text</option>
+            <option value="Text-Image">Text-Image</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message Text</label>
+          <textarea rows="4" [(ngModel)]="form.text"></textarea>
+        </div>
+        <div class="form-group" *ngIf="form.type === 'Text-Image'">
+          <label>Image URL</label>
+          <input type="text" [(ngModel)]="form.imageUrl">
         </div>
       </div>
       <div class="modal-footer">

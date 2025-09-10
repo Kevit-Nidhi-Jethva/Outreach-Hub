@@ -1,0 +1,30 @@
+.campaigns-list-container {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 15px;
+  }
+
+  button {
+    margin-right: 5px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    .actions button {
+      margin-right: 5px;
+    }
+  }
+}

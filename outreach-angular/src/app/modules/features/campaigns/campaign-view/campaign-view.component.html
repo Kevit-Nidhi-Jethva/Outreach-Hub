@@ -1,0 +1,17 @@
+<div class="campaign-view-container" *ngIf="campaign; else loading">
+  <h2>Campaign Details</h2>
+  <p><strong>Name:</strong> {{ campaign!.name }}</p>
+  <p><strong>Description:</strong> {{ campaign!.description || 'N/A' }}</p>
+  <p><strong>Status:</strong> {{ campaign!.status }}</p>
+  <p><strong>Tags:</strong> {{ campaign!.selectedTags.join(', ') }}</p>
+  <div class="message">
+    <p><strong>Message Type:</strong> {{ campaign!.message.type }}</p>
+    <p><strong>Message Text:</strong> {{ campaign!.message.text }}</p>
+    <p *ngIf="campaign!.message.imageUrl"><strong>Image:</strong> <img [src]="campaign!.message.imageUrl" alt="campaign image" /></p>
+  </div>
+  <button (click)="back()">Back</button>
+</div>
+
+<ng-template #loading>
+  <p>Loading campaign...</p>
+</ng-template>
