@@ -1,78 +1,137 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { CampaignService } from '../services/campaign.service';
 import { CampaignService, Campaign } from '../services/campaign.service';
+import { TemplateService, Template } from '../../templates/services/template.service';
+import { ContactsService } from '../../contacts/services/contacts.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-campaigns-form',
+  selector: 'app-campaign-form',
   templateUrl: './campaign-form.component.html',
   styleUrls: ['./campaign-form.component.scss']
 })
 export class CampaignsFormComponent implements OnInit {
-  form!: FormGroup;
+  campaignForm!: FormGroup;
+  templates: Template[] = [];
+  workspaceTags: string[] = [];
+  loading = false;
   isEdit = false;
-  campaignId: string | null = null;
 
-  // Dummy templates for select dropdown
-  templates = [
-    { id: '1', name: 'Template 1', type: 'Text' },
-    { id: '2', name: 'Template 2', type: 'Text-Image' }
-  ];
+  workspaceId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private campaignService: CampaignService,
-    private router: Router,
-    private route: ActivatedRoute
+    private templateService: TemplateService,
+    private contactsService: ContactsService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.campaignId = this.route.snapshot.paramMap.get('id');
-    this.isEdit = !!this.campaignId;
+    // Get workspace ID first
+    this.workspaceId = this.authService.getSelectedWorkspaceId();
+    if (!this.workspaceId) {
+      console.error('No workspace selected');
+      return;
+    }
 
-    this.form = this.fb.group({
+    this.initForm();
+    this.fetchTemplates();
+    this.fetchWorkspaceTags();
+  }
+
+  initForm() {
+    this.campaignForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
-      status: ['Draft', Validators.required],
-      selectedTags: [[]],
       templateId: [''],
+      selectedTags: [[]],
       message: this.fb.group({
         type: ['Text', Validators.required],
         text: ['', Validators.required],
         imageUrl: ['']
       })
     });
+  }
 
-    if (this.isEdit && this.campaignId) {
-      this.campaignService.getCampaignById(this.campaignId).subscribe(c => {
-        this.form.patchValue(c);
+  fetchTemplates() {
+    if (!this.workspaceId) return;
+    this.templateService.getWorkspaceTemplates(this.workspaceId).subscribe({
+      next: (res) => {
+        this.templates = res;
+      },
+      error: (err) => console.error('Error fetching templates', err)
+    });
+  }
+
+  fetchWorkspaceTags() {
+    if (!this.workspaceId) return;
+    this.contactsService.getWorkspaceTags(this.workspaceId).subscribe({
+      next: (tags) => (this.workspaceTags = tags),
+      error: (err) => console.error('Error fetching tags', err)
+    });
+  }
+
+  onTemplateChange(event: Event) {
+    const templateId = (event.target as HTMLSelectElement).value;
+    const selectedTemplate = this.templates.find(t => t.id === templateId);
+    if (selectedTemplate) {
+      this.campaignForm.get('message')?.patchValue({
+        type: selectedTemplate.type,
+        text: selectedTemplate.message.text,
+        imageUrl: selectedTemplate.message.imageUrl || ''
+      });
+    } else {
+      this.campaignForm.get('message')?.patchValue({
+        type: 'Text',
+        text: '',
+        imageUrl: ''
       });
     }
   }
 
-  onTemplateChange(templateId: string) {
-    const template = this.templates.find(t => t.id === templateId);
-    if (template) {
-      this.form.patchValue({
-        templateId: template.id,
-        message: { type: template.type, text: '', imageUrl: '' }
-      });
+  isTagSelected(tag: string) {
+    return this.campaignForm.get('selectedTags')?.value.includes(tag);
+  }
+
+  onTagToggle(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const selectedTags = this.campaignForm.get('selectedTags')?.value || [];
+    if (input.checked) {
+      selectedTags.push(input.value);
+    } else {
+      const index = selectedTags.indexOf(input.value);
+      if (index > -1) selectedTags.splice(index, 1);
     }
+    this.campaignForm.get('selectedTags')?.setValue(selectedTags);
   }
 
   submit() {
-    if (this.form.invalid) return;
-    const data: Campaign = this.form.value;
+    if (!this.campaignForm.valid || !this.workspaceId) return;
 
-    if (this.isEdit && this.campaignId) {
-      this.campaignService.updateCampaign(this.campaignId, data).subscribe(() => {
-        alert('Campaign updated successfully');
-        this.router.navigate(['/campaigns']);
+    const payload = { ...this.campaignForm.value, workspaceId: this.workspaceId };
+
+    this.loading = true;
+    if (this.isEdit) {
+      const campaignId = payload._id;
+      const campaignId = (payload as any)._id;
+      if (!campaignId) return;
+      this.campaignService.updateCampaign(campaignId, payload).subscribe({
+        next: () => (this.loading = false),
+        error: (err) => {
+          console.error(err);
+          this.loading = false;
+        }
       });
     } else {
-      this.campaignService.createCampaign(data).subscribe(() => {
-        alert('Campaign created successfully');
-        this.router.navigate(['/campaigns']);
+      this.campaignService.createCampaign(payload).subscribe({
+      this.campaignService.createCampaign(payload as Campaign).subscribe({
+        next: () => (this.loading = false),
+        error: (err) => {
+          console.error(err);
+          this.loading = false;
+        }
       });
     }
   }

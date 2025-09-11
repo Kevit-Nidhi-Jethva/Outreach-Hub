@@ -1,17 +1,15 @@
-<div class="campaign-view-container" *ngIf="campaign; else loading">
-  <h2>Campaign Details</h2>
-  <p><strong>Name:</strong> {{ campaign!.name }}</p>
-  <p><strong>Description:</strong> {{ campaign!.description || 'N/A' }}</p>
-  <p><strong>Status:</strong> {{ campaign!.status }}</p>
-  <p><strong>Tags:</strong> {{ campaign!.selectedTags.join(', ') }}</p>
-  <div class="message">
-    <p><strong>Message Type:</strong> {{ campaign!.message.type }}</p>
-    <p><strong>Message Text:</strong> {{ campaign!.message.text }}</p>
-    <p *ngIf="campaign!.message.imageUrl"><strong>Image:</strong> <img [src]="campaign!.message.imageUrl" alt="campaign image" /></p>
+<div class="campaign-view" *ngIf="!loading && campaign">
+  <h2>{{ campaign.name }}</h2>
+  <p><strong>Description:</strong> {{ campaign.description }}</p>
+  <p><strong>Message Type:</strong> {{ campaign.messageType }}</p>
+  <p><strong>Message Content:</strong> {{ campaign.messageContent }}</p>
+
+  <div *ngIf="campaign.messageType === 'Text-Image' && campaign.messageImage">
+    <p><strong>Message Image:</strong></p>
+    <img [src]="campaign.messageImage" alt="Campaign Image" />
   </div>
-  <button (click)="back()">Back</button>
+
+  <p><strong>Status:</strong> {{ campaign.status || 'Draft' }}</p>
 </div>
 
-<ng-template #loading>
-  <p>Loading campaign...</p>
-</ng-template>
+<p *ngIf="!loading && !campaign">Campaign not found.</p>

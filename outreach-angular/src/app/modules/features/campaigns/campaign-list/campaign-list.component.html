@@ -1,31 +1,35 @@
-<div class="campaigns-list-container">
-  <h2>Campaigns</h2>
-  <button (click)="router.navigate(['/campaigns/create'])">Create New Campaign</button>
+<div class="campaign-list">
+  <div class="header">
+    <h2>Campaigns</h2>
+    <button class="btn btn-primary" (click)="newCampaign()">New Campaign</button>
+  </div>
 
-  <table>
+  <div *ngIf="loading" class="loading">Loading campaigns...</div>
+
+  <table *ngIf="!loading && campaigns.length > 0">
     <thead>
       <tr>
         <th>Name</th>
+        <th>Description</th>
         <th>Status</th>
-        <th>Tags</th>
-        <th>Created At</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let campaign of campaigns">
-        <td>{{ campaign.name }}</td>
-        <td>{{ campaign.status }}</td>
-        <td>{{ campaign.selectedTags.join(', ') }}</td>
-        <td>{{ campaign.createdAt | date:'short' }}</td>
-        <td class="actions">
-          <button (click)="viewCampaign(campaign._id!)">View</button>
-          <button (click)="editCampaign(campaign._id!)">Edit</button>
-          <button (click)="copyCampaign(campaign._id!)">Copy</button>
-          <button (click)="launchCampaign(campaign._id!)" [disabled]="campaign.status !== 'Draft'">Launch</button>
-          <button (click)="deleteCampaign(campaign._id!)">Delete</button>
+      <tr *ngFor="let c of campaigns">
+        <td>{{ c.name }}</td>
+        <td>{{ c.description }}</td>
+        <td>{{ c.status }}</td>
+        <td>
+          <button (click)="viewCampaign(c._id!)">View</button>
+          <button (click)="editCampaign(c._id!)">Edit</button>
+          <button (click)="deleteCampaign(c._id!)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="!loading && campaigns.length === 0">
+    No campaigns found.
+  </div>
 </div>

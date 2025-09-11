@@ -154,4 +154,7 @@ export class ContactService {
     await this.contactModel.deleteOne({ _id: id });
     return { message: 'Contact deleted successfully' };
   }
+
+  
+
 }

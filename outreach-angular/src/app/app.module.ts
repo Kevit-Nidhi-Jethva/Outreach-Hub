@@ -17,6 +17,7 @@ import { CampaignsModule } from './modules/features/campaigns/campaigns.module.j
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './modules/core/intersecptors/auth.interceptor.js';
 import { CommonModule } from '@angular/common';
+import {ToastrModule} from "ngx-toastr";
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { CommonModule } from '@angular/common';
     TemplateModule,
     CampaignsModule,
     BrowserAnimationsModule,
-    CommonModule
+    CommonModule,
+    ToastrModule.forRoot(),
   ],
   providers: [
     provideClientHydration(),

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CampaignsRoutingModule } from './campaigns-routing.module';
-import { CampaignsComponent } from './campaigns/campaigns.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CampaignsListComponent } from './campaign-list/campaign-list.component';
@@ -16,10 +15,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOptionModule } from '@angular/material/core';
+import { ToastrModule } from 'ngx-toastr';
+
 
 @NgModule({
   declarations: [
-    CampaignsComponent,
     CampaignsListComponent,
     CampaignsViewComponent,
     CampaignsFormComponent
@@ -35,6 +35,7 @@ import { MatOptionModule } from '@angular/material/core';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
+    ToastrModule
   ]
 })
 export class CampaignsModule { }

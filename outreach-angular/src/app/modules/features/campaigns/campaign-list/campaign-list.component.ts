@@ -1,28 +1,50 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CampaignService, Campaign } from '../services/campaign.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-campaigns-list',
+  selector: 'app-campaign-list',
   templateUrl: './campaign-list.component.html',
   styleUrls: ['./campaign-list.component.scss']
 })
 export class CampaignsListComponent implements OnInit {
   campaigns: Campaign[] = [];
-  workspaceId: string = '';
+  loading = false;
 
-  constructor(private campaignService: CampaignService, private router: Router) {}
+  constructor(
+    public router: Router,
+    private campaignService: CampaignService,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
-    this.workspaceId = localStorage.getItem('selectedWorkspaceId') || '';
+    const workspaceId = this.authService.getSelectedWorkspaceId();
+    if (!workspaceId) {
+      this.toastr.error('No workspace selected');
+      return;
+    }
     this.loadCampaigns();
   }
 
   loadCampaigns() {
-    this.campaignService.getCampaigns(this.workspaceId).subscribe({
-      next: (data) => (this.campaigns = data),
-      error: (err) => console.error('Failed to load campaigns', err)
+    this.loading = true;
+    this.campaignService.getCampaigns().subscribe({
+      next: (res) => {
+        this.campaigns = res;
+        this.loading = false;
+      },
+      error: () => {
+        this.toastr.error('Failed to load campaigns');
+        this.loading = false;
+      }
     });
+  }
+
+  newCampaign() {
+    this.router.navigate(['/campaigns/form']);
   }
 
   viewCampaign(id: string) {
@@ -36,23 +58,11 @@ export class CampaignsListComponent implements OnInit {
   deleteCampaign(id: string) {
     if (!confirm('Are you sure you want to delete this campaign?')) return;
     this.campaignService.deleteCampaign(id).subscribe({
-      next: () => this.loadCampaigns(),
-      error: (err) => console.error('Delete failed', err)
-    });
-  }
-
-  copyCampaign(id: string) {
-    this.campaignService.copyCampaign(id).subscribe({
-      next: () => this.loadCampaigns(),
-      error: (err) => console.error('Copy failed', err)
-    });
-  }
-
-  launchCampaign(id: string) {
-    if (!confirm('Are you sure you want to launch this campaign?')) return;
-    this.campaignService.launchCampaign(id).subscribe({
-      next: () => this.loadCampaigns(),
-      error: (err) => console.error('Launch failed', err)
+      next: () => {
+        this.toastr.success('Campaign deleted');
+        this.loadCampaigns();
+      },
+      error: () => this.toastr.error('Failed to delete campaign')
     });
   }
 }

@@ -53,12 +53,12 @@ export class SidebarComponent implements OnInit {
   }
 
   allMenuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'house-door-fill', route: 'dashboard', guard: () => true },
-    { label: 'Contacts', icon: 'person-lines-fill', route: 'contacts', guard: () => true },
+    { label: 'Dashboard', icon: 'house-door-fill', route: '/dashboard', guard: () => true },
+    { label: 'Contacts', icon: 'person-lines-fill', route: '/contacts', guard: () => true },
     { label: 'Templates', icon: 'file-earmark-text', route: 'templates', guard: () => true },
-    { label: 'Campaigns', icon: 'rocket-takeoff', route: 'campaigns', guard: () => true },
-    { label: 'Reports', icon: 'bar-chart-fill', route: 'reports', guard: () => true },
-    { label: 'Profile', icon: 'person-badge', route: 'profile', guard: () => true }
+    { label: 'Campaigns', icon: 'rocket-takeoff', route: '/campaigns', guard: () => true },
+    { label: 'Reports', icon: 'bar-chart-fill', route: '/reports', guard: () => true },
+    { label: 'Profile', icon: 'person-badge', route: '/profile', guard: () => true }
   ];
 
   get items(): MenuItem[] {

@@ -76,6 +76,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 export interface Template {
   id: string; // _id from backend
@@ -94,7 +95,7 @@ export interface Template {
 export class TemplateService {
   private baseUrl = 'http://localhost:3000/messages';
 
-  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService) {}
+  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService, private authService: AuthService) {}
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -137,6 +138,15 @@ export class TemplateService {
       .delete(`${this.baseUrl}/delete/${id}`, { headers: this.getHeaders() })
       .pipe(catchError(err => throwError(() => err)));
   }
+
+  getWorkspaceTemplates(workspaceId?: string): Observable<any[]> {
+    workspaceId = workspaceId || this.authService.getSelectedWorkspaceId()!;
+    if (!workspaceId) return throwError(() => new Error('No workspace selected'));
+    return this.http.get<any[]>(`${this.baseUrl}/workspace/${workspaceId}/templates`, { headers: this.getHeaders() });
+  }
+
+
+
 }
 
 

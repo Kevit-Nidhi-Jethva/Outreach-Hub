@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ContactsService {
   private baseUrl = 'http://localhost:3000/contacts';
 
-  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService) {}
+  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService, private authService: AuthService) {}
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -86,4 +87,13 @@ export class ContactsService {
     // For now, return empty array observable
     return of([]); 
   }
+
+  getWorkspaceTags(workspaceId?: string): Observable<string[]> {
+  workspaceId = workspaceId || this.authService.getSelectedWorkspaceId()!;
+  if (!workspaceId) return throwError(() => new Error('No workspace selected'));
+  return this.http.get<string[]>(`${this.baseUrl}/tags/${workspaceId}`, { headers: this.getHeaders() });
+  }
+
+
+
 }

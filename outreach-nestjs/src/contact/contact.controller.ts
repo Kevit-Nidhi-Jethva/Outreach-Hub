@@ -70,4 +70,18 @@ export class ContactController {
   remove(@Param('id') id: string, @Req() req) {
     return this.contactService.remove(id, req.user);
   }
+
+  // Get all unique tags in a workspace
+  @Get('tags/:workspaceId')
+  async getTags(@Param('workspaceId') workspaceId: string) {
+    const contacts = await this.contactService.findByWorkspace(workspaceId);
+    const tagsSet = new Set<string>();
+    contacts.forEach(contact => {
+      if (Array.isArray(contact.tags)) {
+        contact.tags.forEach(tag => tagsSet.add(tag));
+      }
+    });
+    return Array.from(tagsSet);
+  }
+
 }

@@ -160,4 +160,19 @@ getUserRole(workspaceId?: string): string | null {
       return null;
     }
   }
+
+getSelectedWorkspaceId(): string | null {
+  const data = localStorage.getItem('selectedWorkspace');
+  if (!data) return null;
+  try {
+    const workspaces = JSON.parse(data); // should be array of workspace objects
+    return workspaces.length > 0 ? workspaces[0]._id : null;
+  } catch (err) {
+    console.error('Error parsing workspace data', err);
+    return null;
+  }
+}
+
+
+
 }
