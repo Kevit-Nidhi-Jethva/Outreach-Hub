@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Campaign } from './campaign.schema';
+import { Campaign, CampaignSentMessageSubdoc } from './campaign.schema';
 import { CreateCampaignDto } from './dto/create.campaign.dto';
 import { UpdateCampaignDto } from './dto/update.campaign.dto';
 import { Contact } from '../contact/contact.schema';
@@ -31,7 +31,7 @@ export class CampaignService {
     return new Types.ObjectId(user.id || user._id);
   }
 
-  // Create
+  // CREATE CAMPAIGN
   async create(dto: CreateCampaignDto, user: any): Promise<Campaign> {
     const workspaceRole = this.getWorkspaceRole(user, dto.workspaceId);
     if (!workspaceRole) throw new ForbiddenException('Unauthorized');
@@ -39,16 +39,23 @@ export class CampaignService {
       throw new ForbiddenException('Only editors can create campaigns');
 
     const created = new this.campaignModel({
-      ...dto,
+      name: dto.name,
+      description: dto.description || '',
+      status: dto.status || 'Draft',
+      selectedTags: dto.selectedTags || [],
+      message: {
+        type: dto.message.type,
+        text: dto.message.text,
+        imageUrl: dto.message.imageUrl || undefined,
+      },
       workspaceId: new Types.ObjectId(dto.workspaceId),
       createdBy: new Types.ObjectId(user.id || user._id),
-      status: 'Draft',
     });
 
     return created.save();
   }
 
-  // Get my campaigns
+  // GET MY CAMPAIGNS
   async findMine(user: any): Promise<Campaign[]> {
     const userId = new Types.ObjectId(user.id || user._id);
     return this.campaignModel
@@ -57,7 +64,7 @@ export class CampaignService {
       .exec();
   }
 
-  // Get all in a workspace
+  // GET ALL CAMPAIGNS IN WORKSPACE
   async findAllInWorkspace(workspaceId: string, user: any): Promise<Campaign[]> {
     const workspaceRole = this.getWorkspaceRole(user, workspaceId);
     if (!workspaceRole) throw new ForbiddenException('Unauthorized');
@@ -68,7 +75,7 @@ export class CampaignService {
       .exec();
   }
 
-  // Get by id
+  // GET CAMPAIGN BY ID
   async findOne(id: string, user: any): Promise<Campaign> {
     if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid ID');
 
@@ -84,40 +91,58 @@ export class CampaignService {
     return campaign;
   }
 
-  // Update
-  async update(
-    id: string,
-    dto: UpdateCampaignDto,
-    user: any,
-  ): Promise<Campaign> {
-    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid ID');
+async update(
+  id: string,
+  dto: UpdateCampaignDto,
+  user: any,
+): Promise<Campaign> {
+  if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid ID');
 
-    const campaign = await this.campaignModel.findById(id);
-    if (!campaign) throw new NotFoundException('Campaign not found');
+  const campaign = await this.campaignModel.findById(id);
+  if (!campaign) throw new NotFoundException('Campaign not found');
 
-    const workspaceRole = this.getWorkspaceRole(
-      user,
-      campaign.workspaceId.toString(),
-    );
-    if (!workspaceRole || workspaceRole.role !== 'Editor')
-      throw new ForbiddenException('Only editors can update campaigns');
+  const workspaceRole = this.getWorkspaceRole(
+    user,
+    campaign.workspaceId.toString(),
+  );
+  if (!workspaceRole || workspaceRole.role !== 'Editor')
+    throw new ForbiddenException('Only editors can update campaigns');
 
-    if (campaign.status !== 'Draft')
-      throw new ForbiddenException('Only Draft campaigns can be updated');
+  if (campaign.status !== 'Draft')
+    throw new ForbiddenException('Only Draft campaigns can be updated');
 
-    const { workspaceId, createdBy, ...safe } = dto as any;
+  // Create a new object and map types manually
+  const updateObj: Partial<Campaign> = {};
 
-    const updated = await this.campaignModel.findByIdAndUpdate(
-      id,
-      { $set: safe },
-      { new: true, runValidators: true },
-    );
+  if (dto.name !== undefined) updateObj.name = dto.name;
+  if (dto.description !== undefined) updateObj.description = dto.description;
+  if (dto.status !== undefined) updateObj.status = dto.status;
+  if (dto.selectedTags !== undefined) updateObj.selectedTags = dto.selectedTags;
+  if (dto.workspaceId !== undefined) updateObj.workspaceId = new Types.ObjectId(dto.workspaceId);
 
-    if (!updated) throw new NotFoundException('Campaign not found after update');
-    return updated;
+  if (dto.launchedAt !== undefined) updateObj.launchedAt = new Date(dto.launchedAt);
+
+  if (dto.message !== undefined) {
+    updateObj.message = {
+      type: dto.message.type,
+      text: dto.message.text,
+      imageUrl: dto.message.imageUrl || undefined,
+    };
   }
 
-  // Delete
+  const updated = await this.campaignModel.findByIdAndUpdate(
+    id,
+    { $set: updateObj },
+    { new: true, runValidators: true },
+  );
+
+  if (!updated) throw new NotFoundException('Campaign not found after update');
+
+  return updated as Campaign;
+}
+
+
+  // DELETE CAMPAIGN
   async remove(id: string, user: any): Promise<{ message: string }> {
     if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid ID');
 
@@ -135,7 +160,7 @@ export class CampaignService {
     return { message: 'Campaign deleted successfully' };
   }
 
-  // Launch campaign
+  // LAUNCH CAMPAIGN
   async launch(id: string, user: any): Promise<Campaign> {
     const campaign = await this.findOne(id, user);
 
@@ -149,7 +174,7 @@ export class CampaignService {
     if (!workspaceRole || workspaceRole.role !== 'Editor')
       throw new ForbiddenException('Only editors can launch campaigns');
 
-    // Fetch contacts matching tags (if no tags selected, match all in workspace)
+    // Fetch contacts matching tags (if no tags, get all in workspace)
     const contactQuery: any = { workspaceId: campaign.workspaceId };
     if (Array.isArray(campaign.selectedTags) && campaign.selectedTags.length) {
       contactQuery.tags = { $in: campaign.selectedTags };
@@ -157,61 +182,42 @@ export class CampaignService {
 
     const contacts = await this.contactModel.find(contactQuery).exec();
 
-    // Prepare per-contact messages (pending)
-    // Use `any[]` to avoid strict type mismatch with TS subdoc types; Mongoose will handle validation
-    const messagesToSave: any[] = contacts.map((c) => ({
-      contactId: (c as any)._id ? new Types.ObjectId((c as any)._id) : undefined,
+    // Prepare per-contact messages
+    const messagesToSave: CampaignSentMessageSubdoc[] = contacts.map((c) => ({
+      contactId: new Types.ObjectId(c._id as string),
       contactSnapshot: {
-        name: (c as any).name,
-        phoneNumber: (c as any).phoneNumber,
-        tags: (c as any).tags || [],
+        name: c.name,
+        phoneNumber: c.phoneNumber,
+        tags: c.tags || [],
       },
       messageContent: campaign.message.text,
-      status: 'pending' as 'pending',
+      status: 'pending',
       sentAt: null,
       error: null,
     }));
 
-    // Save initial messages and update campaign status to Running
-    campaign.messages = messagesToSave as any; // assign, mongoose will cast
+    campaign.messages = messagesToSave;
     campaign.status = 'Running';
     campaign.launchedAt = new Date();
     await campaign.save();
 
-    // Now simulate sending each message asynchronously (non-blocking)
-    // We will update each message item in the campaign.messages array
-    // Note: production should use a job queue (Bull, RabbitMQ), this is a simulation
+    // Simulate async sending (non-blocking)
     (async () => {
       try {
-        // Re-fetch campaign to ensure we have the current array with _ids assigned
         const runningCampaign = await this.campaignModel.findById(campaign._id);
-        if (!runningCampaign) {
-          this.logger.error(`Campaign ${campaign._id} disappeared after save`);
-          return;
-        }
+        if (!runningCampaign) return;
 
         for (let i = 0; i < (runningCampaign.messages || []).length; i++) {
           const msg = (runningCampaign.messages as any[])[i];
-
-          // artificial delay per message to emulate send time
           await new Promise((res) => setTimeout(res, 300 + Math.random() * 700));
-
-          // simulate random success/failure
-          const succeeded = Math.random() > 0.05; // 95% success chance
+          const succeeded = Math.random() > 0.05;
 
           if (succeeded) {
-            // mark as sent
             await this.campaignModel.updateOne(
               { _id: campaign._id, 'messages._id': msg._id },
-              {
-                $set: {
-                  'messages.$.status': 'sent',
-                  'messages.$.sentAt': new Date(),
-                },
-              },
+              { $set: { 'messages.$.status': 'sent', 'messages.$.sentAt': new Date() } },
             );
           } else {
-            // mark failed with error
             await this.campaignModel.updateOne(
               { _id: campaign._id, 'messages._id': msg._id },
               {
@@ -225,45 +231,32 @@ export class CampaignService {
           }
         }
 
-        // After processing all messages, compute summary stats
         const fresh = await this.campaignModel.findById(campaign._id).lean();
-        if (!fresh) {
-          this.logger.error(`Campaign ${campaign._id} not found when finalizing`);
-          return;
-        }
+        if (!fresh) return;
 
-        const total = (fresh.messages || []).length;
         const sentCount = (fresh.messages || []).filter((m) => m.status === 'sent')
           .length;
         const failedCount = (fresh.messages || []).filter((m) => m.status === 'failed')
           .length;
 
-        // update campaign status to Completed
-        await this.campaignModel.findByIdAndUpdate(campaign._id, {
-          status: 'Completed',
-        });
-
+        await this.campaignModel.findByIdAndUpdate(campaign._id, { status: 'Completed' });
         this.logger.log(
-          `Campaign ${campaign._id} completed. total=${total} sent=${sentCount} failed=${failedCount}`,
+          `Campaign ${campaign._id} completed. total=${fresh.messages.length} sent=${sentCount} failed=${failedCount}`,
         );
       } catch (err) {
-        this.logger.error('Error while processing campaign messages', err);
-        // If an unexpected error occurs, mark campaign Completed anyway or Failed - here we'll mark Completed but you can adjust
+        this.logger.error('Error processing campaign messages', err);
         try {
-          await this.campaignModel.findByIdAndUpdate(campaign._id, {
-            status: 'Completed',
-          });
+          await this.campaignModel.findByIdAndUpdate(campaign._id, { status: 'Completed' });
         } catch (e) {
-          this.logger.error('Failed to set campaign status after processing error', e);
+          this.logger.error('Failed to set campaign status after error', e);
         }
       }
     })();
 
-    // return the campaign (running) to client
     return campaign;
   }
 
-  // Copy campaign
+  // COPY CAMPAIGN
   async copy(id: string, user: any): Promise<Campaign> {
     const campaign = await this.findOne(id, user);
 
@@ -287,13 +280,13 @@ export class CampaignService {
     return copy.save();
   }
 
-  // Polling status
+  // GET CAMPAIGN STATUS
   async getStatus(id: string, user: any): Promise<{ status: string }> {
     const campaign = await this.findOne(id, user);
     return { status: campaign.status };
   }
 
-  // Get messages for a campaign (with optional pagination)
+  // GET MESSAGES WITH PAGINATION
   async getMessages(
     id: string,
     user: any,

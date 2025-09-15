@@ -7,7 +7,6 @@ import {
   IsNotEmpty,
   IsMongoId,
   IsDateString,
-  ArrayNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -50,5 +49,32 @@ export class CreateCampaignDto {
   launchedAt?: string;
 
   @IsMongoId()
-  workspaceId: string; // taken from body OR fallback from token in guard logic
+  workspaceId: string;
+}
+
+export class UpdateCampaignDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsEnum(['Draft', 'Running', 'Completed'])
+  status?: 'Draft' | 'Running' | 'Completed';
+
+  @IsOptional()
+  @IsArray()
+  selectedTags?: string[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MessageDto)
+  message?: MessageDto;
+
+  @IsOptional()
+  @IsDateString()
+  launchedAt?: string;
 }

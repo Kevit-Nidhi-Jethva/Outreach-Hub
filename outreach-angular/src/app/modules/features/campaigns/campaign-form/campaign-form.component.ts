@@ -124,31 +124,38 @@ export class CampaignFormComponent implements OnInit {
     });
   }
 
-  loadCampaign(id: string) {
-    if (!id) return;
-    this.loading = true;
-    this.campaignService.getCampaignById(id).subscribe({
-      next: (res: Campaign) => {
-        this.campaignForm.patchValue({
-          name: res.name,
-          description: res.description || '',
-          templateId: res.templateId || '',
-          selectedTags: res.selectedTags || [],
-          message: {
-            type: res.message?.type || 'Text',
-            text: res.message?.text || '',
-            imageUrl: res.message?.imageUrl || ''
-          }
-        });
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.toastr.error('Failed to load campaign');
-        this.loading = false;
+  private loadCampaign(id: string) {
+  this.loading = true;
+  this.campaignService.getCampaignById(id).subscribe({
+    next: (res: Campaign) => {
+      this.campaignForm.patchValue({
+        name: res.name,
+        description: res.description || '',
+        templateId: res.templateId || '',
+        selectedTags: res.selectedTags || [],
+        status: res.status || 'Draft',
+        message: {
+          type: res.message?.type || 'Text',
+          text: res.message?.text || '',
+          imageUrl: res.message?.imageUrl || ''
+        }
+      });
+
+      // Convert launchedAt from string to Date for form if needed
+      if (res.launchedAt) {
+        const launchedDate = new Date(res.launchedAt);
+        // optionally store somewhere if your form has a launchedAt control
       }
-    });
-  }
+
+      this.loading = false;
+    },
+    error: (err) => {
+      console.error(err);
+      this.toastr.error('Failed to load campaign');
+      this.loading = false;
+    }
+  });
+}
 
   onTemplateChange(event: Event) {
     const select = event.target as HTMLSelectElement;
@@ -194,51 +201,49 @@ export class CampaignFormComponent implements OnInit {
   }
 
   submit() {
-    if (!this.campaignForm || this.campaignForm.invalid) {
-      this.toastr.error('Please fill required fields');
-      return;
-    }
-    if (!this.workspaceId) {
-      this.toastr.error('No workspace selected');
-      return;
-    }
-
-    const { templateId, ...rest } = this.campaignForm.value; // remove templateId before send
-    const payload: Partial<Campaign> = {
-      ...rest,
-      workspaceId: this.workspaceId
-    };
-
-    console.log('Payload being sent:', payload);
-
-    this.loading = true;
-
-    if (this.isEdit && this.campaignId) {
-      this.campaignService.updateCampaign(this.campaignId, payload).subscribe({
-        next: () => {
-          this.toastr.success('Campaign updated');
-          this.router.navigate(['/campaigns']);
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.toastr.error(err?.error?.message || 'Failed to update campaign');
-          this.loading = false;
-        }
-      });
-    } else {
-      this.campaignService.createCampaign(payload).subscribe({
-        next: () => {
-          this.toastr.success('Campaign created');
-          this.router.navigate(['/campaigns']);
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.toastr.error(err?.error?.message || 'Failed to create campaign');
-          this.loading = false;
-        }
-      });
-    }
+  if (!this.campaignForm || this.campaignForm.invalid) {
+    this.toastr.error('Please fill required fields');
+    return;
   }
+  if (!this.workspaceId) {
+    this.toastr.error('No workspace selected');
+    return;
+  }
+
+  const { templateId, ...rest } = this.campaignForm.value;
+  const payload: Partial<Campaign> = { ...rest, workspaceId: this.workspaceId };
+
+  // Ensure launchedAt is ISO string if exists
+  if (payload.launchedAt) payload.launchedAt = new Date(payload.launchedAt).toISOString();
+
+  this.loading = true;
+
+  if (this.isEdit && this.campaignId) {
+    this.campaignService.updateCampaign(this.campaignId, payload).subscribe({
+      next: () => {
+        this.toastr.success('Campaign updated');
+        this.router.navigate(['/campaigns']);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastr.error(err?.error?.message || 'Failed to update campaign');
+        this.loading = false;
+      }
+    });
+  } else {
+    this.campaignService.createCampaign(payload).subscribe({
+      next: () => {
+        this.toastr.success('Campaign created');
+        this.router.navigate(['/campaigns']);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastr.error(err?.error?.message || 'Failed to create campaign');
+        this.loading = false;
+      }
+    });
+  }
+}
 }

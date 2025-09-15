@@ -51,17 +51,38 @@ export class CampaignService {
       .pipe(catchError(err => throwError(() => err)));
   }
 
-  createCampaign(data: Partial<Campaign>): Observable<Campaign> {
-    const workspaceId = data.workspaceId || this.authService.getSelectedWorkspaceId();
-    if (!workspaceId) return throwError(() => new Error('No workspace selected'));
-    return this.http.post<Campaign>(`${this.baseUrl}/create`, { ...data, workspaceId }, { headers: this.getHeaders() })
-      .pipe(catchError(err => throwError(() => err)));
+createCampaign(data: Partial<Campaign>): Observable<Campaign> {
+  const workspaceId = data.workspaceId || this.authService.getSelectedWorkspaceId();
+  if (!workspaceId) return throwError(() => new Error('No workspace selected'));
+
+  const payload = { ...data };
+
+  // Convert launchedAt string to Date string ISO if needed
+  if (payload.launchedAt && typeof payload.launchedAt !== 'string') {
+    payload.launchedAt = new Date(payload.launchedAt).toISOString();
   }
 
-  updateCampaign(id: string, data: Partial<Campaign>): Observable<Campaign> {
-    return this.http.patch<Campaign>(`${this.baseUrl}/${id}`, data, { headers: this.getHeaders() })
-      .pipe(catchError(err => throwError(() => err)));
+  return this.http
+    .post<Campaign>(`${this.baseUrl}/create`, { ...payload, workspaceId }, { headers: this.getHeaders() })
+    .pipe(catchError(err => throwError(() => err)));
+}
+
+updateCampaign(id: string, data: Partial<Campaign>): Observable<Campaign> {
+  const payload = { ...data };
+
+  // Convert launchedAt string to Date string ISO if needed
+  if (payload.launchedAt && typeof payload.launchedAt !== 'string') {
+    payload.launchedAt = new Date(payload.launchedAt).toISOString();
   }
+
+  return this.http
+    .patch<Campaign>(`${this.baseUrl}/${id}`, payload, { headers: this.getHeaders() })
+    .pipe(catchError(err => throwError(() => err)));
+}
+
+
+
+  
 
   deleteCampaign(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`, { headers: this.getHeaders() })
