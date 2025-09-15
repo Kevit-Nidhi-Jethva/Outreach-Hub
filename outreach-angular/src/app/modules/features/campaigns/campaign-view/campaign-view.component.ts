@@ -1,40 +1,61 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CampaignService, Campaign } from '../services/campaign.service';
 import { ToastrService } from 'ngx-toastr';
-import { CampaignService } from '../services/campaign.service';
 
 @Component({
-  selector: 'app-campaigns-view',
+  selector: 'app-campaign-view',
   templateUrl: './campaign-view.component.html',
   styleUrls: ['./campaign-view.component.scss']
 })
-export class CampaignsViewComponent implements OnInit {
-  campaign: any;
-  campaignId!: string;
-  loading = true;
+export class CampaignViewComponent implements OnInit {
+  campaignId: string | null = null;
+  campaign: Campaign | null = null;
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private campaignService: CampaignService,
     private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
-    this.campaignId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadCampaign();
+    this.campaignId = this.route.snapshot.paramMap.get('id');
+    if (!this.campaignId) {
+      this.toastr.error('Invalid campaign ID');
+      this.router.navigate(['/campaigns']);
+      return;
+    }
+    this.fetchCampaign(this.campaignId);
   }
 
-  loadCampaign() {
+  fetchCampaign(id: string) {
     this.loading = true;
-    this.campaignService.getCampaignById(this.campaignId).subscribe({
+    this.campaignService.getCampaignById(id).subscribe({
       next: (res) => {
         this.campaign = res;
         this.loading = false;
       },
-      error: () => {
-        this.toastr.error('Failed to load campaign');
+      error: (err) => {
+        console.error(err);
+        this.toastr.error(err?.error?.message || 'Failed to load campaign');
+        this.router.navigate(['/campaigns']);
         this.loading = false;
       }
     });
+  }
+
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'Draft': return 'badge bg-secondary';
+      case 'Running': return 'badge bg-primary';
+      case 'Completed': return 'badge bg-success';
+      default: return 'badge bg-light';
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/campaigns']);
   }
 }

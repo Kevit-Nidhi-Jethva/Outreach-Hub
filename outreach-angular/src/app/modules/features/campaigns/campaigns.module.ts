@@ -5,8 +5,9 @@ import { CampaignsRoutingModule } from './campaigns-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CampaignListComponent } from './campaign-list/campaign-list.component';
-import { CampaignsViewComponent } from './campaign-view/campaign-view.component';
+import { CampaignViewComponent } from './campaign-view/campaign-view.component';
 import { CampaignFormComponent } from './campaign-form/campaign-form.component';
+
 
 // Angular Material modules
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,10 +19,16 @@ import { MatOptionModule } from '@angular/material/core';
 import { ToastrModule } from 'ngx-toastr';
 
 
+// PrimeNG
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { BadgeModule } from 'primeng/badge';
+
+
 @NgModule({
   declarations: [
     CampaignListComponent,
-    CampaignsViewComponent,
+    CampaignViewComponent,
     CampaignFormComponent
   ],
   imports: [
@@ -35,7 +42,10 @@ import { ToastrModule } from 'ngx-toastr';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    ToastrModule
+    ToastrModule,
+    TableModule,
+    ButtonModule,
+    BadgeModule
   ]
 })
 export class CampaignsModule { }

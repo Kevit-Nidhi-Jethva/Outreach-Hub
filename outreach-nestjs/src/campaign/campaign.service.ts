@@ -23,7 +23,9 @@ export class CampaignService {
   private getWorkspaceRole(user: any, workspaceId: string) {
     if (user?.isAdmin) return { role: 'Admin' };
     return user?.workspaces?.find(
-      (w) => w?.workspaceId?.toString() === workspaceId.toString(),
+      (w) =>
+        w?.workspaceId?.toString() === workspaceId.toString() ||
+        w?._id?.toString() === workspaceId.toString()
     );
   }
 
@@ -31,12 +33,17 @@ export class CampaignService {
     return new Types.ObjectId(user.id || user._id);
   }
 
+  // ✅ Permission helper
+  private ensureEditorOrAdmin(workspaceRole: any) {
+    if (!workspaceRole || (workspaceRole.role !== 'Editor' && workspaceRole.role !== 'Admin')) {
+      throw new ForbiddenException('Only editors or admins can perform this action');
+    }
+  }
+
   // CREATE CAMPAIGN
   async create(dto: CreateCampaignDto, user: any): Promise<Campaign> {
     const workspaceRole = this.getWorkspaceRole(user, dto.workspaceId);
-    if (!workspaceRole) throw new ForbiddenException('Unauthorized');
-    if (workspaceRole.role !== 'Editor')
-      throw new ForbiddenException('Only editors can create campaigns');
+    this.ensureEditorOrAdmin(workspaceRole);
 
     const created = new this.campaignModel({
       name: dto.name,
@@ -49,7 +56,7 @@ export class CampaignService {
         imageUrl: dto.message.imageUrl || undefined,
       },
       workspaceId: new Types.ObjectId(dto.workspaceId),
-      createdBy: new Types.ObjectId(user.id || user._id),
+      createdBy: this.getUserId(user),
     });
 
     return created.save();
@@ -57,7 +64,7 @@ export class CampaignService {
 
   // GET MY CAMPAIGNS
   async findMine(user: any): Promise<Campaign[]> {
-    const userId = new Types.ObjectId(user.id || user._id);
+    const userId = this.getUserId(user);
     return this.campaignModel
       .find({ createdBy: userId })
       .sort({ createdAt: -1 })
@@ -91,56 +98,54 @@ export class CampaignService {
     return campaign;
   }
 
-async update(
-  id: string,
-  dto: UpdateCampaignDto,
-  user: any,
-): Promise<Campaign> {
-  if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid ID');
+  // UPDATE CAMPAIGN
+  async update(
+    id: string,
+    dto: UpdateCampaignDto,
+    user: any,
+  ): Promise<Campaign> {
+    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Invalid ID');
 
-  const campaign = await this.campaignModel.findById(id);
-  if (!campaign) throw new NotFoundException('Campaign not found');
+    const campaign = await this.campaignModel.findById(id);
+    if (!campaign) throw new NotFoundException('Campaign not found');
 
-  const workspaceRole = this.getWorkspaceRole(
-    user,
-    campaign.workspaceId.toString(),
-  );
-  if (!workspaceRole || workspaceRole.role !== 'Editor')
-    throw new ForbiddenException('Only editors can update campaigns');
+    const workspaceRole = this.getWorkspaceRole(
+      user,
+      campaign.workspaceId.toString(),
+    );
+    this.ensureEditorOrAdmin(workspaceRole);
 
-  if (campaign.status !== 'Draft')
-    throw new ForbiddenException('Only Draft campaigns can be updated');
+    if (campaign.status !== 'Draft')
+      throw new ForbiddenException('Only Draft campaigns can be updated');
 
-  // Create a new object and map types manually
-  const updateObj: Partial<Campaign> = {};
+    const updateObj: Partial<Campaign> = {};
 
-  if (dto.name !== undefined) updateObj.name = dto.name;
-  if (dto.description !== undefined) updateObj.description = dto.description;
-  if (dto.status !== undefined) updateObj.status = dto.status;
-  if (dto.selectedTags !== undefined) updateObj.selectedTags = dto.selectedTags;
-  if (dto.workspaceId !== undefined) updateObj.workspaceId = new Types.ObjectId(dto.workspaceId);
+    if (dto.name !== undefined) updateObj.name = dto.name;
+    if (dto.description !== undefined) updateObj.description = dto.description;
+    if (dto.status !== undefined) updateObj.status = dto.status;
+    if (dto.selectedTags !== undefined) updateObj.selectedTags = dto.selectedTags;
+    if (dto.workspaceId !== undefined) updateObj.workspaceId = new Types.ObjectId(dto.workspaceId);
 
-  if (dto.launchedAt !== undefined) updateObj.launchedAt = new Date(dto.launchedAt);
+    if (dto.launchedAt !== undefined) updateObj.launchedAt = new Date(dto.launchedAt);
 
-  if (dto.message !== undefined) {
-    updateObj.message = {
-      type: dto.message.type,
-      text: dto.message.text,
-      imageUrl: dto.message.imageUrl || undefined,
-    };
+    if (dto.message !== undefined) {
+      updateObj.message = {
+        type: dto.message.type,
+        text: dto.message.text,
+        imageUrl: dto.message.imageUrl || undefined,
+      };
+    }
+
+    const updated = await this.campaignModel.findByIdAndUpdate(
+      id,
+      { $set: updateObj },
+      { new: true, runValidators: true },
+    );
+
+    if (!updated) throw new NotFoundException('Campaign not found after update');
+
+    return updated as Campaign;
   }
-
-  const updated = await this.campaignModel.findByIdAndUpdate(
-    id,
-    { $set: updateObj },
-    { new: true, runValidators: true },
-  );
-
-  if (!updated) throw new NotFoundException('Campaign not found after update');
-
-  return updated as Campaign;
-}
-
 
   // DELETE CAMPAIGN
   async remove(id: string, user: any): Promise<{ message: string }> {
@@ -153,8 +158,7 @@ async update(
       user,
       campaign.workspaceId.toString(),
     );
-    if (!workspaceRole || workspaceRole.role !== 'Editor')
-      throw new ForbiddenException('Only editors can delete campaigns');
+    this.ensureEditorOrAdmin(workspaceRole);
 
     await campaign.deleteOne();
     return { message: 'Campaign deleted successfully' };
@@ -171,10 +175,8 @@ async update(
       user,
       campaign.workspaceId.toString(),
     );
-    if (!workspaceRole || workspaceRole.role !== 'Editor')
-      throw new ForbiddenException('Only editors can launch campaigns');
+    this.ensureEditorOrAdmin(workspaceRole);
 
-    // Fetch contacts matching tags (if no tags, get all in workspace)
     const contactQuery: any = { workspaceId: campaign.workspaceId };
     if (Array.isArray(campaign.selectedTags) && campaign.selectedTags.length) {
       contactQuery.tags = { $in: campaign.selectedTags };
@@ -182,7 +184,6 @@ async update(
 
     const contacts = await this.contactModel.find(contactQuery).exec();
 
-    // Prepare per-contact messages
     const messagesToSave: CampaignSentMessageSubdoc[] = contacts.map((c) => ({
       contactId: new Types.ObjectId(c._id as string),
       contactSnapshot: {
@@ -201,7 +202,6 @@ async update(
     campaign.launchedAt = new Date();
     await campaign.save();
 
-    // Simulate async sending (non-blocking)
     (async () => {
       try {
         const runningCampaign = await this.campaignModel.findById(campaign._id);
@@ -234,10 +234,8 @@ async update(
         const fresh = await this.campaignModel.findById(campaign._id).lean();
         if (!fresh) return;
 
-        const sentCount = (fresh.messages || []).filter((m) => m.status === 'sent')
-          .length;
-        const failedCount = (fresh.messages || []).filter((m) => m.status === 'failed')
-          .length;
+        const sentCount = (fresh.messages || []).filter((m) => m.status === 'sent').length;
+        const failedCount = (fresh.messages || []).filter((m) => m.status === 'failed').length;
 
         await this.campaignModel.findByIdAndUpdate(campaign._id, { status: 'Completed' });
         this.logger.log(
@@ -264,8 +262,7 @@ async update(
       user,
       campaign.workspaceId.toString(),
     );
-    if (!workspaceRole || workspaceRole.role !== 'Editor')
-      throw new ForbiddenException('Only editors can copy campaigns');
+    this.ensureEditorOrAdmin(workspaceRole);
 
     const { _id, createdAt, updatedAt, messages, ...rest } = campaign.toObject();
 

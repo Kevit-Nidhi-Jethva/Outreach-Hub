@@ -211,7 +211,7 @@ export class CampaignFormComponent implements OnInit {
   }
 
   const { templateId, ...rest } = this.campaignForm.value;
-  const payload: Partial<Campaign> = { ...rest, workspaceId: this.workspaceId };
+  const payload: Partial<Campaign> = this.isEdit ? rest : { ...rest, workspaceId: this.workspaceId };
 
   // Ensure launchedAt is ISO string if exists
   if (payload.launchedAt) payload.launchedAt = new Date(payload.launchedAt).toISOString();

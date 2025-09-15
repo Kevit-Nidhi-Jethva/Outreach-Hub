@@ -1,15 +1,79 @@
-<div class="campaign-view" *ngIf="!loading && campaign">
-  <h2>{{ campaign.name }}</h2>
-  <p><strong>Description:</strong> {{ campaign.description }}</p>
-  <p><strong>Message Type:</strong> {{ campaign.messageType }}</p>
-  <p><strong>Message Content:</strong> {{ campaign.messageContent }}</p>
-
-  <div *ngIf="campaign.messageType === 'Text-Image' && campaign.messageImage">
-    <p><strong>Message Image:</strong></p>
-    <img [src]="campaign.messageImage" alt="Campaign Image" />
+<div class="container my-4" *ngIf="campaign; else loadingTpl">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Campaign Details</h2>
+    <button class="btn btn-outline-secondary" (click)="goBack()">
+      <i class="pi pi-arrow-left"></i> Back
+    </button>
   </div>
 
-  <p><strong>Status:</strong> {{ campaign.status || 'Draft' }}</p>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4 class="card-title">{{ campaign.name }}</h4>
+      <p class="card-text">{{ campaign.description || 'No description provided.' }}</p>
+      <div class="mb-2">
+        <span class="me-2">Status:</span>
+        <span [ngClass]="getStatusBadgeClass(campaign.status || '')">{{ campaign.status }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="me-2">Tags:</span>
+        <ng-container *ngIf="campaign.selectedTags && campaign.selectedTags.length > 0; else noTags">
+          <span *ngFor="let tag of campaign.selectedTags" class="badge bg-info text-dark me-1">{{ tag }}</span>
+        </ng-container>
+        <ng-template #noTags><span class="text-muted">No tags selected</span></ng-template>
+      </div>
+      <div class="mb-2">
+        <span class="me-2">Launched At:</span>
+        <span>{{ campaign.launchedAt ? (campaign.launchedAt | date:'medium') : 'Not launched yet' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5>Message Preview</h5>
+      <p><strong>Type:</strong> {{ campaign.message?.type || '-' }}</p>
+      <p><strong>Text:</strong> {{ campaign.message?.text || '-' }}</p>
+      <div *ngIf="campaign.message?.imageUrl">
+        <strong>Image:</strong>
+        <img [src]="campaign.message.imageUrl" alt="Message Image" class="img-fluid rounded mt-2" style="max-height:200px;">
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm" *ngIf="campaign.messages && campaign.messages.length > 0">
+    <div class="card-body">
+      <h5>Sent Messages</h5>
+      <p-table [value]="campaign.messages" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Contact ID</th>
+            <th>Message Content</th>
+            <th>Status</th>
+            <th>Sent At</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-msg>
+          <tr>
+            <td>{{ msg.contactId || '-' }}</td>
+            <td>{{ msg.messageContent || '-' }}</td>
+            <td>
+              <span [ngClass]="{
+                'badge bg-secondary': msg.status === 'pending',
+                'badge bg-success': msg.status === 'sent',
+                'badge bg-danger': msg.status === 'failed'
+              }">{{ msg.status || '-' }}</span>
+            </td>
+            <td>{{ msg.sentAt ? (msg.sentAt | date:'short') : '-' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </div>
 
-<p *ngIf="!loading && !campaign">Campaign not found.</p>
+<ng-template #loadingTpl>
+  <div class="text-center my-5">
+    <i class="pi pi-spin pi-spinner" style="font-size: 3rem;"></i>
+    <p>Loading campaign details...</p>
+  </div>
+</ng-template>

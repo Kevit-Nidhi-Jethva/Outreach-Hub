@@ -26,6 +26,7 @@ import {ToastrModule} from "ngx-toastr";
     LayoutComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,

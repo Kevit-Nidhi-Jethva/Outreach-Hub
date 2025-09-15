@@ -1,41 +1,42 @@
-<div class="campaigns-list container mt-3">
-  <div class="d-flex mb-3 align-items-center">
-    <h3 class="m-0">Campaigns</h3>
-    <div class="ms-auto">
-      <button class="btn btn-success" (click)="newCampaign()">+ New Campaign</button>
-    </div>
+<div class="campaign-list-container p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Campaigns</h2>
+    <button class="btn btn-primary" (click)="createCampaign()">+ Create Campaign</button>
   </div>
 
-  <div *ngIf="loading" class="text-center py-4">
-    <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
-  </div>
-
-  <table *ngIf="!loading && campaigns.length > 0" class="table table-striped">
-    <thead>
+  <p-table [value]="campaigns" [paginator]="true" [rows]="10" [loading]="loading" [responsiveLayout]="'scroll'" [showCurrentPageReport]="true">
+    <ng-template pTemplate="header">
       <tr>
         <th>Name</th>
-        <th>Message Type</th>
+        <th>Description</th>
+        <th>Tags</th>
         <th>Status</th>
-        <th>Created At</th>
+        <th>Launched At</th>
         <th>Actions</th>
       </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of campaigns">
-        <td>{{ c.name }}</td>
-        <td>{{ c.message?.type || '-' }}</td>
-        <td>{{ c.status || 'Draft' }}</td>
-        <td>{{ c.createdAt | date:'short' }}</td>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-campaign>
+      <tr>
+        <td>{{ campaign.name }}</td>
+        <td>{{ campaign.description || '-' }}</td>
+        <td>{{ campaign.selectedTags.join(', ') || '-' }}</td>
+        <td><span [class]="getStatusBadgeClass(campaign.status || '')">{{ campaign.status || '-' }}</span></td>
+        <td>{{ campaign.launchedAt ? (campaign.launchedAt | date:'short') : '-' }}</td>
         <td>
-          <button class="btn btn-sm btn-outline-primary me-1" (click)="viewCampaign(c._id)">View</button>
-          <button class="btn btn-sm btn-outline-secondary me-1" (click)="editCampaign(c._id)">Edit</button>
-          <button class="btn btn-sm btn-outline-danger" (click)="deleteCampaign(c._id)">Delete</button>
+          <button pButton type="button" class="btn btn-sm btn-info me-1" (click)="viewCampaign(campaign._id!)">View</button>
+          <button pButton type="button" class="btn btn-sm btn-warning me-1" (click)="editCampaign(campaign._id!)">Edit</button>
+          <button pButton type="button" class="btn btn-sm btn-success me-1" *ngIf="campaign.status !== 'Running'" (click)="launchCampaign(campaign._id!)">Launch</button>
+          <button pButton type="button" class="btn btn-sm btn-secondary me-1" (click)="copyCampaign(campaign._id!)">Copy</button>
+          <button pButton type="button" class="btn btn-sm btn-danger" (click)="deleteCampaign(campaign._id!)">Delete</button>
         </td>
       </tr>
-    </tbody>
-  </table>
+    </ng-template>
 
-  <div *ngIf="!loading && campaigns.length === 0" class="text-muted">
-    No campaigns found for this workspace.
-  </div>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="text-center">No campaigns found</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
