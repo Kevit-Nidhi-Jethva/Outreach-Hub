@@ -84,7 +84,7 @@ export class TemplatesComponent implements OnInit {
   }
 
   deleteTemplate(template: Template) {
-    this.templateService.deleteTemplate(template.id).subscribe(() => this.loadTemplates());
+    this.templateService.deleteTemplate(template._id).subscribe(() => this.loadTemplates());
   }
 
   closeModal() {

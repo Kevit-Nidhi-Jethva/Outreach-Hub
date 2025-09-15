@@ -1,49 +1,74 @@
-<div class="campaign-form-container" [formGroup]="campaignForm">
-  <h2>{{ isEdit ? 'Edit Campaign' : 'New Campaign' }}</h2>
+<div *ngIf="campaignForm" class="campaign-form-container">
+  <h2 class="mb-3">{{ isEdit ? 'Edit Campaign' : 'Create Campaign' }}</h2>
 
-  <div class="form-group">
-    <label>Name <span class="required">*</span></label>
-    <input type="text" formControlName="name" placeholder="Campaign name" />
-  </div>
-
-  <div class="form-group">
-    <label>Description</label>
-    <textarea formControlName="description" placeholder="Description"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label>Tags <span class="required">*</span></label>
-    <div class="tags-container">
-      <label *ngFor="let tag of workspaceTags">
-        <input type="checkbox" [value]="tag" (change)="onTagToggle($event)" [checked]="isTagSelected(tag)" />
-        {{ tag }}
-      </label>
+  <form [formGroup]="campaignForm" (ngSubmit)="submit()">
+    <!-- Name -->
+    <div class="form-group mb-2">
+      <label class="form-label">Name <span class="text-danger">*</span></label>
+      <input class="form-control" type="text" formControlName="name" placeholder="Campaign name" />
     </div>
-  </div>
 
-  <div class="form-group">
-    <label>Template</label>
-    <select formControlName="templateId" (change)="onTemplateChange($event)">
-      <option value="">Select Template</option>
-      <option *ngFor="let t of templates" [value]="t.id">{{ t.name }}</option>
-    </select>
-  </div>
+    <!-- Description -->
+    <div class="form-group mb-2">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" formControlName="description" placeholder="Optional description"></textarea>
+    </div>
 
-  <div formGroupName="message" class="form-group">
-    <label>Message Type</label>
-    <select formControlName="type">
-      <option value="Text">Text</option>
-      <option value="Text-Image">Text-Image</option>
-    </select>
+    <!-- Tags -->
+    <div class="form-group mb-2">
+      <label class="form-label">Tags (contacts tags)</label>
+      <div class="tags-container">
+        <div *ngIf="workspaceTags.length === 0" class="text-muted small">
+          No tags found in workspace contacts
+        </div>
+        <div *ngFor="let tag of workspaceTags" class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="'tag_' + tag"
+            [checked]="isTagSelected(tag)"
+            (change)="toggleTag(tag, $event)"
+          />
+          <label class="form-check-label" [for]="'tag_' + tag">{{ tag }}</label>
+        </div>
+      </div>
+    </div>
 
-    <label>Text</label>
-    <textarea formControlName="text" placeholder="Message text"></textarea>
+    <!-- Template -->
+    <div class="form-group">
+      <label>Template</label>
+      <select formControlName="templateId" (change)="onTemplateChange($event)">
+        <option value="">Select Template</option>
+        <option *ngFor="let t of templates" [value]="t._id">{{ t.name }}</option>
+      </select>
+    </div>
 
-    <label *ngIf="campaignForm.get('message.type')?.value === 'Text-Image'">Image URL</label>
-    <input *ngIf="campaignForm.get('message.type')?.value === 'Text-Image'" type="text" formControlName="imageUrl" placeholder="Image URL" />
-  </div>
+    <!-- Message -->
+    <div formGroupName="message" class="border p-3 rounded mb-3">
+      <div class="mb-2">
+        <label class="form-label">Message Type</label>
+        <select class="form-select" formControlName="type">
+          <option value="Text">Text</option>
+          <option value="Text-Image">Text-Image</option>
+        </select>
+      </div>
 
-  <button type="button" (click)="submit()" [disabled]="loading">
-    {{ isEdit ? 'Update' : 'Create' }} Campaign
-  </button>
+      <div class="mb-2">
+        <label class="form-label">Message Text <span class="text-danger">*</span></label>
+        <textarea class="form-control" formControlName="text" rows="4" placeholder="Message content"></textarea>
+      </div>
+
+      <div *ngIf="campaignForm.get('message.type')?.value === 'Text-Image'" class="mb-2">
+        <label class="form-label">Image URL</label>
+        <input class="form-control" type="text" formControlName="imageUrl" placeholder="Image URL (optional)" />
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="d-grid">
+      <button class="btn btn-primary" [disabled]="loading">
+        {{ isEdit ? 'Update Campaign' : 'Create Campaign' }}
+      </button>
+    </div>
+  </form>
 </div>

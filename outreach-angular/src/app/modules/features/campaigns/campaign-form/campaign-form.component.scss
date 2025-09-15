@@ -1,66 +1,28 @@
 .campaign-form-container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #fff;
+  max-width: 900px;
+  margin: 22px auto;
+  padding: 18px;
+  background: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 
   h2 {
-    text-align: center;
-    margin-bottom: 20px;
+    text-align: left;
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .form-group {
-    margin-bottom: 15px;
-
-    label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 5px;
-
-      .required {
-        color: red;
-      }
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-
-      label {
-        margin-right: 15px;
-        margin-bottom: 5px;
-        cursor: pointer;
-
-        input {
-          margin-right: 5px;
-        }
-      }
-    }
+    margin-bottom: 12px;
   }
 
-  button {
-    width: 100%;
-    padding: 10px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-
-    &:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
+  .border {
+    background: #fafafa;
   }
 }

@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { CampaignsRoutingModule } from './campaigns-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { CampaignsListComponent } from './campaign-list/campaign-list.component';
+import { CampaignListComponent } from './campaign-list/campaign-list.component';
 import { CampaignsViewComponent } from './campaign-view/campaign-view.component';
-import { CampaignsFormComponent } from './campaign-form/campaign-form.component';
+import { CampaignFormComponent } from './campaign-form/campaign-form.component';
 
 // Angular Material modules
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,9 +20,9 @@ import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
-    CampaignsListComponent,
+    CampaignListComponent,
     CampaignsViewComponent,
-    CampaignsFormComponent
+    CampaignFormComponent
   ],
   imports: [
     CommonModule,
