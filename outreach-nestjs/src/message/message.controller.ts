@@ -61,13 +61,23 @@ export class MessageController {
   }
 
   // Get all templates for a workspace
+  // @Get('workspace/:workspaceId/templates')
+  // async getWorkspaceTemplates(@Param('workspaceId') workspaceId: string, @Req() req) {
+  //   // optional: check workspace access
+  //   const hasAccess = req.user.workspaces?.some(w => w.workspaceId.toString() === workspaceId);
+  //   if (!hasAccess) throw new ForbiddenException('Unauthorized');
+
+  //   return await this.messageService.findByWorkspace(workspaceId);
+  // }
+
   @Get('workspace/:workspaceId/templates')
   async getWorkspaceTemplates(@Param('workspaceId') workspaceId: string, @Req() req) {
-    // optional: check workspace access
-    const hasAccess = req.user.workspaces?.some(w => w.workspaceId.toString() === workspaceId);
-    if (!hasAccess) throw new ForbiddenException('Unauthorized');
+  const hasAccess = req.user.workspaces?.some(
+    w => w.workspaceId.toString() === workspaceId
+  );
+  if (!hasAccess) throw new ForbiddenException('Unauthorized');
+  return await this.messageService.findByWorkspace(workspaceId);
+}
 
-    return await this.messageService.findByWorkspace(workspaceId);
-  }
 
 }
