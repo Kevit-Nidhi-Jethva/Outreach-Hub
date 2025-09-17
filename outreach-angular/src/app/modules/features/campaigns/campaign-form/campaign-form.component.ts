@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { CampaignService, Campaign } from '../services/campaign.service';
 import { TemplateService } from '../../templates/services/template.service';
 import { ContactsService } from '../../contacts/services/contacts.service';
@@ -14,8 +14,11 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class CampaignFormComponent implements OnInit {
   campaignForm!: FormGroup;
+  tagInput = new FormControl('');
   templates: any[] = [];
   workspaceTags: string[] = [];
+  tagCounts: { [tag: string]: number } = {};
+  selectedTagsWithCounts: { tag: string, count: number }[] = [];
   loading = false;
   isEdit = false;
   campaignId: string | null = null;
@@ -109,13 +112,16 @@ export class CampaignFormComponent implements OnInit {
     if (!this.workspaceId) return;
     this.contactsService.getWorkspaceContacts(this.workspaceId).subscribe({
       next: (contacts: any[] = []) => {
-        const set = new Set<string>();
+        const tagCountMap: { [tag: string]: number } = {};
         contacts.forEach(c => {
           if (Array.isArray(c.tags)) {
-            c.tags.forEach((t: string) => set.add(t));
+            c.tags.forEach((t: string) => {
+              tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+            });
           }
         });
-        this.workspaceTags = Array.from(set).sort();
+        this.workspaceTags = Object.keys(tagCountMap).sort();
+        this.tagCounts = tagCountMap;
       },
       error: (err) => {
         console.error('Error fetching tags', err);
@@ -140,6 +146,12 @@ export class CampaignFormComponent implements OnInit {
           imageUrl: res.message?.imageUrl || ''
         }
       });
+
+      // Update selectedTagsWithCounts based on loaded campaign tags
+      this.selectedTagsWithCounts = (res.selectedTags || []).map(tag => ({
+        tag,
+        count: this.tagCounts[tag] || 0
+      }));
 
       // Convert launchedAt from string to Date for form if needed
       if (res.launchedAt) {
@@ -180,23 +192,28 @@ export class CampaignFormComponent implements OnInit {
     }
   }
 
-  isTagSelected(tag: string) {
-    const arr: string[] = this.campaignForm.get('selectedTags')?.value || [];
-    return arr.includes(tag);
+  addTag(event: any): void {
+    const tag = typeof event === 'string' ? event : event?.originalEvent?.target?.value || event?.value || '';
+    if (!tag || !this.workspaceTags.includes(tag)) return;
+    const selectedTags = this.campaignForm.get('selectedTags')?.value || [];
+    if (selectedTags.includes(tag)) return;
+    this.campaignForm.patchValue({ selectedTags: [...selectedTags, tag] });
+    this.selectedTagsWithCounts.push({ tag, count: this.tagCounts[tag] || 0 });
+    this.tagInput.setValue('');
   }
 
-  toggleTag(tag: string, event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  removeTag(tag: string): void {
     const selectedTags = this.campaignForm.get('selectedTags')?.value || [];
+    this.campaignForm.patchValue({
+      selectedTags: selectedTags.filter((t: string) => t !== tag),
+    });
+    this.selectedTagsWithCounts = this.selectedTagsWithCounts.filter(t => t.tag !== tag);
+  }
 
-    if (checked) {
-      if (!selectedTags.includes(tag)) {
-        this.campaignForm.patchValue({ selectedTags: [...selectedTags, tag] });
-      }
-    } else {
-      this.campaignForm.patchValue({
-        selectedTags: selectedTags.filter((t: string) => t !== tag),
-      });
+  onTagEnter(event: Event): void {
+    const tag = this.tagInput.value?.trim();
+    if (tag) {
+      this.addTag(tag);
     }
   }
 

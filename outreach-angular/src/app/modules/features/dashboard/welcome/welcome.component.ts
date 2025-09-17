@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-welcome',
@@ -8,6 +9,11 @@ import { WorkspaceStateService } from '../../../core/services/workspace-state.se
 })
 export class WelcomeComponent implements OnInit {
   selectedWorkspaceName = '';
+
+  totalCampaigns = 120;
+  totalContacts = 450;
+  totalTemplates = 35;
+  totalSentMessages = 3240;
 
   stats = [
     { title: 'Total Contacts', value: '1,234', icon: 'people' },
@@ -30,6 +36,58 @@ export class WelcomeComponent implements OnInit {
   ];
 
   constructor(private workspaceState: WorkspaceStateService) {}
+
+  // Chart.js data and options for line chart
+  lineChartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+    datasets: [
+      {
+        label: 'Campaigns Sent',
+        data: [10, 20, 15, 25, 30, 28, 35],
+        fill: false,
+        borderColor: '#6b46c1',
+        tension: 0.1
+      }
+    ]
+  };
+
+  lineChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+      }
+    }
+  };
+
+  lineChartLegend = true;
+  lineChartType: 'line' = 'line';
+
+  // Chart.js data and options for bar chart
+  barChartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+    datasets: [
+      {
+        label: 'Contacts Added',
+        data: [5, 15, 10, 20, 25, 22, 30],
+        backgroundColor: '#3182ce'
+      }
+    ]
+  };
+
+  barChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+      }
+    }
+  };
+
+  barChartLegend = true;
+  barChartType: 'bar' = 'bar';
 
   ngOnInit(): void {
     const ws = this.workspaceState.getWorkspaceSync();

@@ -23,6 +23,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { BadgeModule } from 'primeng/badge';
     ToastrModule,
     TableModule,
     ButtonModule,
-    BadgeModule
+    BadgeModule,
+    AutoCompleteModule
   ]
 })
 export class CampaignsModule { }

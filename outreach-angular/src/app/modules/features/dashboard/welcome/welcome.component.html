@@ -1,65 +1,80 @@
-<!-- dashboard.component.html -->
-<div class="dashboard-content">
-  <div class="content-header">
-    <h1 class="page-title">Dashboard</h1>
-    <div class="header-actions">
-      <button class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> New Campaign
-      </button>
+<div class="dashboard-container" style="padding: 2rem; font-family: Arial, sans-serif; background: #f9fafb; min-height: 100vh;">
+
+  <!-- Top Cards -->
+  <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+    <div style="flex: 1; background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem;">
+      <div style="background: #e0d7ff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #6b46c1; font-weight: bold; font-size: 24px;">C</div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{ totalCampaigns }}</div>
+        <div style="color: #718096;">Total Campaigns</div>
+      </div>
+    </div>
+    <div style="flex: 1; background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem;">
+      <div style="background: #d6f6ff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #3182ce; font-weight: bold; font-size: 24px;">O</div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{ totalContacts }}</div>
+        <div style="color: #718096;">Total Contacts</div>
+      </div>
+    </div>
+    <div style="flex: 1; background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem;">
+      <div style="background: #ffe4d6; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #dd6b20; font-weight: bold; font-size: 24px;">T</div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{ totalTemplates }}</div>
+        <div style="color: #718096;">Total Templates</div>
+      </div>
+    </div>
+    <div style="flex: 1; background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem;">
+      <div style="background: #ffe4f0; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #d53f8c; font-weight: bold; font-size: 24px;">S</div>
+      <div>
+        <div style="font-size: 1.5rem; font-weight: 700;">{{ totalSentMessages }}</div>
+        <div style="color: #718096;">Total Sent Messages</div>
+      </div>
     </div>
   </div>
 
-  <!-- Stat Cards -->
-  <div class="stats-grid">
-    <div class="stat-card" *ngFor="let stat of stats">
-      <div class="card-icon"><i class="bi bi-{{ stat.icon }}"></i></div>
-      <div class="card-details">
-        <div class="card-title">{{ stat.title }}</div>
-        <div class="card-value">{{ stat.value }}</div>
+  <!-- Charts Section -->
+  <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 300px;">
+    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 300px; max-width: 500px;">
+        <h3 style="text-align: center; margin-bottom: 1rem;">Campaigns Sent Over Time</h3>
+        <canvas baseChart
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                [legend]="lineChartLegend"
+                [type]="lineChartType">
+        </canvas>
+      </div>
+      <div style="flex: 1; min-width: 300px; max-width: 500px;">
+        <h3 style="text-align: center; margin-bottom: 1rem;">Contacts Added Over Time</h3>
+        <canvas baseChart
+                [data]="barChartData"
+                [options]="barChartOptions"
+                [legend]="barChartLegend"
+                [type]="barChartType">
+        </canvas>
       </div>
     </div>
   </div>
 
-  <!-- Main Sections -->
-  <div class="dashboard-grid">
-    <div class="dashboard-section chart-section">
-      <div class="section-header">
-        <h3>Performance Overview</h3>
-        <span class="section-label">Last 30 Days</span>
-      </div>
-      <div class="chart-container">
-        <!-- Placeholder for a chart -->
-        <img
-          src="https://via.placeholder.com/600x300.png?text=Chart+Placeholder"
-          alt="Performance Chart"
-          class="chart-placeholder"
-        />
-      </div>
-    </div>
-
-    <div class="dashboard-section recent-activity">
-      <div class="section-header">
-        <h3>Recent Activity</h3>
-        <a href="#" class="view-all">View All</a>
-      </div>
-      <ul class="activity-list">
-        <li *ngFor="let activity of recentActivity">
-          <i class="bi bi-{{ activity.icon }}"></i> {{ activity.text }}
-        </li>
-      </ul>
-    </div>
-
-    <div class="dashboard-section user-list">
-      <div class="section-header">
-        <h3>Recent Sign-ups</h3>
-        <a href="#" class="view-all">View All</a>
-      </div>
-      <ul class="user-signup-list">
-        <li *ngFor="let user of recentSignups">
-          <img [src]="user.avatar" alt="User" class="user-avatar" />
-          {{ user.name }}
-        </li>
-      </ul>
-    </div>
+  <!-- Recent Activity Table -->
+  <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Recent Activity</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f7fafc; border-bottom: 1px solid #e2e8f0;">
+          <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Activity</th>
+          <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Icon</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let activity of recentActivity" style="border-bottom: 1px solid #e2e8f0;">
+          <td style="padding: 0.75rem;">{{ activity.text }}</td>
+          <td style="padding: 0.75rem;">
+            <i [class]="activity.icon" style="font-size: 1.2rem;"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
 </div>

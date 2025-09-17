@@ -21,15 +21,22 @@
         <div *ngIf="workspaceTags.length === 0" class="text-muted small">
           No tags found in workspace contacts
         </div>
-        <div *ngFor="let tag of workspaceTags" class="form-check form-check-inline">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            [id]="'tag_' + tag"
-            [checked]="isTagSelected(tag)"
-            (change)="toggleTag(tag, $event)"
-          />
-          <label class="form-check-label" [for]="'tag_' + tag">{{ tag }}</label>
+        <input
+          type="text"
+          class="form-control"
+          [formControl]="tagInput"
+          placeholder="Enter tag and press Enter"
+          (keydown.enter)="onTagEnter($event)"
+          list="tags-list"
+        />
+        <datalist id="tags-list">
+          <option *ngFor="let tag of workspaceTags" [value]="tag">
+        </datalist>
+        <div class="selected-tags mt-2">
+          <span *ngFor="let item of selectedTagsWithCounts" class="badge bg-primary me-2 mb-1">
+            {{ item.tag }} ({{ item.count }} contacts)
+            <button type="button" class="btn-close btn-close-white ms-1" (click)="removeTag(item.tag)" aria-label="Remove"></button>
+          </span>
         </div>
       </div>
     </div>

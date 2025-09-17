@@ -46,7 +46,7 @@
       <p-table [value]="campaign.messages" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
         <ng-template pTemplate="header">
           <tr>
-            <th>Contact ID</th>
+            <th>Contact Name</th>
             <th>Message Content</th>
             <th>Status</th>
             <th>Sent At</th>
@@ -54,7 +54,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-msg>
           <tr>
-            <td>{{ msg.contactId || '-' }}</td>
+            <td>{{ msg.contactName || msg.contactId || '-' }}</td>
             <td>{{ msg.messageContent || '-' }}</td>
             <td>
               <span [ngClass]="{

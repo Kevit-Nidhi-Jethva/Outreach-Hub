@@ -64,6 +64,11 @@ export class ContactsService {
       .pipe(catchError(err => throwError(() => err)));
   }
 
+  getContactById(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${id}`, { headers: this.getHeaders() })
+      .pipe(catchError(err => throwError(() => err)));
+  }
+
   /** Get all unique tags from workspace contacts */
   getTags(): Observable<string[]> {
     return this.getWorkspaceContacts().pipe(
