@@ -63,10 +63,15 @@ export class TemplatesComponent implements OnInit {
   save() {
     if (!this.currentWorkspaceId) return;
 
+    const message: any = { text: this.form.text };
+    if (this.form.type === 'Text-Image') {
+      message.imageUrl = this.form.imageUrl;
+    }
+
     const payload = {
       name: this.form.name,
       type: this.form.type,
-      message: { text: this.form.text, imageUrl: this.form.imageUrl },
+      message,
       workspaceId: this.currentWorkspaceId
     };
 

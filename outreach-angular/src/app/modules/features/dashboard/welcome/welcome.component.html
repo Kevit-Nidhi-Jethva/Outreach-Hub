@@ -32,49 +32,78 @@
     </div>
   </div>
 
+  <!-- Date Range Picker -->
+  <div style="margin-bottom: 1rem; display: flex; justify-content: center; gap: 1rem; align-items: center;">
+    <p-calendar [(ngModel)]="dateRange" selectionMode="range" dateFormat="yy-mm-dd" (onSelect)="onDateRangeChange()" placeholder="Select Date Range"></p-calendar>
+    <button pButton type="button" label="Refresh Data" (click)="loadData()" class="p-button-secondary"></button>
+  </div>
+
   <!-- Charts Section -->
-  <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 300px;">
-    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
-      <div style="flex: 1; min-width: 300px; max-width: 500px;">
-        <h3 style="text-align: center; margin-bottom: 1rem;">Campaigns Sent Over Time</h3>
-        <canvas baseChart
-                [data]="lineChartData"
-                [options]="lineChartOptions"
-                [legend]="lineChartLegend"
-                [type]="lineChartType">
-        </canvas>
-      </div>
-      <div style="flex: 1; min-width: 300px; max-width: 500px;">
-        <h3 style="text-align: center; margin-bottom: 1rem;">Contacts Added Over Time</h3>
-        <canvas baseChart
-                [data]="barChartData"
-                [options]="barChartOptions"
-                [legend]="barChartLegend"
-                [type]="barChartType">
-        </canvas>
-      </div>
+  <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 300px; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 300px; max-width: 400px;">
+      <h3 style="text-align: center; margin-bottom: 1rem;">Campaigns Sent Over Time</h3>
+      <canvas baseChart
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              [type]="lineChartType"
+              style="height: 400px; width:400px;"></canvas>
+    </div>
+    <div style="flex: 1; min-width: 300px; max-width: 400px;">
+      <h3 style="text-align: center; margin-bottom: 1rem;">Templates Created by Type</h3>
+      <canvas baseChart
+              [data]="doughnutChartData"
+              [options]="doughnutChartOptions"
+              [type]="doughnutChartType"
+              style="height: 300px;"></canvas>
+    </div>
+    <div style="flex: 1; min-width: 300px; max-width: 400px;">
+      <h3 style="text-align: center; margin-bottom: 1rem;">Campaign Status</h3>
+      <canvas baseChart
+              [data]="pieChartData"
+              [options]="pieChartOptions"
+              [type]="pieChartType"
+              style="height: 300px;"></canvas>
     </div>
   </div>
 
-  <!-- Recent Activity Table -->
-  <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 2rem;">
-    <h3 style="margin-bottom: 1rem;">Recent Activity</h3>
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr style="background: #f7fafc; border-bottom: 1px solid #e2e8f0;">
-          <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Activity</th>
-          <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Icon</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let activity of recentActivity" style="border-bottom: 1px solid #e2e8f0;">
-          <td style="padding: 0.75rem;">{{ activity.text }}</td>
-          <td style="padding: 0.75rem;">
-            <i [class]="activity.icon" style="font-size: 1.2rem;"></i>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Tables Section -->
+  <div style="margin-top: 2rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 400px; background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <h3 style="margin-bottom: 1rem;">Latest Launched Campaigns</h3>
+      <p-table [value]="latestCampaigns" class="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Launched At</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-campaign>
+          <tr>
+            <td>{{ campaign.name }}</td>
+            <td>{{ campaign.status }}</td>
+            <td>{{ campaign.launchedAt | date:'short' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div style="flex: 1; min-width: 400px; background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <h3 style="margin-bottom: 1rem;">Most Used Tags</h3>
+      <p-table [value]="mostUsedTags" class="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Tag</th>
+            <th>Count</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-tag>
+          <tr>
+            <td>{{ tag.tag }}</td>
+            <td>{{ tag.count }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 
 </div>

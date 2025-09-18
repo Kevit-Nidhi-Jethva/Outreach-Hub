@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, throwError, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private baseUrl = 'http://localhost:3000/users';
+  private baseUrl = 'http://localhost:3000/user';
 
   constructor(private http: HttpClient) {}
 
@@ -20,9 +20,19 @@ export class UsersService {
   }
 
   getAllUsers(): Observable<any> {
-    return this.http.get(this.baseUrl, { headers: this.getHeaders() }).pipe(
+    return this.http.get(`${this.baseUrl}/all`, { headers: this.getHeaders() }).pipe(
       catchError((error) => {
         console.error('Error fetching users:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getUsersByWorkspace(workspaceId: string): Observable<any> {
+    return this.getAllUsers().pipe(
+      map((users: any[]) => users.filter(user => user.workspaces.some((ws: any) => ws.workspaceId === workspaceId))),
+      catchError((error) => {
+        console.error('Error fetching users by workspace:', error);
         return throwError(() => error);
       })
     );

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
@@ -43,6 +43,20 @@ export class CampaignService {
     const workspaceId = this.authService.getSelectedWorkspaceId();
     if (!workspaceId) return throwError(() => new Error('No workspace selected'));
     return this.http.get<Campaign[]>(`${this.baseUrl}/workspace/${workspaceId}`, { headers: this.getHeaders() })
+      .pipe(catchError(err => throwError(() => err)));
+  }
+
+  getCampaignsByDate(startDate?: Date, endDate?: Date): Observable<Campaign[]> {
+    const workspaceId = this.authService.getSelectedWorkspaceId();
+    if (!workspaceId) return throwError(() => new Error('No workspace selected'));
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', startDate.toISOString());
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate.toISOString());
+    }
+    return this.http.get<Campaign[]>(`${this.baseUrl}/workspace/${workspaceId}`, { headers: this.getHeaders(), params })
       .pipe(catchError(err => throwError(() => err)));
   }
 

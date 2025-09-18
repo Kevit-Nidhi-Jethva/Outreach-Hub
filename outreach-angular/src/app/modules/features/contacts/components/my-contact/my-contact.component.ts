@@ -43,7 +43,7 @@ export class MyContactsComponent implements OnInit {
     this.loading = true;
     this.contactsService.getMyContacts().subscribe({
       next: (contacts) => {
-        this.contacts = contacts;
+        this.contacts = contacts.sort((a, b) => a.name.localeCompare(b.name));
         this.loading = false;
       },
       error: (err) => {

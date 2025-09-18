@@ -31,8 +31,8 @@
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h5>Message Preview</h5>
-      <p><strong>Type:</strong> {{ campaign.message?.type || '-' }}</p>
-      <p><strong>Text:</strong> {{ campaign.message?.text || '-' }}</p>
+      <p><strong>Type:</strong> {{ campaign.message.type || '-' }}</p>
+      <p><strong>Text:</strong> {{ campaign.message.text || '-' }}</p>
       <div *ngIf="campaign.message?.imageUrl">
         <strong>Image:</strong>
         <img [src]="campaign.message.imageUrl" alt="Message Image" class="img-fluid rounded mt-2" style="max-height:200px;">

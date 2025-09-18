@@ -19,6 +19,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './modules/core/intersecptors/auth.interceptor.js';
 import { CommonModule } from '@angular/common';
 import {ToastrModule} from "ngx-toastr";
+import { CalendarModule } from 'primeng/calendar';
 
 
 @NgModule({

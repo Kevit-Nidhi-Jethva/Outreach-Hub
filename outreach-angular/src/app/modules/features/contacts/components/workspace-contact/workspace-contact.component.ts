@@ -37,7 +37,7 @@ export class WorkspaceContactsComponent implements OnInit {
     this.loading = true;
     this.contactsService.getWorkspaceContacts().subscribe({
       next: (res: Contact[]) => {
-        this.contacts = Array.isArray(res) ? res : [];
+        this.contacts = Array.isArray(res) ? res.sort((a, b) => a.name.localeCompare(b.name)) : [];
         this.loading = false;
       },
       error: (err) => {

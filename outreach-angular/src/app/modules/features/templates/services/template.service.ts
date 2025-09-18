@@ -72,7 +72,7 @@
 //   }
 // }
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
@@ -116,6 +116,35 @@ export class TemplateService {
     return this.http
       .get<Template[]>(`${this.baseUrl}/workspace/${ws.workspaceId}/templates`, {
         headers: this.getHeaders(),
+      })
+      .pipe(
+        map(templates =>
+          templates.map(t => ({
+            ...t,
+            _id: t._id || (t as any).id // normalize if backend ever returns id
+          }))
+        ),
+        catchError(err => throwError(() => err))
+      );
+  }
+
+  // ✅ Get templates by date range
+  getTemplatesByDate(startDate?: Date, endDate?: Date): Observable<Template[]> {
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (!ws?.workspaceId) return throwError(() => new Error('No workspace selected'));
+
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', startDate.toISOString());
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate.toISOString());
+    }
+
+    return this.http
+      .get<Template[]>(`${this.baseUrl}/workspace/${ws.workspaceId}/templates`, {
+        headers: this.getHeaders(),
+        params
       })
       .pipe(
         map(templates =>
