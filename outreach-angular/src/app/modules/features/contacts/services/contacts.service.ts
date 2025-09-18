@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ContactsService {
   private baseUrl = 'http://localhost:3000/contacts';
 
-  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService) {}
+  constructor(private http: HttpClient, private workspaceState: WorkspaceStateService, private authService: AuthService) {}
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -30,6 +31,21 @@ export class ContactsService {
     const ws = workspaceId || this.ensureWorkspace().workspaceId;
     return this.http
       .get(`${this.baseUrl}/workspace/${ws}`, { headers: this.getHeaders() })
+      .pipe(catchError(err => throwError(() => err)));
+  }
+
+  /** ✅ All contacts in a workspace filtered by date range */
+  getWorkspaceContactsByDate(startDate?: Date, endDate?: Date, workspaceId?: string): Observable<any> {
+    const ws = workspaceId || this.ensureWorkspace().workspaceId;
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', startDate.toISOString());
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate.toISOString());
+    }
+    return this.http
+      .get(`${this.baseUrl}/workspace/${ws}`, { headers: this.getHeaders(), params })
       .pipe(catchError(err => throwError(() => err)));
   }
 
@@ -62,4 +78,62 @@ export class ContactsService {
     return this.http.delete(`${this.baseUrl}/${id}`, { headers: this.getHeaders() })
       .pipe(catchError(err => throwError(() => err)));
   }
+
+  getContactById(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${id}`, { headers: this.getHeaders() })
+      .pipe(catchError(err => throwError(() => err)));
+  }
+
+  /** Get all unique tags from workspace contacts */
+  getTags(): Observable<string[]> {
+    return this.getWorkspaceContacts().pipe(
+      // Extract tags from contacts and flatten unique tags
+      map(contacts => {
+        const tagsSet = new Set<string>();
+        contacts.forEach((contact: any) => {
+          if (Array.isArray(contact.tags)) {
+            contact.tags.forEach((tag: string) => tagsSet.add(tag));
+          }
+        });
+        return Array.from(tagsSet);
+      }),
+      catchError(err => throwError(() => err))
+    );
+  }
+
+  /** Get tag counts from workspace contacts */
+  getTagCounts(): Observable<{ tag: string; count: number }[]> {
+    return this.getWorkspaceContacts().pipe(
+      map(contacts => {
+        const tagCounts: { [key: string]: number } = {};
+        contacts.forEach((contact: any) => {
+          if (Array.isArray(contact.tags)) {
+            contact.tags.forEach((tag: string) => {
+              tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+          }
+        });
+        return Object.entries(tagCounts)
+          .map(([tag, count]) => ({ tag, count }))
+          .sort((a, b) => b.count - a.count);
+      }),
+      catchError(err => throwError(() => err))
+    );
+  }
+
+  /** Get all templates - placeholder, adjust as needed */
+  getTemplates(): Observable<string[]> {
+    // Assuming templates are fetched from a different endpoint or service
+    // For now, return empty array observable
+    return of([]); 
+  }
+
+  getWorkspaceTags(workspaceId?: string): Observable<string[]> {
+  workspaceId = workspaceId || this.authService.getSelectedWorkspaceId()!;
+  if (!workspaceId) return throwError(() => new Error('No workspace selected'));
+  return this.http.get<string[]>(`${this.baseUrl}/tags/${workspaceId}`, { headers: this.getHeaders() });
+  }
+
+
+
 }

@@ -1,0 +1,81 @@
+<div *ngIf="campaignForm" class="campaign-form-container">
+  <h2 class="mb-3">{{ isEdit ? 'Edit Campaign' : 'Create Campaign' }}</h2>
+
+  <form [formGroup]="campaignForm" (ngSubmit)="submit()">
+    <!-- Name -->
+    <div class="form-group mb-2">
+      <label class="form-label">Name <span class="text-danger">*</span></label>
+      <input class="form-control" type="text" formControlName="name" placeholder="Campaign name" />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group mb-2">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" formControlName="description" placeholder="Optional description"></textarea>
+    </div>
+
+    <!-- Tags -->
+    <div class="form-group mb-2">
+      <label class="form-label">Tags (contacts tags)</label>
+      <div class="tags-container">
+        <div *ngIf="workspaceTags.length === 0" class="text-muted small">
+          No tags found in workspace contacts
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          [formControl]="tagInput"
+          placeholder="Enter tag and press Enter"
+          (keydown.enter)="onTagEnter($event)"
+          list="tags-list"
+        />
+        <datalist id="tags-list">
+          <option *ngFor="let tag of workspaceTags" [value]="tag">
+        </datalist>
+        <div class="selected-tags mt-2">
+          <span *ngFor="let item of selectedTagsWithCounts" class="badge bg-primary me-2 mb-1">
+            {{ item.tag }} ({{ item.count }} contacts)
+            <button type="button" class="btn-close btn-close-white ms-1" (click)="removeTag(item.tag)" aria-label="Remove"></button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template -->
+    <div class="form-group">
+      <label>Template</label>
+      <select formControlName="templateId" (change)="onTemplateChange($event)">
+        <option value="">Select Template</option>
+        <option *ngFor="let t of templates" [value]="t._id">{{ t.name }}</option>
+      </select>
+    </div>
+
+    <!-- Message -->
+    <div formGroupName="message" class="border p-3 rounded mb-3">
+      <div class="mb-2">
+        <label class="form-label">Message Type</label>
+        <select class="form-select" formControlName="type">
+          <option value="Text">Text</option>
+          <option value="Text-Image">Text-Image</option>
+        </select>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label">Message Text <span class="text-danger">*</span></label>
+        <textarea class="form-control" formControlName="text" rows="4" placeholder="Message content"></textarea>
+      </div>
+
+      <div *ngIf="campaignForm.get('message.type')?.value === 'Text-Image'" class="mb-2">
+        <label class="form-label">Image URL</label>
+        <input class="form-control" type="text" formControlName="imageUrl" placeholder="Image URL (optional)" />
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="d-grid">
+      <button class="btn btn-primary" [disabled]="loading">
+        {{ isEdit ? 'Update Campaign' : 'Create Campaign' }}
+      </button>
+    </div>
+  </form>
+</div>

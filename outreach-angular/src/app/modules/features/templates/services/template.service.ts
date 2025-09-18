@@ -72,45 +72,116 @@
 //   }
 // }
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 export interface Template {
-  id: string;
+  _id: string; // backend field
   name: string;
-  content: string;
-  createdBy: string;
+  type: 'Text' | 'Text-Image';
+  message: {
+    text: string;
+    imageUrl?: string;
+  };
+  workspaceId: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TemplateService {
+  private baseUrl = 'http://localhost:3000/messages';
 
-  private dummyTemplates: Template[] = [
-    { id: '1', name: 'Welcome Message', content: 'Hello {{name}}, welcome to our platform!', createdBy: 'editor1' },
-    { id: '2', name: 'Reminder', content: 'Hi {{name}}, don\'t forget your appointment tomorrow.', createdBy: 'editor2' },
-    { id: '3', name: 'Thank You', content: 'Thanks for your purchase, {{name}}!', createdBy: 'editor1' }
-  ];
+  constructor(
+    private http: HttpClient,
+    private workspaceState: WorkspaceStateService,
+    private authService: AuthService
+  ) {}
 
-  constructor() { }
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (token) headers = headers.set('Authorization', `Bearer ${token}`);
+    return headers;
+  }
 
+  // ✅ Get all templates for current workspace
   getTemplates(): Observable<Template[]> {
-    return of(this.dummyTemplates);
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (!ws?.workspaceId) return throwError(() => new Error('No workspace selected'));
+
+    return this.http
+      .get<Template[]>(`${this.baseUrl}/workspace/${ws.workspaceId}/templates`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(
+        map(templates =>
+          templates.map(t => ({
+            ...t,
+            _id: t._id || (t as any).id // normalize if backend ever returns id
+          }))
+        ),
+        catchError(err => throwError(() => err))
+      );
   }
 
-  addTemplate(template: Template): Observable<Template> {
-    this.dummyTemplates.push(template);
-    return of(template);
+  // ✅ Get templates by date range
+  getTemplatesByDate(startDate?: Date, endDate?: Date): Observable<Template[]> {
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (!ws?.workspaceId) return throwError(() => new Error('No workspace selected'));
+
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('startDate', startDate.toISOString());
+    }
+    if (endDate) {
+      params = params.set('endDate', endDate.toISOString());
+    }
+
+    return this.http
+      .get<Template[]>(`${this.baseUrl}/workspace/${ws.workspaceId}/templates`, {
+        headers: this.getHeaders(),
+        params
+      })
+      .pipe(
+        map(templates =>
+          templates.map(t => ({
+            ...t,
+            _id: t._id || (t as any).id // normalize if backend ever returns id
+          }))
+        ),
+        catchError(err => throwError(() => err))
+      );
   }
 
+  // ✅ Create template
+  createTemplate(data: Partial<Template>): Observable<Template> {
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (!ws?.workspaceId) return throwError(() => new Error('No workspace selected'));
+
+    const payload = { ...data, workspaceId: ws.workspaceId };
+    return this.http
+      .post<Template>(`${this.baseUrl}/create`, payload, { headers: this.getHeaders() })
+      .pipe(catchError(err => throwError(() => err)));
+  }
+
+  // ✅ Update template by _id
   updateTemplate(template: Template): Observable<Template> {
-    const index = this.dummyTemplates.findIndex(t => t.id === template.id);
-    if (index !== -1) this.dummyTemplates[index] = template;
-    return of(template);
+    return this.http
+      .put<Template>(`${this.baseUrl}/update/${template._id}`, template, {
+        headers: this.getHeaders(),
+      })
+      .pipe(catchError(err => throwError(() => err)));
   }
 
-  deleteTemplate(id: string): Observable<boolean> {
-    this.dummyTemplates = this.dummyTemplates.filter(t => t.id !== id);
-    return of(true);
+  // ✅ Delete template by _id
+  deleteTemplate(id: string): Observable<any> {
+    return this.http
+      .delete(`${this.baseUrl}/delete/${id}`, { headers: this.getHeaders() })
+      .pipe(catchError(err => throwError(() => err)));
   }
 }
+

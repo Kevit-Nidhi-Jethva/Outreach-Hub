@@ -37,12 +37,24 @@ export class MessageService {
   }
 
   // Get all messages of user’s workspaces
-  async findAll(user: any): Promise<Message[]> {
-    const workspaceIds = user.workspaces?.map((w) => new Types.ObjectId(w.workspaceId)) || [];
-    if (!workspaceIds.length) return [];
+  // async findAll(user: any): Promise<Message[]> {
+  //   const workspaceIds = user.workspaces?.map((w) => new Types.ObjectId(w.workspaceId)) || [];
+  //   if (!workspaceIds.length) return [];
 
-    return this.messageModel.find({ workspaceId: { $in: workspaceIds } }).exec();
+  //   return this.messageModel.find({ workspaceId: { $in: workspaceIds } }).exec();
+  // }
+  async findAll(user: any, workspaceId: string): Promise<Message[]> {
+  // Check if user has access to this workspace
+  const hasAccess = user.workspaces?.some(
+    (w) => w.workspaceId.toString() === workspaceId.toString()
+  );
+  if (!hasAccess) {
+    throw new ForbiddenException('Unauthorized: You do not belong to this workspace');
   }
+
+  // Return messages for that workspace only
+  return this.messageModel.find({ workspaceId: new Types.ObjectId(workspaceId) }).exec();
+}
 
   // Get message by ID
   async findById(id: string, user: any): Promise<Message> {
@@ -80,4 +92,9 @@ export class MessageService {
     await this.messageModel.deleteOne({ _id: id });
     return { message: 'Message deleted successfully' };
   }
+
+  async findByWorkspace(workspaceId: string): Promise<Message[]> {
+  return this.messageModel.find({ workspaceId: new Types.ObjectId(workspaceId) }).exec();
+}
+
 }

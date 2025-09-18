@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Template, TemplateService } from '../services/template.service';
-import { v4 as uuidv4 } from 'uuid';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
+
+type TemplateForm = {
+  name: string;
+  type: 'Text' | 'Text-Image';
+  text: string;
+  imageUrl: string;
+};
 
 @Component({
   selector: 'app-templates',
@@ -8,46 +15,73 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./templates.component.scss']
 })
 export class TemplatesComponent implements OnInit {
-
   templates: Template[] = [];
   displayModal = false;
   editingTemplate: Template | null = null;
+  form: TemplateForm = { name: '', type: 'Text', text: '', imageUrl: '' };
+  currentWorkspaceId: string | null = null;
 
-  form = { name: '', content: '' };
-  currentUser = 'editor1'; // dummy logged-in editor
-
-  constructor(private templateService: TemplateService) { }
+  constructor(
+    private templateService: TemplateService,
+    private workspaceState: WorkspaceStateService
+  ) {}
 
   ngOnInit(): void {
+    const ws = this.workspaceState.getWorkspaceSync();
+    this.currentWorkspaceId = ws?.workspaceId || null;
     this.loadTemplates();
   }
 
   loadTemplates() {
-    this.templateService.getTemplates().subscribe(data => this.templates = data);
+    if (!this.currentWorkspaceId) return;
+    this.templateService.getTemplates().subscribe({
+      next: data => {
+        // filter for current workspace
+        this.templates = data.filter(t => t.workspaceId === this.currentWorkspaceId);
+      },
+      error: err => console.error('Error loading templates:', err)
+    });
   }
 
   openAdd() {
     this.editingTemplate = null;
-    this.form = { name: '', content: '' };
+    this.form = { name: '', type: 'Text', text: '', imageUrl: '' };
     this.displayModal = true;
   }
 
   openEdit(template: Template) {
     this.editingTemplate = template;
-    this.form = { name: template.name, content: template.content };
+    this.form = {
+      name: template.name,
+      type: template.type,
+      text: template.message.text,
+      imageUrl: template.message.imageUrl || ''
+    };
     this.displayModal = true;
   }
 
   save() {
+    if (!this.currentWorkspaceId) return;
+
+    const message: any = { text: this.form.text };
+    if (this.form.type === 'Text-Image') {
+      message.imageUrl = this.form.imageUrl;
+    }
+
+    const payload = {
+      name: this.form.name,
+      type: this.form.type,
+      message,
+      workspaceId: this.currentWorkspaceId
+    };
+
     if (this.editingTemplate) {
-      const updated: Template = { ...this.editingTemplate, ...this.form };
-      this.templateService.updateTemplate(updated).subscribe(() => {
+      this.templateService.updateTemplate({ ...this.editingTemplate, ...payload }).subscribe(() => {
         this.loadTemplates();
         this.displayModal = false;
       });
     } else {
-      const newTemplate: Template = { id: uuidv4(), ...this.form, createdBy: this.currentUser };
-      this.templateService.addTemplate(newTemplate).subscribe(() => {
+      this.templateService.createTemplate(payload).subscribe(() => {
         this.loadTemplates();
         this.displayModal = false;
       });
@@ -55,11 +89,7 @@ export class TemplatesComponent implements OnInit {
   }
 
   deleteTemplate(template: Template) {
-    if (template.createdBy === this.currentUser) {
-      this.templateService.deleteTemplate(template.id).subscribe(() => this.loadTemplates());
-    } else {
-      alert('You can only delete templates created by you.');
-    }
+    this.templateService.deleteTemplate(template._id).subscribe(() => this.loadTemplates());
   }
 
   closeModal() {

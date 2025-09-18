@@ -5,17 +5,21 @@ import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { LayoutComponent } from './modules/features/layout/layout.component';
+import { AppRoutingModule } from './app-routing.module.js';
+import { AppComponent } from './app.component.js';
+import { LayoutComponent } from './modules/features/layout/layout.component.js';
 
-import { SharedModule } from './modules/shared/shared.module';
-import { ContactsModule } from './modules/features/contacts/contacts.module';
-import { TemplateModule } from './modules/features/templates/templates.module';
+import { SharedModule } from './modules/shared/shared.module.js';
+import { ContactsModule } from './modules/features/contacts/contacts.module.js';
+import { TemplateModule } from './modules/features/templates/templates.module.js';
+import { CampaignsModule } from './modules/features/campaigns/campaigns.module.js';
+import { DashboardModule } from './modules/features/dashboard/dashboard.module';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './modules/core/intersecptors/auth.interceptor';
+import { AuthInterceptor } from './modules/core/intersecptors/auth.interceptor.js';
 import { CommonModule } from '@angular/common';
+import {ToastrModule} from "ngx-toastr";
+import { CalendarModule } from 'primeng/calendar';
 
 
 @NgModule({
@@ -24,6 +28,7 @@ import { CommonModule } from '@angular/common';
     LayoutComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -32,8 +37,11 @@ import { CommonModule } from '@angular/common';
     SharedModule,
     ContactsModule,
     TemplateModule,
+    CampaignsModule,
+    DashboardModule,
     BrowserAnimationsModule,
-    CommonModule
+    CommonModule,
+    ToastrModule.forRoot(),
   ],
   providers: [
     provideClientHydration(),

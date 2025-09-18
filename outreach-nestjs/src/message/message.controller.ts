@@ -9,11 +9,13 @@ import {
   Param,
   Req,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateMessageDto } from './dto/create.message.dto';
 import { UpdateMessageDto } from './dto/update.message.dto';
+import { Query } from '@nestjs/common';
 
 @Controller('messages')
 @UseGuards(AuthGuard)
@@ -27,9 +29,13 @@ export class MessageController {
   }
 
   // Get all messages for logged-in user
+  // @Get('all')
+  // async findAll(@Req() req) {
+  //   return await this.messageService.findAll(req.user);
+  // }
   @Get('all')
-  async findAll(@Req() req) {
-    return await this.messageService.findAll(req.user);
+  async findAll(@Req() req, @Query('workspaceId') workspaceId: string) {
+    return await this.messageService.findAll(req.user, workspaceId);
   }
 
   // Get a single message by ID
@@ -53,4 +59,25 @@ export class MessageController {
   async delete(@Param('id') id: string, @Req() req) {
     return await this.messageService.delete(id, req.user);
   }
+
+  // Get all templates for a workspace
+  // @Get('workspace/:workspaceId/templates')
+  // async getWorkspaceTemplates(@Param('workspaceId') workspaceId: string, @Req() req) {
+  //   // optional: check workspace access
+  //   const hasAccess = req.user.workspaces?.some(w => w.workspaceId.toString() === workspaceId);
+  //   if (!hasAccess) throw new ForbiddenException('Unauthorized');
+
+  //   return await this.messageService.findByWorkspace(workspaceId);
+  // }
+
+  @Get('workspace/:workspaceId/templates')
+  async getWorkspaceTemplates(@Param('workspaceId') workspaceId: string, @Req() req) {
+  const hasAccess = req.user.workspaces?.some(
+    w => w.workspaceId.toString() === workspaceId
+  );
+  if (!hasAccess) throw new ForbiddenException('Unauthorized');
+  return await this.messageService.findByWorkspace(workspaceId);
+}
+
+
 }

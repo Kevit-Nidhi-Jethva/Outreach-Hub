@@ -23,7 +23,7 @@ export class EditorGuard implements CanActivate {
   canActivate(): boolean {
     const role = this.authService.getUserRole(this.currentWorkspaceId || undefined);
 
-    if (role === 'editor' || role === 'admin') {
+    if (role === 'editor' || role === 'Editor' || role === 'admin') {
       return true;
     }
 

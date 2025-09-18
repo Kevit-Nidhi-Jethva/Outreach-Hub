@@ -1,0 +1,42 @@
+<div class="campaign-list-container p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Campaigns</h2>
+    <button class="btn btn-primary" (click)="createCampaign()">+ Create Campaign</button>
+  </div>
+
+  <p-table [value]="campaigns" [paginator]="true" [rows]="10" [loading]="loading" [responsiveLayout]="'scroll'" [showCurrentPageReport]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Tags</th>
+        <th>Status</th>
+        <th>Launched At</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-campaign>
+      <tr>
+        <td>{{ campaign.name }}</td>
+        <td>{{ campaign.description || '-' }}</td>
+        <td>{{ campaign.selectedTags.join(', ') || '-' }}</td>
+        <td><span [class]="getStatusBadgeClass(campaign.status || '')">{{ campaign.status || '-' }}</span></td>
+        <td>{{ campaign.launchedAt ? (campaign.launchedAt | date:'short') : '-' }}</td>
+        <td>
+          <button pButton type="button" class="btn btn-sm btn-info me-1" (click)="viewCampaign(campaign._id!)">View</button>
+          <button pButton type="button" class="btn btn-sm btn-warning me-1" *ngIf="campaign.status === 'Draft'" (click)="editCampaign(campaign._id!)">Edit</button>
+          <button pButton type="button" class="btn btn-sm btn-success me-1" *ngIf="campaign.status === 'Draft'" (click)="launchCampaign(campaign._id!)">Launch</button>
+          <button pButton type="button" class="btn btn-sm btn-secondary me-1" (click)="copyCampaign(campaign._id!)">Copy</button>
+          <button pButton type="button" class="btn btn-sm btn-danger" *ngIf="campaign.status === 'Draft'" (click)="deleteCampaign(campaign._id!)">Delete</button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6" class="text-center">No campaigns found</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
