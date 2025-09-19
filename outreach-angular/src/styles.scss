@@ -1,36 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 /* Define CSS layers to control specificity. The `primeng` layer is ordered after `reset` to prevent conflicts. */
 @layer reset, primeng;
-
-/*
-  Import PrimeNG CSS files.
-  The order here is important and should match the `@layer` rule.
-*/
-@import "primeng/resources/themes/lara-light-blue/theme.css";
-@import "primeng/resources/primeng.css";
-@import "primeicons/primeicons.css";
-
 /* Import Bootstrap and other global styles */
 @import "bootstrap/scss/bootstrap";
 
 /* Your custom reset layer to override default browser or framework styles */
 @layer reset {
-  button,
-  input {
-    // Add your custom CSS to reset or normalize elements here.
-    // This will take precedence over Bootstrap's default styles.
-  }
+  /* Add your custom CSS to reset or normalize elements here. */
 }
 
 /* Your custom PrimeNG layer for additional styling */
 @layer primeng {
-  // You can add custom styles for PrimeNG components here.
-  // These styles will be more specific than the default PrimeNG styles.
 }
 
 /* Any other global styles for your application */
 :root {
-  --font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
 body {

@@ -21,7 +21,7 @@ export class WorkspaceContactsComponent implements OnInit {
 
   // pagination
   currentPage = 1;
-  pageSize = 8;
+  pageSize = 6;
 
   // view modal
   viewing: Contact | null = null;

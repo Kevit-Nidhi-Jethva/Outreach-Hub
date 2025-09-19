@@ -20,6 +20,7 @@ export class TemplatesComponent implements OnInit {
   editingTemplate: Template | null = null;
   form: TemplateForm = { name: '', type: 'Text', text: '', imageUrl: '' };
   currentWorkspaceId: string | null = null;
+  userRole: string = 'Viewer';
 
   constructor(
     private templateService: TemplateService,
@@ -29,6 +30,11 @@ export class TemplatesComponent implements OnInit {
   ngOnInit(): void {
     const ws = this.workspaceState.getWorkspaceSync();
     this.currentWorkspaceId = ws?.workspaceId || null;
+    if (ws?.role) {
+      const normalized = ws.role.toLowerCase();
+      if (normalized === 'editor') this.userRole = 'Editor';
+      else this.userRole = 'Viewer';
+    }
     this.loadTemplates();
   }
 
@@ -44,12 +50,14 @@ export class TemplatesComponent implements OnInit {
   }
 
   openAdd() {
+    if (this.userRole === 'Viewer') return;
     this.editingTemplate = null;
     this.form = { name: '', type: 'Text', text: '', imageUrl: '' };
     this.displayModal = true;
   }
 
   openEdit(template: Template) {
+    if (this.userRole === 'Viewer') return;
     this.editingTemplate = template;
     this.form = {
       name: template.name,
@@ -61,7 +69,7 @@ export class TemplatesComponent implements OnInit {
   }
 
   save() {
-    if (!this.currentWorkspaceId) return;
+    if (this.userRole === 'Viewer' || !this.currentWorkspaceId) return;
 
     const message: any = { text: this.form.text };
     if (this.form.type === 'Text-Image') {
@@ -89,7 +97,10 @@ export class TemplatesComponent implements OnInit {
   }
 
   deleteTemplate(template: Template) {
-    this.templateService.deleteTemplate(template._id).subscribe(() => this.loadTemplates());
+    if (this.userRole === 'Viewer') return;
+    if (confirm('Are you sure you want to delete this template?')) {
+      this.templateService.deleteTemplate(template._id).subscribe(() => this.loadTemplates());
+    }
   }
 
   closeModal() {

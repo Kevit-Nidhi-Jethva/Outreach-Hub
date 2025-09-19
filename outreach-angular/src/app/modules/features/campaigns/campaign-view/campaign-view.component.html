@@ -57,11 +57,7 @@
             <td>{{ msg.contactName || msg.contactId || '-' }}</td>
             <td>{{ msg.messageContent || '-' }}</td>
             <td>
-              <span [ngClass]="{
-                'badge bg-secondary': msg.status === 'pending',
-                'badge bg-success': msg.status === 'sent',
-                'badge bg-danger': msg.status === 'failed'
-              }">{{ msg.status || '-' }}</span>
+              <p-badge [value]="msg.status || '-'" [severity]="getMessageStatusSeverity(msg.status)"></p-badge>
             </td>
             <td>{{ msg.sentAt ? (msg.sentAt | date:'short') : '-' }}</td>
           </tr>

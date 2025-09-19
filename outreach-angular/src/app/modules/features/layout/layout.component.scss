@@ -21,3 +21,28 @@ app-sidebar {
   padding: 1rem;
   margin-top: 100px; /* Account for fixed navbar height (60px) + some extra space */
 }
+
+@media (max-width: 768px) {
+  .main-area {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 769px) {
+  .sidebar-collapsed .main-area {
+    margin-left: 0;
+  }
+}
+
+.btn-sidebar-toggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1050;
+  background-color: #1c1e20;
+  border: none;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}

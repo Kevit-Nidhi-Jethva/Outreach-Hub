@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
 
 @Component({
   selector: 'app-campaign-list',
@@ -14,14 +15,22 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   campaigns: Campaign[] = [];
   loading = false;
   pollingSubs: { [id: string]: Subscription } = {};
+  userRole: string = 'Viewer';
 
   constructor(
     private campaignService: CampaignService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private workspaceState: WorkspaceStateService
   ) {}
 
   ngOnInit(): void {
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (ws?.role) {
+      const normalized = ws.role.toLowerCase();
+      if (normalized === 'editor') this.userRole = 'Editor';
+      else this.userRole = 'Viewer';
+    }
     this.fetchCampaigns();
   }
 
@@ -66,10 +75,12 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   }
 
   createCampaign() {
+    if (this.userRole === 'Viewer') return;
     this.router.navigate(['/campaigns/form']);
   }
 
   editCampaign(id: string) {
+    if (this.userRole === 'Viewer') return;
     this.router.navigate(['/campaigns/edit', id]);
   }
 
@@ -78,6 +89,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   }
 
   deleteCampaign(id: string) {
+    if (this.userRole === 'Viewer') return;
     if (!confirm('Are you sure you want to delete this campaign?')) return;
     this.campaignService.deleteCampaign(id).subscribe({
       next: () => {
@@ -92,6 +104,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   }
 
   launchCampaign(id: string) {
+    if (this.userRole === 'Viewer') return;
     this.campaignService.launchCampaign(id).subscribe({
       next: (res) => {
         this.toastr.success('Campaign launched');
@@ -110,6 +123,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   }
 
   copyCampaign(id: string) {
+    if (this.userRole === 'Viewer') return;
     this.campaignService.copyCampaign(id).subscribe({
       next: (res) => {
         this.toastr.success('Campaign copied');
@@ -130,4 +144,15 @@ export class CampaignListComponent implements OnInit, OnDestroy {
       default: return 'badge bg-light';
     }
   }
+
+  getSeverity(status: string): "success" | "info" | "warning" | "danger" | "help" | "primary" | "secondary" | "contrast" | undefined {
+  switch (status) {
+    case 'Draft': return 'secondary';
+    case 'Running': return 'info';
+    case 'Completed': return 'success';
+    default: return 'contrast'; // fallback instead of warning
+  }
+}
+
+
 }

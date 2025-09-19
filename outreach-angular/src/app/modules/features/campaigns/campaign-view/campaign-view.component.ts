@@ -93,6 +93,15 @@ export class CampaignViewComponent implements OnInit {
     }
   }
 
+  getMessageStatusSeverity(status: string): "success" | "info" | "warning" | "danger" | "help" | "primary" | "secondary" | "contrast" {
+    switch (status) {
+      case 'pending': return 'secondary';
+      case 'sent': return 'success';
+      case 'failed': return 'danger';
+      default: return 'info';
+    }
+  }
+
   goBack() {
     this.router.navigate(['/campaigns']);
   }

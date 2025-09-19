@@ -1,67 +1,67 @@
-<aside class="sidebar-container">
-  <!-- User Header -->
-  <div class="user-profile-header">
-    <div class="user-avatar-circle">
-      <span class="initials">{{ userInitial }}</span>
-    </div>
-    <div class="user-details">
-      <span class="app-name">Outreach Hub</span>
+<aside class="sidebar-container" [class.collapsed]="isCollapsed">
+    <!-- User Header -->
+    <div class="user-profile-header">
+      <div class="user-avatar-circle">
+        <span class="initials">{{ userInitial }}</span>
+      </div>
+      <div class="user-details">
+        <span class="app-name">Outreach Hub</span>
 
-      <!-- ✅ Workspace Info -->
-      <ng-container *ngIf="currentWorkspace; else noWorkspace">
-        <div class="workspace-info">
-          <i class="bi bi-building"></i>
-          <span>{{ currentWorkspace.name }}</span>
-        </div>
-      </ng-container>
-      <ng-template #noWorkspace>
-        <div class="workspace-info text-muted">
-          <i class="bi bi-exclamation-circle"></i>
-          <span>No workspace</span>
-        </div>
-      </ng-template>
-    </div>
-  </div>
-
-  <!-- Navigation -->
-  <nav class="sidebar-nav">
-    <ul>
-      <li *ngFor="let item of items; trackBy: trackByFn">
-        
-        <!-- ✅ Contacts Dropdown -->
-        <ng-container *ngIf="item.label === 'Contacts'; else normalItem">
-          <a href="javascript:void(0)" (click)="toggleContacts()" class="menu-link">
-            <i class="bi bi-{{ item.icon }}" *ngIf="item.icon"></i>
-            <span class="nav-label">{{ item.label }}</span>
-            <i class="bi ms-auto" [ngClass]="isContactsOpen ? 'bi-caret-up-fill' : 'bi-caret-down-fill'"></i>
-          </a>
-
-          <!-- Collapsible submenu -->
-          <ul class="submenu" *ngIf="isContactsOpen">
-            <!-- ✅ My Contacts (only for Editors & Admins) -->
-            <li *ngIf="userRole === 'Editor' || userRole === 'Admin'">
-              <a [routerLink]="'/contacts/my'" routerLinkActive="active">
-                <i class="bi bi-person"></i> My Contacts
-              </a>
-            </li>
-
-            <!-- ✅ Workspace Contacts (visible for all) -->
-            <li>
-              <a [routerLink]="'/contacts/workspace'" routerLinkActive="active">
-                <i class="bi bi-people"></i> Workspace Contacts
-              </a>
-            </li>
-          </ul>
+        <!-- ✅ Workspace Info -->
+        <ng-container *ngIf="currentWorkspace; else noWorkspace">
+          <div class="workspace-info">
+            <i class="bi bi-building"></i>
+            <span>{{ currentWorkspace.name }}</span>
+          </div>
         </ng-container>
-
-        <!-- Normal items -->
-        <ng-template #normalItem>
-          <a [routerLink]="item.route" routerLinkActive="active">
-            <i class="bi bi-{{ item.icon }}" *ngIf="item.icon"></i>
-            <span class="nav-label">{{ item.label }}</span>
-          </a>
+        <ng-template #noWorkspace>
+          <div class="workspace-info text-muted">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>No workspace</span>
+          </div>
         </ng-template>
-      </li>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <ul>
+        <li *ngFor="let item of items; trackBy: trackByFn">
+          
+          <!-- ✅ Contacts Dropdown -->
+          <ng-container *ngIf="item.label === 'Contacts'; else normalItem">
+            <a href="javascript:void(0)" (click)="toggleContacts()" class="menu-link">
+              <i class="bi bi-{{ item.icon }}" *ngIf="item.icon"></i>
+              <span class="nav-label">{{ item.label }}</span>
+              <i class="bi ms-auto" [ngClass]="isContactsOpen ? 'bi-caret-up-fill' : 'bi-caret-down-fill'"></i>
+            </a>
+
+            <!-- Collapsible submenu -->
+            <ul class="submenu" *ngIf="isContactsOpen">
+              <!-- ✅ My Contacts (only for Editors & Admins) -->
+              <li *ngIf="userRole === 'Editor' || userRole === 'Admin'">
+                <a [routerLink]="'/contacts/my'" routerLinkActive="active">
+                  <i class="bi bi-person"></i> My Contacts
+                </a>
+              </li>
+
+              <!-- ✅ Workspace Contacts (visible for all) -->
+              <li>
+                <a [routerLink]="'/contacts/workspace'" routerLinkActive="active">
+                  <i class="bi bi-people"></i> Workspace Contacts
+                </a>
+              </li>
+            </ul>
+          </ng-container>
+
+          <!-- Normal items -->
+          <ng-template #normalItem>
+            <a [routerLink]="item.route" routerLinkActive="active">
+              <i class="bi bi-{{ item.icon }}" *ngIf="item.icon"></i>
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          </ng-template>
+        </li>
     </ul>
   </nav>
 </aside>

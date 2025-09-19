@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatOptionModule } from '@angular/material/core';
 import { ToastrModule } from 'ngx-toastr';
+import {ChipModule} from 'primeng/chip';
 
 
 // PrimeNG
@@ -34,6 +35,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
   ],
   imports: [
     CommonModule,
+    ChipModule,
     CampaignsRoutingModule,
     FormsModule,
     ReactiveFormsModule,

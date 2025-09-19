@@ -18,6 +18,7 @@ interface MenuItem {
 })
 export class SidebarComponent implements OnInit {
   @Input() role?: Role;
+  @Input() isCollapsed: boolean = false;
   currentWorkspace: SelectedWorkspace | null = null;
 
   username: string = 'User';
@@ -74,5 +75,10 @@ export class SidebarComponent implements OnInit {
   // ✅ Toggle method for Contacts dropdown
   toggleContacts(): void {
     this.isContactsOpen = !this.isContactsOpen;
+  }
+
+  // Toggle sidebar for responsive
+  toggleSidebar(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 }

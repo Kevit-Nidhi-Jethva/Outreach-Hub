@@ -1,12 +1,12 @@
 <div class="templates-container">
   <div class="header">
     <h2>Message Templates</h2>
-    <button class="btn-add" (click)="openAdd()">+ Add Template</button>
+    <button class="btn-add" (click)="openAdd()" *ngIf="userRole === 'Editor'">+ Add Template</button>
   </div>
 
   <div class="cards-wrapper">
     <div class="template-card" *ngFor="let t of templates">
-      <div class="card-actions">
+      <div class="card-actions" *ngIf="userRole === 'Editor'">
         <button class="btn-icon edit" (click)="openEdit(t)">✏️</button>
         <button class="btn-icon del" (click)="deleteTemplate(t)">🗑️</button>
       </div>
