@@ -1,6 +1,6 @@
-/* Navbar Styling */
+/* Navbar Styling - Updated to Match Welcome Page and Sidebar Consistency */
 
-// Define color variables for consistency
+// Define color variables for consistency (aligned with welcome page)
 $primary-text: #1e293b;
 $secondary-text: #64748b;
 $border-light: #e2e8f0;
@@ -11,6 +11,9 @@ $hover-blue: #2563eb;
 $shadow-light: rgba(0, 0, 0, 0.05);
 $navbar-height: 60px;
 
+// Gradient for buttons and accents (matching welcome page)
+$blue-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
 .top-navbar {
   height: $navbar-height;
   background-color: $card-bg;
@@ -19,19 +22,20 @@ $navbar-height: 60px;
   justify-content: flex-start; /* Aligns items to the left */
   align-items: center;
   padding: 0 24px;
-  box-shadow: 0 2px 4px $shadow-light;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Enhanced shadow for consistency */
   position: fixed;
   top: 0;
   left: 250px;
   right: 0;
   z-index: 1000;
   transition: all 0.3s ease;
+  border-radius: 0 0 8px 8px; /* Rounded bottom corners for modern look */
 
   &.scrolled {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Matching welcome hover shadow */
   }
 }
 
@@ -47,9 +51,16 @@ $navbar-height: 60px;
   gap: 8px;
   background-color: #f1f5f9;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 8px; /* Consistent with welcome page */
   width: 400px;
   order: -1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  transition: box-shadow 0.3s ease;
+  position: relative;
+
+  &:focus-within {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Enhanced on focus */
+  }
 
   .search-icon {
     color: $secondary-text;
@@ -64,6 +75,41 @@ $navbar-height: 60px;
 
     &:focus {
       outline: none;
+    }
+  }
+
+  .search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: $blue-gradient;
+        color: white;
+      }
+
+      i {
+        font-size: 1rem;
+      }
     }
   }
 }
@@ -92,42 +138,44 @@ $navbar-height: 60px;
 }
 
 .btn-logout {
-  background-color: transparent;
-  border: 1px solid $border-light;
-  color: $secondary-text;
+  background: $blue-gradient; /* Gradient background for professional look */
+  border: none;
+  color: #ffffff;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 8px; /* Consistent rounding */
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: $border-light;
-    border-color: darken($border-light, 10%);
-    color: $primary-text;
+    transform: translateY(-2px); /* Matching welcome hover effect */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
-  
+
   i {
     font-size: 1rem;
   }
 }
 
 .btn-switch-workspace {
-  background-color: transparent;
+  background: transparent;
   border: 1px solid $border-light;
   color: $primary-text;
   padding: 6px 14px;
-  border-radius: 6px;
+  border-radius: 8px; /* Consistent rounding */
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-size: 0.875rem;
   font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
   &:hover {
-    background-color: $border-light;
-    border-color: darken($border-light, 10%);
-    color: $primary-blue;
+    background: $blue-gradient; /* Gradient on hover */
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 }

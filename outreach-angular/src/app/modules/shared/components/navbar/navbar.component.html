@@ -5,7 +5,12 @@
 
   <div class="navbar-search">
     <i class="bi bi-search search-icon"></i>
-    <input type="text" placeholder="Search...">
+    <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (input)="onSearch()" (focus)="onFocus()" (blur)="onBlur()" autocomplete="off" />
+    <ul class="search-dropdown" *ngIf="showDropdown">
+      <li *ngFor="let item of filteredItems" (mousedown)="onSelect(item)">
+        <i class="bi bi-{{item.icon}}"></i> {{ item.label }}
+      </li>
+    </ul>
   </div>
 
   <div class="navbar-right">

@@ -6,6 +6,7 @@ import { ContactsService } from '../../contacts/services/contacts.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { WorkspaceStateService } from '../../../core/services/workspace-state.service';
 
 @Component({
   selector: 'app-campaign-form',
@@ -23,6 +24,7 @@ export class CampaignFormComponent implements OnInit {
   isEdit = false;
   campaignId: string | null = null;
   workspaceId: string | null = null;
+  userRole: string = 'Viewer';
 
   constructor(
     private fb: FormBuilder,
@@ -32,10 +34,18 @@ export class CampaignFormComponent implements OnInit {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private workspaceState: WorkspaceStateService
   ) {}
 
   ngOnInit(): void {
+    const ws = this.workspaceState.getWorkspaceSync();
+    if (ws?.role) {
+      const normalized = ws.role.toLowerCase();
+      if (normalized === 'editor') this.userRole = 'Editor';
+      else this.userRole = 'Viewer';
+    }
+
     this.workspaceId =
       this.authService.getSelectedWorkspaceId() ||
       this._fallbackWorkspaceIdFromLocalStorage();
@@ -122,12 +132,21 @@ export class CampaignFormComponent implements OnInit {
         });
         this.workspaceTags = Object.keys(tagCountMap).sort();
         this.tagCounts = tagCountMap;
+        this.updateSelectedTagsWithCounts();
       },
       error: (err) => {
         console.error('Error fetching tags', err);
         this.toastr.error('Failed to load tags');
       }
     });
+  }
+
+  private updateSelectedTagsWithCounts() {
+    const selectedTags: string[] = this.campaignForm.get('selectedTags')?.value || [];
+    this.selectedTagsWithCounts = selectedTags.map(tag => ({
+      tag,
+      count: this.tagCounts[tag] || 0
+    }));
   }
 
   private loadCampaign(id: string) {
@@ -147,11 +166,7 @@ export class CampaignFormComponent implements OnInit {
         }
       });
 
-      // Update selectedTagsWithCounts based on loaded campaign tags
-      this.selectedTagsWithCounts = (res.selectedTags || []).map(tag => ({
-        tag,
-        count: this.tagCounts[tag] || 0
-      }));
+      this.updateSelectedTagsWithCounts();
 
       // Convert launchedAt from string to Date for form if needed
       if (res.launchedAt) {
@@ -218,6 +233,7 @@ export class CampaignFormComponent implements OnInit {
   }
 
   submit() {
+  if (this.userRole === 'Viewer') return;
   if (!this.campaignForm || this.campaignForm.invalid) {
     this.toastr.error('Please fill required fields');
     return;

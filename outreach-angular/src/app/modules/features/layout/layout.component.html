@@ -1,6 +1,9 @@
 <!-- layout/layout.component.html -->
-<div class="d-flex layout-container">
-  <app-sidebar></app-sidebar>
+<div class="d-flex layout-container" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <button class="btn btn-sm btn-sidebar-toggle" [ngClass]="{'d-md-none': !isSidebarCollapsed}" (click)="toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
+  <app-sidebar [isCollapsed]="isSidebarCollapsed"></app-sidebar>
   <div class="main-area flex-grow-1 d-flex flex-column">
     <app-navbar></app-navbar>
     <div class="content-area flex-grow-1 p-3">

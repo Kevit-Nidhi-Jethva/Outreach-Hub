@@ -8,14 +8,24 @@
   <!-- list / cards -->
   <div class="cards-wrapper" *ngIf="!loading; else loadingTpl">
     <div class="contact-card" *ngFor="let c of paginatedContacts">
-      <div class="card-actions">
-        <button class="btn-icon edit" title="Edit" (click)="openEdit(c)">✏️</button>
-        <button class="btn-icon del" title="Delete" (click)="deleteContact(c._id)">🗑️</button>
+      <div class="card-header">
+        <div class="avatar">
+          <span class="initials">{{ c.name.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-icon edit" title="Edit" (click)="openEdit(c)">✏️</button>
+          <button class="btn-icon del" title="Delete" (click)="deleteContact(c._id)">🗑️</button>
+        </div>
       </div>
 
       <div class="card-content">
-        <h4>{{ c.name }}</h4>
-        <p>Phone: {{ c.phoneNumber }}</p>
+        <h4 class="contact-name">{{ c.name }}</h4>
+        <div class="contact-info">
+          <div class="info-item">
+            <span class="icon">📞</span>
+            <span class="info-text">{{ c.phoneNumber }}</span>
+          </div>
+        </div>
         <div class="tags" *ngIf="c.tags?.length">
           <span class="tag" *ngFor="let t of c.tags">{{ t }}</span>
         </div>

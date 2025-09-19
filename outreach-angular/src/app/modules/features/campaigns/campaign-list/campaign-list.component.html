@@ -1,41 +1,59 @@
 <div class="campaign-list-container p-3">
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Campaigns</h2>
-    <button class="btn btn-primary" (click)="createCampaign()">+ Create Campaign</button>
+    <h2 class="fw-bold mb-0">📢 Campaigns</h2>
+    <button *ngIf="userRole === 'Editor'" pButton type="button" icon="pi pi-plus" label="Create Campaign" class="p-button-primary" (click)="createCampaign()"></button>
   </div>
 
-  <p-table [value]="campaigns" [paginator]="true" [rows]="10" [loading]="loading" [responsiveLayout]="'scroll'" [showCurrentPageReport]="true">
+  <!-- Campaigns Table -->
+  <p-table
+    [value]="campaigns"
+    [paginator]="true"
+    [rows]="10"
+    [loading]="loading"
+    [responsiveLayout]="'scroll'"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} campaigns"
+    styleClass="p-datatable-striped p-datatable-sm shadow-sm rounded"
+  >
     <ng-template pTemplate="header">
       <tr>
-        <th>Name</th>
+        <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
         <th>Description</th>
         <th>Tags</th>
         <th>Status</th>
-        <th>Launched At</th>
-        <th>Actions</th>
+        <th pSortableColumn="launchedAt">Launched At <p-sortIcon field="launchedAt"></p-sortIcon></th>
+        <th class="text-center">Actions</th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-campaign>
       <tr>
-        <td>{{ campaign.name }}</td>
+        <td class="fw-semibold">{{ campaign.name }}</td>
         <td>{{ campaign.description || '-' }}</td>
-        <td>{{ campaign.selectedTags.join(', ') || '-' }}</td>
-        <td><span [class]="getStatusBadgeClass(campaign.status || '')">{{ campaign.status || '-' }}</span></td>
-        <td>{{ campaign.launchedAt ? (campaign.launchedAt | date:'short') : '-' }}</td>
         <td>
-          <button pButton type="button" class="btn btn-sm btn-info me-1" (click)="viewCampaign(campaign._id!)">View</button>
-          <button pButton type="button" class="btn btn-sm btn-warning me-1" *ngIf="campaign.status === 'Draft'" (click)="editCampaign(campaign._id!)">Edit</button>
-          <button pButton type="button" class="btn btn-sm btn-success me-1" *ngIf="campaign.status === 'Draft'" (click)="launchCampaign(campaign._id!)">Launch</button>
-          <button pButton type="button" class="btn btn-sm btn-secondary me-1" (click)="copyCampaign(campaign._id!)">Copy</button>
-          <button pButton type="button" class="btn btn-sm btn-danger" *ngIf="campaign.status === 'Draft'" (click)="deleteCampaign(campaign._id!)">Delete</button>
+          <p-chip *ngFor="let tag of campaign.selectedTags" [label]="tag" class="me-1 mb-1"></p-chip>
+          <span *ngIf="!campaign.selectedTags?.length">-</span>
+        </td>
+        <td>
+          <p-badge [value]="campaign.status || '-'" [severity]="getSeverity(campaign.status)"></p-badge>
+        </td>
+        <td>{{ campaign.launchedAt ? (campaign.launchedAt | date:'short') : '-' }}</td>
+        <td class="text-center">
+          <button pButton icon="pi pi-eye" class="p-button-rounded p-button-info p-button-xs me-0.5" (click)="viewCampaign(campaign._id!)"></button>
+          <button *ngIf="userRole === 'Editor'" pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning p-button-xs me-0.5" [disabled]="campaign.status !== 'Draft'" (click)="editCampaign(campaign._id!)"></button>
+          <button *ngIf="userRole === 'Editor'" pButton icon="pi pi-play" class="p-button-rounded p-button-success p-button-xs me-0.5" [disabled]="campaign.status !== 'Draft'" (click)="launchCampaign(campaign._id!)"></button>
+          <button *ngIf="userRole === 'Editor'" pButton icon="pi pi-copy" class="p-button-rounded p-button-secondary p-button-xs me-0.5" (click)="copyCampaign(campaign._id!)"></button>
+          <button *ngIf="userRole === 'Editor'" pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-xs" [disabled]="campaign.status !== 'Draft'" (click)="deleteCampaign(campaign._id!)"></button>
         </td>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="6" class="text-center">No campaigns found</td>
+        <td colspan="6" class="text-center py-4">
+          <i class="pi pi-info-circle me-2"></i> No campaigns found
+        </td>
       </tr>
     </ng-template>
   </p-table>
