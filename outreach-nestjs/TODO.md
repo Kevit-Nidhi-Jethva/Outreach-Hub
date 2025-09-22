@@ -1,0 +1,1 @@
+- [x] Add isAdmin check in loginAdminUser function in src/user/user.service.ts

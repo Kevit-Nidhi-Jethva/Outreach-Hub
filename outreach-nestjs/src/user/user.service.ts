@@ -105,7 +105,45 @@ export class UserService {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day
     await this.whitelistModel.create({ token, userId: user._id, expiresAt });
 
-    return { message: 'Login successful', token };
+    return { "Login successful": true, token};
+  }
+  async loginAdminUser(email: string, password: string) {
+    const user = await this.userModel.findOne({ email }).select('+password');
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    if (!user.isAdmin) {
+      throw new UnauthorizedException('User is not an admin');
+    }
+
+    const payload = {
+      id: user.id.toString(),
+      email: user.email,
+      name: user.name,
+      isAdmin: user.isAdmin,
+      workspaces: user.workspaces.map((ws) => ({
+        workspaceId: ws.workspaceId.toString(),
+        role: ws.role,
+      })),
+    };
+
+    const token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET || 'default_secret',
+      { expiresIn: '1d' },
+    );
+
+    // Store in whitelist
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day
+    await this.whitelistModel.create({ token, userId: user._id, expiresAt });
+
+    return { "login successful": true , token};
   }
 
   async addUser(

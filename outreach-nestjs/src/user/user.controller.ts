@@ -52,6 +52,12 @@ export class UserController {
     return this.userService.loginUser(body.email, body.password);
   }
 
+   @Public()
+  @Post('loginadmin')
+  async loginAdminUser(@Body() body: { email: string; password: string }) {
+    return this.userService.loginAdminUser(body.email, body.password);
+  }
+
   @Public()
   @Post('logout')
   async logoutUser(@Headers('authorization') authHeader?: string) {
