@@ -59,7 +59,7 @@ export class SidebarComponent implements OnInit {
     { label: 'Templates', icon: 'file-earmark-text', route: 'templates', guard: () => true },
     { label: 'Campaigns', icon: 'rocket-takeoff', route: '/campaigns', guard: () => true },
     { label: 'Reports', icon: 'bar-chart-fill', route: '/reports', guard: () => true },
-    { label: 'Profile', icon: 'person-badge', route: '/profile', guard: () => true }
+    { label: 'Profile', icon: 'person-badge', route: '/profile', guard: (role: Role) => role === 'Editor' }
   ];
 
   get items(): MenuItem[] {

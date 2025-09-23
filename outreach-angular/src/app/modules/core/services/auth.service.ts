@@ -129,9 +129,6 @@ getUserRole(workspaceId?: string): string | null {
   }
 }
 
-
-
-
   getUserId(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
 
@@ -173,8 +170,17 @@ getSelectedWorkspaceId(): string | null {
     return null;
   }
 }
-
-
-
+  getCurrentUser(): DecodedToken | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
+    
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const decoded: DecodedToken = jwtDecode(token);
+      return decoded;
+    } catch {
+      return null;
+    }
+  }
 
 }

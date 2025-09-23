@@ -20,7 +20,7 @@
           </div>
           <div class="info-item" *ngIf="c.createdBy">
             <span class="icon">👤</span>
-            <span class="info-text">{{ c.createdBy.name || c.createdBy.email }}</span>
+            <span class="info-text">Created By: {{ c.createdBy.name || c.createdBy.email }}</span>
           </div>
         </div>
         <div class="tags" *ngIf="c.tags?.length">

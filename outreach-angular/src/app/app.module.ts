@@ -14,6 +14,7 @@ import { ContactsModule } from './modules/features/contacts/contacts.module.js';
 import { TemplateModule } from './modules/features/templates/templates.module.js';
 import { CampaignsModule } from './modules/features/campaigns/campaigns.module.js';
 import { DashboardModule } from './modules/features/dashboard/dashboard.module';
+import { ProfileModule } from './modules/features/profile/profile.module';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './modules/core/intersecptors/auth.interceptor.js';
@@ -39,6 +40,7 @@ import { CalendarModule } from 'primeng/calendar';
     TemplateModule,
     CampaignsModule,
     DashboardModule,
+    ProfileModule,
     BrowserAnimationsModule,
     CommonModule,
     ToastrModule.forRoot(),

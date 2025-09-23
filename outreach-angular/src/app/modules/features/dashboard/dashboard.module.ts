@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { TableModule } from 'primeng/table';
-import { DashboardComponent } from './dashboard.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
-  declarations: [DashboardComponent, WelcomeComponent],
+  declarations: [WelcomeComponent],
   imports: [
     CommonModule,
     RouterModule,

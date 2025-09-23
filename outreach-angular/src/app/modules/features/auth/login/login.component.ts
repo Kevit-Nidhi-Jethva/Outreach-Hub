@@ -30,14 +30,14 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    console.log('Form submitted. Valid:', this.loginForm.valid);
-    console.log('Form errors:', this.loginForm.errors);
-    console.log('Email errors:', this.loginForm.get('email')?.errors);
-    console.log('Password errors:', this.loginForm.get('password')?.errors);
+    // console.log('Form submitted. Valid:', this.loginForm.valid);
+    // console.log('Form errors:', this.loginForm.errors);
+    // console.log('Email errors:', this.loginForm.get('email')?.errors);
+    // console.log('Password errors:', this.loginForm.get('password')?.errors);
     
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      console.log('Attempting login with:', { email, password });
+      // console.log('Attempting login with:', { email, password });
       
       this.authService.login(email, password).subscribe({
         next: () => {

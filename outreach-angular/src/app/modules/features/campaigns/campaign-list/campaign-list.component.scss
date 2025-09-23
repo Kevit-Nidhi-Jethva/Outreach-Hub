@@ -13,21 +13,47 @@
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  ::ng-deep .p-button.p-button-primary {
+  /* Create Campaign Button - Matching logout button styling */
+  ::ng-deep .p-button.p-button-primary.create-campaign-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    min-width: 180px !important;
+  }
+
+  ::ng-deep .p-button.p-button-primary.create-campaign-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  }
+
+  /* Keep original primary button styling for other elements */
+  ::ng-deep .p-button.p-button-primary:not(.create-campaign-btn) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 5px 5px;
     border: none;
     border-radius: 0.5rem;
     font-weight: 600;
     font-size: 1rem !important;
     padding: 0.75rem 1.5rem !important;
     min-width: 180px !important;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
   }
 
-  ::ng-deep .p-button.p-button-primary:hover {
+  ::ng-deep .p-button.p-button-primary:not(.create-campaign-btn):hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 
   ::ng-deep .p-datatable {
@@ -37,7 +63,7 @@
     background: #fff;
 
     th {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #1F2937;
       color: #fff;
       font-weight: 600;
       font-size: 0.9rem;
@@ -89,7 +115,7 @@
 
   ::ng-deep .p-chip {
     font-size: 0.75rem;
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    // background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
     border-radius: 15px;
     color: #495057;
     font-weight: 500;
@@ -107,9 +133,8 @@
     pointer-events: none;
   }
 
-  /* Enhanced smaller rounded buttons with color improvements */
+  /* Simplified action buttons with transparent backgrounds */
   ::ng-deep button.p-button {
-    // border-radius: 50% !important;
     width: 40px !important;
     height: 50px !important;
     padding: 0 !important;
@@ -118,6 +143,14 @@
     align-items: center !important;
     justify-content: center !important;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    background: transparent !important; /* Remove background */
+    border: 1px solid #dee2e6 !important; /* Light border */
+    color: #495057 !important; /* Dark text for icons */
+  }
+
+  ::ng-deep button.p-button:hover:not([disabled]) {
+    background: #f8f9fa !important; /* Light background on hover */
+    border-color: #adb5bd !important;
   }
 
   /* Fix action buttons alignment */
@@ -128,58 +161,5 @@
     flex-wrap: nowrap !important;
   }
 
-  ::ng-deep button.p-button.p-button-info {
-    background-color: #007ad9 !important;
-    border-color: #007ad9 !important;
-    color: #fff !important;
-  }
-  ::ng-deep button.p-button.p-button-info:hover:not([disabled]) {
-    background-color: #005bb5 !important;
-    border-color: #005bb5 !important;
-    box-shadow: 0 0 8px rgba(0, 122, 217, 0.6);
-  }
 
-  ::ng-deep button.p-button.p-button-warning {
-    background-color: #f0ad4e !important;
-    border-color: #f0ad4e !important;
-    color: #fff !important;
-  }
-  ::ng-deep button.p-button.p-button-warning:hover:not([disabled]) {
-    background-color: #d6952a !important;
-    border-color: #d6952a !important;
-    box-shadow: 0 0 8px rgba(240, 173, 78, 0.6);
-  }
-
-  ::ng-deep button.p-button.p-button-success {
-    background-color: #5cb85c !important;
-    border-color: #5cb85c !important;
-    color: #fff !important;
-  }
-  ::ng-deep button.p-button.p-button-success:hover:not([disabled]) {
-    background-color: #3d8b3d !important;
-    border-color: #3d8b3d !important;
-    box-shadow: 0 0 8px rgba(92, 184, 92, 0.6);
-  }
-
-  ::ng-deep button.p-button.p-button-secondary {
-    background-color: #6c757d !important;
-    border-color: #6c757d !important;
-    color: #fff !important;
-  }
-  ::ng-deep button.p-button.p-button-secondary:hover:not([disabled]) {
-    background-color: #565e64 !important;
-    border-color: #565e64 !important;
-    box-shadow: 0 0 8px rgba(108, 117, 125, 0.6);
-  }
-
-  ::ng-deep button.p-button.p-button-danger {
-    background-color: #d9534f !important;
-    border-color: #d9534f !important;
-    color: #fff !important;
-  }
-  ::ng-deep button.p-button.p-button-danger:hover:not([disabled]) {
-    background-color: #b52b27 !important;
-    border-color: #b52b27 !important;
-    box-shadow: 0 0 8px rgba(217, 83, 79, 0.6);
-  }
 }

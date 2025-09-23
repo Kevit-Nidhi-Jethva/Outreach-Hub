@@ -26,7 +26,7 @@
           class="form-control"
           [formControl]="tagInput"
           placeholder="Enter tag and press Enter"
-          (keydown.enter)="onTagEnter($event)"
+          (keydown.enter)="onTagEnter($event); $event.preventDefault()"
           list="tags-list"
         />
         <datalist id="tags-list">
