@@ -104,6 +104,7 @@ export class UserController {
       password: string;
       role: string;
       createdBy?: string;
+      phoneNumber?: string;
       workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[];
     },
   ) {
@@ -113,7 +114,30 @@ export class UserController {
       body.password,
       body.role,
       body.createdBy,
-      body.workspaces,
+      body.phoneNumber,
+      body.workspaces
+    );
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
+  @Post('addadmin')
+  async addAdmin(
+    @Req() req,
+    @Body()
+    body: {
+      name: string;
+      email: string;
+      password: string;
+      phoneNumber?: string;
+    },
+  ) {
+    return this.userService.addAdmin(
+      req.user.id,
+      body.name,
+      body.email,
+      body.password,
+      body.phoneNumber,
     );
   }
 

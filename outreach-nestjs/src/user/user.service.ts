@@ -30,6 +30,7 @@ export class UserService {
     password: string,
     role: string,
     createdBy?: string,
+    phoneNumber?: string,
     workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[],
   ) {
     return {
@@ -37,6 +38,7 @@ export class UserService {
       email,
       password, // hashing handled in schema
       role,
+      phoneNumber,
       createdBy: createdBy ? new Types.ObjectId(createdBy) : undefined,
       workspaces: workspaces
         ? workspaces.map((ws) => ({
@@ -66,6 +68,7 @@ export class UserService {
       password,
       role,
       createdBy,
+      undefined, // phoneNumber not provided in signup
       workspaces,
     );
 
@@ -152,6 +155,7 @@ export class UserService {
     password: string,
     role: string,
     createdBy?: string,
+    phoneNumber?: string,
     workspaces?: { workspaceId: string; role: 'Editor' | 'Viewer' }[],
   ) {
     const userData = this.buildUserData(
@@ -160,10 +164,45 @@ export class UserService {
       password,
       role,
       createdBy,
+      phoneNumber,
       workspaces,
     );
     const user = new this.userModel(userData);
     return await user.save();
+  }
+
+  async addAdmin(
+    currentUserId: string,
+    name: string,
+    email: string,
+    password: string,
+    phoneNumber?: string,
+  ) {
+    // Check if the current user is an admin
+    const currentUser = await this.userModel.findById(currentUserId);
+    if (!currentUser || !currentUser.isAdmin) {
+      throw new UnauthorizedException('Only admins can add other admins');
+    }
+
+    // Check if user with this email already exists
+    const existingUser = await this.userModel.findOne({ email });
+    if (existingUser) {
+      throw new BadRequestException('User with this email already exists');
+    }
+
+    // Create admin user with no workspaces, using current user's ID as createdBy
+    const userData = {
+      name,
+      email,
+      password,
+      isAdmin: true,
+      createdBy: new Types.ObjectId(currentUserId),
+      phoneNumber,
+      workspaces: [], // Admins have no workspaces
+    };
+
+    const newAdmin = new this.userModel(userData);
+    return await newAdmin.save();
   }
 
   async updateUser(
