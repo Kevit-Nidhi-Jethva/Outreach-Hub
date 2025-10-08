@@ -1,9 +1,0 @@
-services:
-  backend:
-    build: .
-    container_name: nest-backend
-    restart: always
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env

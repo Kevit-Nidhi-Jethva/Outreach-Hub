@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../../../environments/environment.prod';
 
 export interface CampaignMessage {
   type: 'Text' | 'Text-Image';
@@ -29,6 +30,8 @@ export interface Campaign {
 })
 export class CampaignService {
   private baseUrl = 'http://localhost:3000/campaigns';
+  // private baseUrl = `${environment.apiUrl}/campaigns`;
+
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

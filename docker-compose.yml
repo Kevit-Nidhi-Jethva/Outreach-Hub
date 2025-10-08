@@ -1,0 +1,17 @@
+
+services:
+  backend:
+    build: ./outreach-nestjs
+    container_name: outreach-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./outreach-nestjs/.env
+
+  frontend:
+    build: ./outreach-angular
+    container_name: outreach-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
